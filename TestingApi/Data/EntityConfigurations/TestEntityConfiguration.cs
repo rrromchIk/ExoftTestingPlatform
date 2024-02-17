@@ -2,12 +2,14 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TestingApi.Models;
 
-namespace TestingApi.Data.EntityConfigurations; 
+namespace TestingApi.Data.EntityConfigurations;
 
-public class TestEntityConfiguration : BaseEntityConfiguration<Test> {
-    public override void Configure(EntityTypeBuilder<Test> builder) {
+public class TestEntityConfiguration : BaseEntityConfiguration<Test>
+{
+    public override void Configure(EntityTypeBuilder<Test> builder)
+    {
         base.Configure(builder);
-        
+
         builder
             .HasMany(t => t.QuestionsPools)
             .WithOne(qp => qp.Test)

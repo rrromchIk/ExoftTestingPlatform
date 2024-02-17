@@ -1,5 +1,8 @@
-﻿namespace TestingApi.Models; 
+﻿namespace TestingApi.Models;
 
-public enum UserRole {
-    SuperAdmin, Admin, User
+public enum UserRole
+{
+    User,
+    Admin,
+    SuperAdmin
 }

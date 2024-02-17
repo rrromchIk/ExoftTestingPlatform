@@ -1,5 +1,7 @@
-﻿namespace TestingApi.Models; 
+﻿namespace TestingApi.Models;
 
-public enum GenerationStrategy {
-    Sequentially , Randomly
+public enum GenerationStrategy
+{
+    Sequentially,
+    Randomly
 }

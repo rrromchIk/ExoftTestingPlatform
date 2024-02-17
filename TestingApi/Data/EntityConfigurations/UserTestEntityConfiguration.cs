@@ -2,10 +2,12 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TestingApi.Models;
 
-namespace TestingApi.Data.EntityConfigurations; 
+namespace TestingApi.Data.EntityConfigurations;
 
-public class UserTestEntityConfiguration : IEntityTypeConfiguration<UserTest> {
-    public void Configure(EntityTypeBuilder<UserTest> builder) {
+public class UserTestEntityConfiguration : IEntityTypeConfiguration<UserTest>
+{
+    public void Configure(EntityTypeBuilder<UserTest> builder)
+    {
         builder
             .HasKey(ut => new { ut.UserId, ut.TestId });
         builder

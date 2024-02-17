@@ -1,5 +1,8 @@
-﻿namespace TestingApi.Models; 
+﻿namespace TestingApi.Models;
 
-public enum UserTestStatus {
-    NotStarted, InProcess, Completed
+public enum UserTestStatus
+{
+    NotStarted,
+    InProcess,
+    Completed
 }

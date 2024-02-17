@@ -1,5 +1,8 @@
-﻿namespace TestingApi.Models; 
+﻿namespace TestingApi.Models;
 
-public enum TestDifficulty {
-    Easy, Medium, Hard
+public enum TestDifficulty
+{
+    Easy,
+    Medium,
+    Hard
 }

@@ -1,9 +1,10 @@
-﻿namespace TestingApi.Models; 
+﻿namespace TestingApi.Models;
 
-public class Question : BaseEntity {
+public class Question : BaseEntity
+{
     public string Text { get; set; } = null!;
     public int MaxScore { get; set; }
-    
+
     public Guid QuestionsPoolId { get; set; }
     public QuestionsPool QuestionsPool { get; set; } = null!;
 
