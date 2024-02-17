@@ -142,8 +142,9 @@ namespace TestingApi.Migrations
                     b.Property<Guid>("CreatedBy")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Difficulty")
-                        .HasColumnType("int");
+                    b.Property<string>("Difficulty")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Duration")
                         .HasColumnType("int");
@@ -211,8 +212,9 @@ namespace TestingApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserRole")
-                        .HasColumnType("int");
+                    b.Property<string>("UserRole")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -259,8 +261,9 @@ namespace TestingApi.Migrations
                     b.Property<DateTime>("StartingTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserTestStatus")
-                        .HasColumnType("int");
+                    b.Property<string>("UserTestStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("UserId", "TestId");
 
