@@ -20,11 +20,12 @@ public class UserTestEntityConfiguration : IEntityTypeConfiguration<UserTest>
             .WithMany(t => t.UserTests)
             .HasForeignKey(ut => ut.TestId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        
+
+
         builder.Property(ut => ut.UserTestStatus)
             .HasConversion(
                 uts => uts.ToString(),
-                s => (UserTestStatus)Enum.Parse(typeof(UserTestStatus), s));
+                s => (UserTestStatus)Enum.Parse(typeof(UserTestStatus), s)
+            );
     }
 }

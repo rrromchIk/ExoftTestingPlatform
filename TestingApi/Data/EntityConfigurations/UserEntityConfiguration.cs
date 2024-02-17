@@ -13,11 +13,12 @@ public class UserEntityConfiguration : BaseEntityConfiguration<User>
         builder
             .HasIndex(u => u.Login)
             .IsUnique();
-        
-        
+
+
         builder.Property(u => u.UserRole)
             .HasConversion(
                 ur => ur.ToString(),
-                s => (UserRole)Enum.Parse(typeof(UserRole), s));
+                s => (UserRole)Enum.Parse(typeof(UserRole), s)
+            );
     }
 }

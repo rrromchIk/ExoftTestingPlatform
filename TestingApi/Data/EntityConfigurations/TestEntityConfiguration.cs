@@ -19,10 +19,11 @@ public class TestEntityConfiguration : BaseEntityConfiguration<Test>
         builder
             .HasIndex(t => t.Name)
             .IsUnique();
-        
+
         builder.Property(t => t.Difficulty)
             .HasConversion(
                 td => td.ToString(),
-                s => (TestDifficulty)Enum.Parse(typeof(TestDifficulty), s));
+                s => (TestDifficulty)Enum.Parse(typeof(TestDifficulty), s)
+            );
     }
 }
