@@ -4,8 +4,10 @@ using TestingApi.Models;
 
 namespace TestingApi.Data.EntityConfigurations; 
 
-public class QuestionEntityConfiguration : IEntityTypeConfiguration<Question> {
-    public void Configure(EntityTypeBuilder<Question> builder) {
+public class QuestionEntityConfiguration : BaseEntityConfiguration<Question> {
+    public override void Configure(EntityTypeBuilder<Question> builder) {
+        base.Configure(builder);
+        
         builder
             .HasMany(q => q.Answers)
             .WithOne(a => a.Question)
