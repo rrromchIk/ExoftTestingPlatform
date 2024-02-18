@@ -4,9 +4,9 @@ public abstract class BaseEntity
 {
     public Guid Id { get; set; }
 
-    public DateTime Created { get; set; }
+    public DateTime CreatedTimestamp { get; set; }
 
-    public DateTime? Modified { get; set; }
+    public DateTime? ModifiedTimestamp { get; set; }
 
     public Guid CreatedBy { get; set; }
 

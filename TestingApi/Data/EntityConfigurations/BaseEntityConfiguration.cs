@@ -9,7 +9,7 @@ public class BaseEntityConfiguration<TEntity> : IEntityTypeConfiguration<TEntity
     public virtual void Configure(EntityTypeBuilder<TEntity> builder)
     {
         builder.HasKey(k => k.Id);
-        builder.Property(e => e.Modified).IsRequired(false);
+        builder.Property(e => e.ModifiedTimestamp).IsRequired(false);
         builder.Property(e => e.ModifiedBy).IsRequired(false);
     }
 }
