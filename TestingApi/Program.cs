@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
+using TestingApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -23,6 +25,7 @@ if (app.Environment.IsDevelopment())
 }
 
 
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
