@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
 using TestingApi.Middlewares;
+using TestingApi.Services.Abstractions;
+using TestingApi.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,9 @@ builder.Logging
 
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 builder.Services.AddControllers();
+
+builder.Services.AddScoped<ITestService, TestService>();
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
