@@ -4,6 +4,12 @@ using TestingApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Logging
+    .ClearProviders()
+    .SetMinimumLevel(LogLevel.Trace)
+    .AddSimpleConsole(options => { options.IncludeScopes = true; })
+    .AddDebug();
+
 builder.Services.AddTransient<GlobalExceptionHandlingMiddleware>();
 builder.Services.AddControllers();
 
