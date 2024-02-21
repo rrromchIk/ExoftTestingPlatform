@@ -19,7 +19,7 @@ public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEnt
 
     public async Task<TEntity> GetById(Guid id)
     {
-        return await _dbSet.FindAsync(id);
+        return await _dbSet.AsNoTracking().FirstAsync(e => e.Id == id);
     }
 
     public async Task<bool> Exists(Guid id)
