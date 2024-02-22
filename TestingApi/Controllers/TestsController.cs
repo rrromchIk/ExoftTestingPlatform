@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Data;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using TestingApi.Dto;
 using TestingApi.Dto.Response;
@@ -41,7 +42,66 @@ public class TestsController : ControllerBase
         if (!await _testService.TestExistsAsync(id))
             return NotFound();
 
-        var response = await _testService.GetByIdAsync(id);
+        var response = await _testService.GetTestByIdAsync(id);
         return Ok(response);
+    }
+    
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TestResponseDto))]
+    public async Task<IActionResult> CreateTest([FromBody] TestDto testDto)
+    {
+        _logger.LogInformation("{dt}. Creating test: {dto}",
+            DateTime.Now.ToString(), JsonSerializer.Serialize(testDto));
+
+        if (!ModelState.IsValid) 
+            return BadRequest(ModelState);
+        
+
+        var response = await _testService.CreateTestAsync(testDto);
+
+        return CreatedAtAction(nameof(GetTestById), new { id = response.Id }, response);
+    }
+
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    public async Task<IActionResult> UpdateTest([FromRoute] Guid id, [FromBody] TestDto testDto)
+    {
+        _logger.LogInformation("{dt}. Updating test with id: {id}. New test info: {dto}",
+            DateTime.Now.ToString(), id, JsonSerializer.Serialize(testDto));
+        
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        if (!await _testService.TestExistsAsync(id))
+            return NotFound();
+        
+        if (!await _testService.UpdateTestAsync(id, testDto))
+        {
+            throw new DataException("Something went wrong while updating");
+        }
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> DeleteTest([FromRoute] Guid id)
+    {
+        _logger.LogInformation("{DT}. Deleting test with id: {id}", 
+            DateTime.Now.ToString(), id);
+        
+        if (!await _testService.TestExistsAsync(id))
+            return NotFound();
+
+        if (!await _testService.DeleteTestAsync(id))
+        {
+            throw new DataException("Something went wrong while deleting");
+        }
+
+        return NoContent();
     }
 }
