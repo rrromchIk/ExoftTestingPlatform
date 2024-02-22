@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text.Json;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
 using TestingApi.Dto;
@@ -34,17 +35,32 @@ public class TestService : ITestService
     
     public async Task<TestResponseDto> CreateTestAsync(TestDto testDto)
     {
-        var test = _mapper.Map<Test>(entity);
-        await _dataContext.AddAsync(entity);
         _logger.LogInformation("{dt}. Create test method. TestDto: {dto}",
             DateTime.Now.ToString(), JsonSerializer.Serialize(testDto));
+        var testToAdd = _mapper.Map<Test>(testDto);
+        var createdTest = await _dataContext.AddAsync(testToAdd);
+
+        await _dataContext.SaveChangesAsync();
+        
+        return _mapper.Map<TestResponseDto>(createdTest.Entity);
+    }
 
     public async Task<bool> UpdateTestAsync(Guid id, TestDto testDto)
+    {
+        var testFounded = await _dataContext.FindAsync<Test>(id);
+        var updatedTest = _mapper.Map<Test>(testDto);
+
         _logger.LogInformation(
             "Test to update: {ttu}. Updated test: {ut}",
             JsonSerializer.Serialize(testFounded),
             JsonSerializer.Serialize(updatedTest)
         );
+        
+        testFounded.Name = updatedTest.Name;
+        testFounded.Subject = updatedTest.Subject;
+        testFounded.Difficulty = updatedTest.Difficulty;
+        testFounded.Duration = updatedTest.Duration;
+        
         return await _dataContext.SaveChangesAsync() > 0;
     }
     
