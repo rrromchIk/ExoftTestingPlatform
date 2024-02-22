@@ -20,38 +20,28 @@ public class TestService : ITestService
         _logger = logger;
     }
     
-    public async Task<TestResponseDto> GetByIdAsync(Guid id)
+    public async Task<TestResponseDto> GetTestByIdAsync(Guid id)
     {
         var tests = await _dataContext.Tests.AsNoTracking().FirstAsync(e => e.Id == id);
 
         return _mapper.Map<TestResponseDto>(tests);
     }
 
-    public async Task<bool> ExistsAsync(Guid id)
+    public async Task<bool> TestExistsAsync(Guid id)
     {
         return await _dataContext.Tests.AnyAsync(e => e.Id.Equals(id));
     }
     
-    public async Task<bool> CreateAsync(TestDto entity)
+    public async Task<TestResponseDto> CreateTestAsync(TestDto testDto)
     {
         var test = _mapper.Map<Test>(entity);
         await _dataContext.AddAsync(entity);
 
-        return await _dataContext.SaveChangesAsync() > 0;
-    }
-
-    public async Task<bool> UpdateAsync(Guid id, TestDto entity)
-    {
-
-        var entityFounded = await _dataContext.FindAsync<Test>(id);
-        var updatedTest = _mapper.Map<Test>(entity);
-
-        //....
-        
+    public async Task<bool> UpdateTestAsync(Guid id, TestDto testDto)
         return await _dataContext.SaveChangesAsync() > 0;
     }
     
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> DeleteTestAsync(Guid id)
     {
         var entity = await _dataContext.Tests.FindAsync(id);
 

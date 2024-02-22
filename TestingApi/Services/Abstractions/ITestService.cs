@@ -5,10 +5,10 @@ namespace TestingApi.Services.Abstractions;
 
 public interface ITestService
 {
-    Task<TestResponseDto> GetByIdAsync(Guid id);
-    Task<bool> ExistsAsync(Guid id);
-    Task<bool> CreateAsync(TestDto entity);
-    Task<bool> UpdateAsync(Guid id, TestDto entity);
-    Task<bool> DeleteAsync(Guid id);
+    Task<TestResponseDto> GetTestByIdAsync(Guid id);
+    Task<bool> TestExistsAsync(Guid id);
+    Task<TestResponseDto> CreateTestAsync(TestDto testDto);
+    Task<bool> UpdateTestAsync(Guid id, TestDto testDto);
+    Task<bool> DeleteTestAsync(Guid id);
     Task<ICollection<TestResponseDto>> GetAllTestsAsync();
 }
