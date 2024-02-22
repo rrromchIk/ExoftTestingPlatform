@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TestingApi.Dto;
+using TestingApi.Dto.Response;
 using TestingApi.Models;
 
 namespace TestingApi.Helpers;
@@ -11,7 +12,7 @@ public class MappingProfiles : Profile {
                 opt => opt
                     .MapFrom(src => src.Difficulty.ToString()));
             
-        CreateMap<Test, TestDto>()
+        CreateMap<Test, TestResponseDto>()
             .ForMember(dest => dest.Difficulty, 
                 opt => opt
                     .MapFrom(src => src.Difficulty.ToString()));
@@ -19,7 +20,7 @@ public class MappingProfiles : Profile {
         CreateMap<TestDto, Test>()
             .ForMember(dest => dest.Difficulty,
                 opt => opt
-                    .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.Difficulty)));
+                    .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.Difficulty, true)));
 
         
     }
