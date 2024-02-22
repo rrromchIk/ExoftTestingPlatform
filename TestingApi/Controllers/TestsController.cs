@@ -13,7 +13,8 @@ public class TestsController : ControllerBase
     private readonly ITestService _testService;
     private readonly ILogger<TestsController> _logger;
 
-    public TestsController(ITestService testService, IMapper mapper, ILogger<TestsController> logger) {
+    public TestsController(ITestService testService, ILogger<TestsController> logger)
+    {
         _testService = testService;
         _logger = logger;
     }
@@ -22,6 +23,9 @@ public class TestsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TestResponseDto>))]
     public async Task<IActionResult> GetAllTests()
     {
+        _logger.LogInformation("{dt}. Getting all tests",
+            DateTime.Now.ToString());
+        
         var response = await _testService.GetAllTestsAsync();
         return Ok(response);
     }
@@ -29,8 +33,12 @@ public class TestsController : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetTestById([FromRoute] Guid id) {
-        if (!await _testService.ExistsAsync(id)) 
+    public async Task<IActionResult> GetTestById([FromRoute] Guid id)
+    {
+        _logger.LogInformation("{dt}. Getting test with id: {id}",
+            DateTime.Now.ToString(), id);
+
+        if (!await _testService.TestExistsAsync(id))
             return NotFound();
 
         var response = await _testService.GetByIdAsync(id);

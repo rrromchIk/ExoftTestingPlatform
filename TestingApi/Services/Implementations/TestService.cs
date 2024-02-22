@@ -36,8 +36,15 @@ public class TestService : ITestService
     {
         var test = _mapper.Map<Test>(entity);
         await _dataContext.AddAsync(entity);
+        _logger.LogInformation("{dt}. Create test method. TestDto: {dto}",
+            DateTime.Now.ToString(), JsonSerializer.Serialize(testDto));
 
     public async Task<bool> UpdateTestAsync(Guid id, TestDto testDto)
+        _logger.LogInformation(
+            "Test to update: {ttu}. Updated test: {ut}",
+            JsonSerializer.Serialize(testFounded),
+            JsonSerializer.Serialize(updatedTest)
+        );
         return await _dataContext.SaveChangesAsync() > 0;
     }
     
