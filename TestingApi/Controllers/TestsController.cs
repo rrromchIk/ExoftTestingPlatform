@@ -1,8 +1,9 @@
 ﻿using System.Data;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using TestingApi.Dto;
+using TestingApi.Dto.Request;
 using TestingApi.Dto.Response;
+using TestingApi.Helpers;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Controllers;
@@ -35,7 +36,7 @@ public class TestsController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTestById([FromRoute] Guid id)
@@ -90,7 +91,7 @@ public class TestsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteTest([FromRoute] Guid id)

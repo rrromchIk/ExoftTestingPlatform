@@ -1,4 +1,4 @@
-﻿using TestingApi.Dto;
+﻿using TestingApi.Dto.Request;
 using TestingApi.Dto.Response;
 using TestingApi.Helpers;
 
