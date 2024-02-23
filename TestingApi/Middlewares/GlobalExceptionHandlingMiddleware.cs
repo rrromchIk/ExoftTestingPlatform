@@ -1,5 +1,4 @@
 ﻿using Azure.Core;
-using Microsoft.AspNetCore.Diagnostics;
 
 namespace TestingApi.Middlewares;
 
@@ -25,17 +24,12 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
             context.Response.StatusCode = StatusCodes.Status500InternalServerError;
             context.Response.ContentType = ContentType.ApplicationJson.ToString();
 
-            var contextFeature = context.Features.Get<IExceptionHandlerFeature>();
-            if (contextFeature != null)
-            {
-                await context.Response.WriteAsJsonAsync(
-                    new
-                    {
-                        StatusCode = context.Response.StatusCode,
-                        Message = contextFeature.Error.Message
-                    }
-                );
-            }
+            await context.Response.WriteAsJsonAsync(
+                new
+                {
+                    Message = e.Message
+                }
+            );
         }
     }
 }
