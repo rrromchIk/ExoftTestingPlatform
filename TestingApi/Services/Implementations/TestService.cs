@@ -35,8 +35,11 @@ public class TestService : ITestService
     
     public async Task<TestResponseDto> CreateTestAsync(TestDto testDto)
     {
-        _logger.LogInformation("{dt}. Create test method. TestDto: {dto}",
-            DateTime.Now.ToString(), JsonSerializer.Serialize(testDto));
+        _logger.LogInformation(
+            "{dt}. Create test method. TestDto: {dto}",
+            DateTime.Now.ToString(),
+            JsonSerializer.Serialize(testDto)
+        );
         var testToAdd = _mapper.Map<Test>(testDto);
         var createdTest = await _dataContext.AddAsync(testToAdd);
 
@@ -72,10 +75,42 @@ public class TestService : ITestService
         return await _dataContext.SaveChangesAsync() > 0;
     }
 
-    public async Task<ICollection<TestResponseDto>> GetAllTestsAsync()
+    public async Task<PagedList<TestResponseDto>> GetAllTestsAsync(TestFiltersDto testFiltersDto)
     {
-        var tests =  await _dataContext.Tests.ToListAsync();
+        IQueryable<Test> testsQuery = _dataContext.Tests;
 
-       return _mapper.Map<ICollection<TestResponseDto>>(tests);
+        if (!string.IsNullOrWhiteSpace(testFiltersDto.SearchTerm))
+        {
+            testsQuery = testsQuery.Where(
+                t =>
+                    t.Name.Contains(testFiltersDto.SearchTerm) ||
+                    t.Subject.Contains(testFiltersDto.SearchTerm)
+            );
+        }
+
+        testsQuery = testFiltersDto.SortOrder?.ToLower() == "desc"
+            ? testsQuery.OrderByDescending(GetSortProperty(testFiltersDto.SortColumn))
+            : testsQuery.OrderBy(GetSortProperty(testFiltersDto.SortColumn));
+
+        var tests = await PagedList<Test>.CreateAsync(
+            testsQuery,
+            testFiltersDto.Page,
+            testFiltersDto.PageSize
+        );
+        
+        return _mapper.Map<PagedList<TestResponseDto>>(tests);
+    }
+
+    private static Expression<Func<Test, object>> GetSortProperty(string? sortColumn)
+    {
+        return sortColumn?.ToLower() switch
+        {
+            "name" => t => t.Name,
+            "subject" => t => t.Subject,
+            "difficulty" => t => t.Difficulty,
+            "duration" => t => t.Duration,
+            "creationTime" => t => t.CreatedTimestamp,
+            _ => t => t.Id
+        };
     }
 }

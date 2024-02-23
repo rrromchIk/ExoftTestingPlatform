@@ -19,15 +19,19 @@ public class TestsController : ControllerBase
         _testService = testService;
         _logger = logger;
     }
-    
+
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<TestResponseDto>))]
-    public async Task<IActionResult> GetAllTests()
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestResponseDto>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    public async Task<IActionResult> GetAllTests([FromQuery] TestFiltersDto testFiltersDto)
     {
-        _logger.LogInformation("{dt}. Getting all tests",
-            DateTime.Now.ToString());
+        _logger.LogInformation("{dt}. Getting all tests. Filters applied: {f}",
+            DateTime.Now.ToString(), JsonSerializer.Serialize(testFiltersDto));
         
-        var response = await _testService.GetAllTestsAsync();
+        if (!ModelState.IsValid) 
+            return BadRequest(ModelState);
+        
+        var response = await _testService.GetAllTestsAsync(testFiltersDto);
         return Ok(response);
     }
 
