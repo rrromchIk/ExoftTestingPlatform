@@ -98,7 +98,8 @@ public class TestService : ITestService
         var tests = await PagedList<Test>.CreateAsync(
             testsQuery,
             testFiltersDto.Page,
-            testFiltersDto.PageSize
+            testFiltersDto.PageSize,
+            cancellationToken
         );
         
         return _mapper.Map<PagedList<TestResponseDto>>(tests);
