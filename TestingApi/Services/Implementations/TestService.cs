@@ -23,19 +23,19 @@ public class TestService : ITestService
         _logger = logger;
     }
     
-    public async Task<TestResponseDto> GetTestByIdAsync(Guid id)
+    public async Task<TestResponseDto> GetTestByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var tests = await _dataContext.Tests.AsNoTracking().FirstAsync(e => e.Id == id);
+        var tests = await _dataContext.Tests.AsNoTracking().FirstAsync(e => e.Id == id, cancellationToken);
 
         return _mapper.Map<TestResponseDto>(tests);
     }
 
-    public async Task<bool> TestExistsAsync(Guid id)
+    public async Task<bool> TestExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _dataContext.Tests.AnyAsync(e => e.Id.Equals(id));
+        return await _dataContext.Tests.AnyAsync(e => e.Id.Equals(id), cancellationToken);
     }
     
-    public async Task<TestResponseDto> CreateTestAsync(TestDto testDto)
+    public async Task<TestResponseDto> CreateTestAsync(TestDto testDto, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation(
             "{dt}. Create test method. TestDto: {dto}",
@@ -43,16 +43,16 @@ public class TestService : ITestService
             JsonSerializer.Serialize(testDto)
         );
         var testToAdd = _mapper.Map<Test>(testDto);
-        var createdTest = await _dataContext.AddAsync(testToAdd);
+        var createdTest = await _dataContext.AddAsync(testToAdd, cancellationToken);
 
-        await _dataContext.SaveChangesAsync();
+        await _dataContext.SaveChangesAsync(cancellationToken);
         
         return _mapper.Map<TestResponseDto>(createdTest.Entity);
     }
 
-    public async Task<bool> UpdateTestAsync(Guid id, TestDto testDto)
+    public async Task<bool> UpdateTestAsync(Guid id, TestDto testDto, CancellationToken cancellationToken = default)
     {
-        var testFounded = await _dataContext.FindAsync<Test>(id);
+        var testFounded = await _dataContext.Tests.FirstAsync(e => e.Id == id, cancellationToken);
         var updatedTest = _mapper.Map<Test>(testDto);
 
         _logger.LogInformation(
@@ -66,18 +66,19 @@ public class TestService : ITestService
         testFounded.Difficulty = updatedTest.Difficulty;
         testFounded.Duration = updatedTest.Duration;
         
-        return await _dataContext.SaveChangesAsync() > 0;
+        return await _dataContext.SaveChangesAsync(cancellationToken) > 0;
     }
     
-    public async Task<bool> DeleteTestAsync(Guid id)
+    public async Task<bool> DeleteTestAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _dataContext.Tests.FindAsync(id);
+        var testToDelete = await _dataContext.Tests.FirstAsync(e => e.Id == id, cancellationToken);
 
-        _dataContext.Remove(entity);
-        return await _dataContext.SaveChangesAsync() > 0;
+        _dataContext.Remove(testToDelete);
+        return await _dataContext.SaveChangesAsync(cancellationToken) > 0;
     }
 
-    public async Task<PagedList<TestResponseDto>> GetAllTestsAsync(TestFiltersDto testFiltersDto)
+    public async Task<PagedList<TestResponseDto>> GetAllTestsAsync(TestFiltersDto testFiltersDto,
+        CancellationToken cancellationToken = default)
     {
         IQueryable<Test> testsQuery = _dataContext.Tests;
 
