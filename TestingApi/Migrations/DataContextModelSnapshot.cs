@@ -183,7 +183,7 @@ namespace TestingApi.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("NumOfQuestionsToBeGenerated")
                         .HasColumnType("int");
@@ -192,6 +192,9 @@ namespace TestingApi.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.HasIndex("TestId");
 
