@@ -51,7 +51,7 @@ public class TestsController : ControllerBase
             id
         );
 
-        if (!await _testService.TestExistsAsync(id))
+        if (!await _testService.TestExistsAsync(id, cancellationToken))
             return NotFound();
 
         var response = await _testService.GetTestByIdAsync(id, cancellationToken);
