@@ -21,10 +21,10 @@ public class QuestionsPoolsController : ControllerBase
         _logger = logger;
     }
     
-    [HttpGet("{testId}/questions-pools")]
+    [HttpGet("{testId:guid}/questions-pools")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<QuestionsPoolResponseDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
-    public async Task<IActionResult> GetQuestionsPoolsByTestId([FromQuery] Guid testId,
+    public async Task<IActionResult> GetQuestionsPoolsByTestId([FromRoute] Guid testId,
         CancellationToken cancellationToken)
     {
         _logger.LogInformation(
