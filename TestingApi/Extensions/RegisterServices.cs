@@ -11,5 +11,6 @@ public static class RegisterServices
         serviceCollection.AddScoped<GlobalExceptionHandlingMiddleware>();
         serviceCollection.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         serviceCollection.AddScoped<ITestService, TestService>();
+        serviceCollection.AddScoped<IQuestionsPoolService, QuestionsPoolService>();
     }
 }

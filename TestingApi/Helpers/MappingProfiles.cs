@@ -5,28 +5,71 @@ using TestingApi.Models;
 
 namespace TestingApi.Helpers;
 
-public class MappingProfiles : Profile {
-    public MappingProfiles() {
+public class MappingProfiles : Profile
+{
+    public MappingProfiles()
+    {
         CreateMap<Test, TestDto>()
-            .ForMember(dest => dest.Difficulty, 
+            .ForMember(
+                dest => dest.Difficulty,
                 opt => opt
-                    .MapFrom(src => src.Difficulty.ToString()));
-            
+                    .MapFrom(src => src.Difficulty.ToString())
+            );
+
         CreateMap<Test, TestResponseDto>()
-            .ForMember(dest => dest.Difficulty, 
+            .ForMember(
+                dest => dest.Difficulty,
                 opt => opt
-                    .MapFrom(src => src.Difficulty.ToString()));
+                    .MapFrom(src => src.Difficulty.ToString())
+            );
 
         CreateMap<TestDto, Test>()
-            .ForMember(dest => dest.Difficulty,
+            .ForMember(
+                dest => dest.Difficulty,
                 opt => opt
-                    .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.Difficulty, true)));
-        
+                    .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.Difficulty, true))
+            );
+
         CreateMap<PagedList<Test>, PagedList<TestResponseDto>>()
-            .ConvertUsing((src, dest, context) =>
-            {
-                var mappedItems = context.Mapper.Map<List<TestResponseDto>>(src.Items);
-                return new PagedList<TestResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
-            });
+            .ConvertUsing(
+                (src, dest, context) =>
+                {
+                    var mappedItems = context.Mapper.Map<List<TestResponseDto>>(src.Items);
+                    return new PagedList<TestResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
+                }
+            );
+
+
+        CreateMap<QuestionsPool, QuestionsPoolDto>()
+            .ForMember(
+                dest => dest.GenerationStrategy,
+                opt => opt
+                    .MapFrom(src => src.GenerationStrategy.ToString())
+            );
+
+        CreateMap<QuestionsPool, QuestionsPoolResponseDto>()
+            .ForMember(
+                dest => dest.GenerationStrategy,
+                opt => opt
+                    .MapFrom(src => src.GenerationStrategy.ToString())
+            );
+
+        CreateMap<QuestionsPoolDto, QuestionsPool>()
+            .ForMember(
+                dest => dest.GenerationStrategy,
+                opt => opt
+                    .MapFrom(src => 
+                        Enum.Parse(typeof(GenerationStrategy), src.GenerationStrategy, true)
+                )
+            );
+        
+        CreateMap<PagedList<QuestionsPool>, PagedList<QuestionsPoolResponseDto>>()
+            .ConvertUsing(
+                (src, dest, context) =>
+                {
+                    var mappedItems = context.Mapper.Map<List<QuestionsPoolResponseDto>>(src.Items);
+                    return new PagedList<QuestionsPoolResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
+                }
+            );
     }
 }
