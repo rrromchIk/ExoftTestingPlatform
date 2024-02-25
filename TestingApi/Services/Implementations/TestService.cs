@@ -66,7 +66,7 @@ public class TestService : ITestService
         testFounded.Difficulty = updatedTest.Difficulty;
         testFounded.Duration = updatedTest.Duration;
         
-        return await _dataContext.SaveChangesAsync(cancellationToken) > 0;
+        return await _dataContext.SaveChangesAsync(cancellationToken) >= 0;
     }
     
     public async Task<bool> DeleteTestAsync(Guid id, CancellationToken cancellationToken = default)
