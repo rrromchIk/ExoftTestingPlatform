@@ -195,7 +195,7 @@ namespace TestingApi.Migrations
 
                     b.HasIndex("TestId");
 
-                    b.ToTable("QuestionsPool");
+                    b.ToTable("QuestionsPools");
                 });
 
             modelBuilder.Entity("TestingApi.Models.QuestionsPoolTemplate", b =>

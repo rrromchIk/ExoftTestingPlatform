@@ -7,6 +7,7 @@ namespace TestingApi.Data;
 public class DataContext : DbContext
 {
     public DbSet<Test> Tests { get; set; } = null!;
+    public DbSet<QuestionsPool> QuestionsPools { get; set; } = null!;
     public DbSet<Question> Questions { get; set; } = null!;
     public DbSet<Answer> Answers { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
