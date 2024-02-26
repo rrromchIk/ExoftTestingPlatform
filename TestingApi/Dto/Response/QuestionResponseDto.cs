@@ -1,0 +1,9 @@
+﻿namespace TestingApi.Dto.Response;
+
+public class QuestionResponseDto : BaseResponseDto
+{
+    public Guid QuestionsPoolId { get; set; }
+    
+    public string Text { get; set; } = null!;
+    public int MaxScore { get; set; }
+}

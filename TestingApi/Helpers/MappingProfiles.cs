@@ -71,5 +71,12 @@ public class MappingProfiles : Profile
                     return new PagedList<QuestionsPoolResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
                 }
             );
+        
+        
+        CreateMap<QuestionDto, Question>();
+        CreateMap<Question, QuestionResponseDto>();
+        
+        CreateMap<AnswerDto, Answer>();
+        CreateMap<Answer, AnswerResponseDto>();
     }
 }

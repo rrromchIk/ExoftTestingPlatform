@@ -12,5 +12,7 @@ public static class RegisterServices
         serviceCollection.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         serviceCollection.AddScoped<ITestService, TestService>();
         serviceCollection.AddScoped<IQuestionsPoolService, QuestionsPoolService>();
+        serviceCollection.AddScoped<IQuestionService, QuestionService>();
+        serviceCollection.AddScoped<IAnswerService, AnswerService>();
     }
 }
