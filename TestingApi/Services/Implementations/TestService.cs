@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Data;
+using System.Linq.Expressions;
 using System.Text.Json;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
@@ -44,6 +45,14 @@ public class TestService : ITestService
             JsonSerializer.Serialize(testDto)
         );
         var testToAdd = _mapper.Map<Test>(testDto);
+
+        var collision = await _dataContext.Tests.AnyAsync(
+            t => t.Name == testToAdd.Name,
+            cancellationToken
+        );
+        if (collision)
+            throw new DataException("Test name has to be unique");
+
         var createdTest = await _dataContext.AddAsync(testToAdd, cancellationToken);
 
         await _dataContext.SaveChangesAsync(cancellationToken);
@@ -61,7 +70,15 @@ public class TestService : ITestService
             JsonSerializer.Serialize(testFounded),
             JsonSerializer.Serialize(updatedTest)
         );
+
+        var collision = await _dataContext.Tests.AnyAsync(
+            t => t.Name == updatedTest.Name,
+            cancellationToken
+        );
         
+        if (collision)
+            throw new DataException("Test name has to be unique");
+
         testFounded.Name = updatedTest.Name;
         testFounded.Subject = updatedTest.Subject;
         testFounded.Difficulty = updatedTest.Difficulty;

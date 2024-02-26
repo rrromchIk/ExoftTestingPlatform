@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Data;
+using System.Text.Json;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
@@ -34,7 +35,7 @@ public class QuestionsPoolService : IQuestionsPoolService
         return _mapper.Map<PagedList<QuestionsPoolResponseDto>>(questionsPools);
     }
 
-    public async Task<QuestionsPoolResponseDto> GetQuestionPoolByIdAsync(Guid id,
+    public async Task<QuestionsPoolResponseDto?> GetQuestionPoolByIdAsync(Guid id,
         CancellationToken cancellationToken = default)
     {
         var questionsPool = await _dataContext.QuestionsPools
@@ -57,11 +58,21 @@ public class QuestionsPoolService : IQuestionsPoolService
             JsonSerializer.Serialize(questionsPoolDto)
         );
         var questionsPoolToAdd = _mapper.Map<QuestionsPool>(questionsPoolDto);
-        var createdTest = await _dataContext.AddAsync(questionsPoolToAdd, cancellationToken);
+        
+        var collision = await _dataContext.QuestionsPools.AnyAsync(
+            qp => qp.Name == questionsPoolToAdd.Name 
+                  && qp.TestId == questionsPoolToAdd.TestId,
+            cancellationToken
+        );
+        
+        if (collision)
+            throw new DataException("Questions pool name has to be unique for the each test");
+        
+        var createdQuestionsPool = await _dataContext.AddAsync(questionsPoolToAdd, cancellationToken);
 
         await _dataContext.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<QuestionsPoolResponseDto>(createdTest.Entity);
+        return _mapper.Map<QuestionsPoolResponseDto>(createdQuestionsPool.Entity);
     }
 
     public async Task<bool> UpdateQuestionsPoolAsync(Guid id, QuestionsPoolDto questionsPoolDto,
@@ -76,6 +87,15 @@ public class QuestionsPoolService : IQuestionsPoolService
             JsonSerializer.Serialize(questionsPoolFounded),
             JsonSerializer.Serialize(updatedQuestionsPool)
         );
+        
+        var collision = await _dataContext.QuestionsPools.AnyAsync(
+            qp => qp.Name == updatedQuestionsPool.Name 
+                  && qp.TestId == updatedQuestionsPool.TestId,
+            cancellationToken
+        );
+        
+        if (collision)
+            throw new DataException("Questions pool name has to be unique for the each test");
 
         questionsPoolFounded.Name = updatedQuestionsPool.Name;
         questionsPoolFounded.NumOfQuestionsToBeGenerated = updatedQuestionsPool.NumOfQuestionsToBeGenerated;
