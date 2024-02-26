@@ -81,7 +81,7 @@ public class QuestionsPoolService : IQuestionsPoolService
         questionsPoolFounded.NumOfQuestionsToBeGenerated = updatedQuestionsPool.NumOfQuestionsToBeGenerated;
         questionsPoolFounded.GenerationStrategy = updatedQuestionsPool.GenerationStrategy;
 
-        return await _dataContext.SaveChangesAsync(cancellationToken) > 0;
+        return await _dataContext.SaveChangesAsync(cancellationToken) >= 0;
     }
 
     public async Task<bool> DeleteQuestionsPoolAsync(Guid id, CancellationToken cancellationToken = default)

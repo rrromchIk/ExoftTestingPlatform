@@ -48,11 +48,12 @@ public class QuestionsPoolsController : ControllerBase
             DateTime.Now.ToString(),
             id
         );
-
-        if (!await _questionsPoolService.QuestionsPoolExistsAsync(id, cancellationToken))
-            return NotFound();
-
+        
         var response = await _questionsPoolService.GetQuestionPoolByIdAsync(id, cancellationToken);
+
+        if (response == null)
+            return NotFound();
+        
         return Ok(response);
     }
 

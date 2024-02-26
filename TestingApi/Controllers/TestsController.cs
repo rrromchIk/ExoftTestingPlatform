@@ -50,11 +50,12 @@ public class TestsController : ControllerBase
             DateTime.Now.ToString(),
             id
         );
-
-        if (!await _testService.TestExistsAsync(id, cancellationToken))
-            return NotFound();
-
+        
         var response = await _testService.GetTestByIdAsync(id, cancellationToken);
+
+        if (response == null) 
+            return NotFound();
+        
         return Ok(response);
     }
 

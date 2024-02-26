@@ -6,7 +6,7 @@ namespace TestingApi.Services.Abstractions;
 
 public interface ITestService
 {
-    Task<TestResponseDto> GetTestByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<TestResponseDto?> GetTestByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<bool> TestExistsAsync(Guid id, CancellationToken cancellationToken = default);
     Task<TestResponseDto> CreateTestAsync(TestDto testDto, CancellationToken cancellationToken = default);
     Task<bool> UpdateTestAsync(Guid id, TestDto testDto, CancellationToken cancellationToken = default);

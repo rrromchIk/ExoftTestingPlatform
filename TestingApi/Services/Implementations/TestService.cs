@@ -23,11 +23,12 @@ public class TestService : ITestService
         _logger = logger;
     }
     
-    public async Task<TestResponseDto> GetTestByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<TestResponseDto?> GetTestByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var tests = await _dataContext.Tests.AsNoTracking().FirstAsync(e => e.Id == id, cancellationToken);
+        var test = await _dataContext.Tests.AsNoTracking()
+            .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
 
-        return _mapper.Map<TestResponseDto>(tests);
+        return _mapper.Map<TestResponseDto>(test);
     }
 
     public async Task<bool> TestExistsAsync(Guid id, CancellationToken cancellationToken = default)
