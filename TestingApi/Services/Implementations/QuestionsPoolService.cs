@@ -38,7 +38,7 @@ public class QuestionsPoolService : IQuestionsPoolService
         CancellationToken cancellationToken = default)
     {
         var questionsPool = await _dataContext.QuestionsPools
-            .FirstAsync(qp => qp.Id.Equals(id), cancellationToken);
+            .FirstOrDefaultAsync(qp => qp.Id.Equals(id), cancellationToken);
 
         return _mapper.Map<QuestionsPoolResponseDto>(questionsPool);
     }

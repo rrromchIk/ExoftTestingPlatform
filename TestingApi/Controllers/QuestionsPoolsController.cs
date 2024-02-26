@@ -13,12 +13,14 @@ namespace TestingApi.Controllers;
 public class QuestionsPoolsController : ControllerBase
 {
     private readonly IQuestionsPoolService _questionsPoolService;
+    private readonly ITestService _testService;
     private readonly ILogger<TestsController> _logger;
 
-    public QuestionsPoolsController(IQuestionsPoolService questionsPoolService, ILogger<TestsController> logger)
+    public QuestionsPoolsController(IQuestionsPoolService questionsPoolService, ILogger<TestsController> logger, ITestService testService)
     {
         _questionsPoolService = questionsPoolService;
         _logger = logger;
+        _testService = testService;
     }
     
     [HttpGet("{testId:guid}/questions-pools")]
@@ -31,6 +33,11 @@ public class QuestionsPoolsController : ControllerBase
             "{dt}. Getting questions pools for test: {testId}",
             DateTime.Now.ToString(), testId
         );
+        
+        if (!await _testService.TestExistsAsync(testId, cancellationToken)) {
+            ModelState.AddModelError("TestId", "No test with such id");
+            return BadRequest(new ValidationProblemDetails(ModelState));
+        }
         
         var response = await _questionsPoolService.GetQuestionPoolsByTestIdAsync(
             testId, cancellationToken);
@@ -72,7 +79,11 @@ public class QuestionsPoolsController : ControllerBase
         
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
+        
+        if (!await _testService.TestExistsAsync(questionsPoolDto.TestId, cancellationToken)) {
+            ModelState.AddModelError("TestId", "No test with such id");
+            return BadRequest(new ValidationProblemDetails(ModelState));
+        }
 
         var response = await _questionsPoolService.CreateQuestionsPoolAsync(questionsPoolDto,
             cancellationToken);
