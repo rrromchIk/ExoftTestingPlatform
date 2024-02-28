@@ -35,33 +35,7 @@ public class QuestionsPoolService : IQuestionsPoolService
     {
         return await _dataContext.QuestionsPools.AnyAsync(qp => qp.Id.Equals(id), cancellationToken);
     }
-
-    public async Task<QuestionsPoolResponseDto> CreateQuestionsPoolAsync(QuestionsPoolDto questionsPoolDto,
-        CancellationToken cancellationToken = default)
-    {
-        _logger.LogInformation(
-            "{dt}. Create questions pool method. TestDto: {dto}",
-            DateTime.Now.ToString(),
-            JsonSerializer.Serialize(questionsPoolDto)
-        );
-        var questionsPoolToAdd = _mapper.Map<QuestionsPool>(questionsPoolDto);
-        
-        var collision = await _dataContext.QuestionsPools.AnyAsync(
-            qp => qp.Name == questionsPoolToAdd.Name 
-                  && qp.TestId == questionsPoolToAdd.TestId,
-            cancellationToken
-        );
-        
-        if (collision)
-            throw new DataException("Questions pool name has to be unique for the each test");
-        
-        var createdQuestionsPool = await _dataContext.AddAsync(questionsPoolToAdd, cancellationToken);
-
-        await _dataContext.SaveChangesAsync(cancellationToken);
-
-        return _mapper.Map<QuestionsPoolResponseDto>(createdQuestionsPool.Entity);
-    }
-
+    
     public async Task<bool> UpdateQuestionsPoolAsync(Guid id, QuestionsPoolDto questionsPoolDto,
         CancellationToken cancellationToken = default)
     {
@@ -77,7 +51,8 @@ public class QuestionsPoolService : IQuestionsPoolService
         
         var collision = await _dataContext.QuestionsPools.AnyAsync(
             qp => qp.Name == updatedQuestionsPool.Name 
-                  && qp.TestId == updatedQuestionsPool.TestId,
+                  && qp.TestId == updatedQuestionsPool.TestId
+                  && qp.Id != questionsPoolFounded.Id,
             cancellationToken
         );
         

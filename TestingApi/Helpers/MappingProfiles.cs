@@ -11,7 +11,7 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
-        CreateMap<Test, TestDto>()
+        CreateMap<TestDto, Test>()
             .ForMember(
                 dest => dest.Difficulty,
                 opt => opt
@@ -32,7 +32,7 @@ public class MappingProfiles : Profile
                     .MapFrom(src => src.Difficulty.ToString())
             );
 
-        CreateMap<TestDto, Test>()
+        CreateMap<TestWithQuestionsPoolsDto, Test>()
             .ForMember(
                 dest => dest.Difficulty,
                 opt => opt

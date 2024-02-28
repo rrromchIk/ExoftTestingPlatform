@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Text.Json;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using TestingApi.Data;
 using TestingApi.Dto.TestDto;
 using TestingApi.Helpers;
@@ -44,15 +45,20 @@ public class TestService : ITestService
         return await _dataContext.Tests.AnyAsync(e => e.Id.Equals(id), cancellationToken);
     }
     
-    public async Task<TestResponseDto> CreateTestAsync(TestDto testDto, CancellationToken cancellationToken = default)
+    public async Task<TestWithQuestionsPoolResponseDto> CreateTestAsync(TestWithQuestionsPoolsDto testWithQuestionsPoolsDto, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation(
             "{dt}. Create test method. TestDto: {dto}",
             DateTime.Now.ToString(),
-            JsonSerializer.Serialize(testDto)
+            JsonSerializer.Serialize(testWithQuestionsPoolsDto)
         );
-        var testToAdd = _mapper.Map<Test>(testDto);
+        var testToAdd = _mapper.Map<Test>(testWithQuestionsPoolsDto);
 
+        if (!testWithQuestionsPoolsDto.QuestionsPools.IsNullOrEmpty())
+        {
+            testToAdd.QuestionsPools = _mapper.Map<ICollection<QuestionsPool>>(testWithQuestionsPoolsDto.QuestionsPools);
+        }
+        
         var collision = await _dataContext.Tests.AnyAsync(
             t => t.Name == testToAdd.Name,
             cancellationToken
@@ -64,7 +70,7 @@ public class TestService : ITestService
 
         await _dataContext.SaveChangesAsync(cancellationToken);
         
-        return _mapper.Map<TestResponseDto>(createdTest.Entity);
+        return _mapper.Map<TestWithQuestionsPoolResponseDto>(createdTest.Entity);
     }
 
     public async Task<bool> UpdateTestAsync(Guid id, TestDto testDto, CancellationToken cancellationToken = default)
@@ -79,7 +85,7 @@ public class TestService : ITestService
         );
 
         var collision = await _dataContext.Tests.AnyAsync(
-            t => t.Name == updatedTest.Name,
+            t => t.Name == updatedTest.Name && t.Id != testFounded.Id,
             cancellationToken
         );
         

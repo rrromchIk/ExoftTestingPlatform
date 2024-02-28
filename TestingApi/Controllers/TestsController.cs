@@ -79,20 +79,20 @@ public class TestsController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TestResponseDto))]
-    public async Task<IActionResult> CreateTest([FromBody] TestDto testDto, CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TestWithQuestionsPoolResponseDto))]
+    public async Task<IActionResult> CreateTest([FromBody] TestWithQuestionsPoolsDto testWithQuestionsPoolsDto,
+        CancellationToken cancellationToken)
     {
         _logger.LogInformation(
             "{dt}. Creating test: {dto}",
             DateTime.Now.ToString(),
-            JsonSerializer.Serialize(testDto)
+            JsonSerializer.Serialize(testWithQuestionsPoolsDto)
         );
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
-
-        var response = await _testService.CreateTestAsync(testDto, cancellationToken);
+        
+        var response = await _testService.CreateTestAsync(testWithQuestionsPoolsDto, cancellationToken);
 
         return CreatedAtAction(nameof(GetTestById), new { id = response.Id }, response);
     }
@@ -103,14 +103,14 @@ public class TestsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> UpdateTest(
         [FromRoute] Guid id,
-        [FromBody] TestDto testDto,
+        [FromBody] TestDto testWithQuestionsPoolsDto,
         CancellationToken cancellationToken)
     {
         _logger.LogInformation(
             "{dt}. Updating test with id: {id}. New test info: {dto}",
             DateTime.Now.ToString(),
             id,
-            JsonSerializer.Serialize(testDto)
+            JsonSerializer.Serialize(testWithQuestionsPoolsDto)
         );
 
         if (!ModelState.IsValid)
@@ -119,7 +119,7 @@ public class TestsController : ControllerBase
         if (!await _testService.TestExistsAsync(id, cancellationToken))
             return NotFound();
 
-        if (!await _testService.UpdateTestAsync(id, testDto, cancellationToken))
+        if (!await _testService.UpdateTestAsync(id, testWithQuestionsPoolsDto, cancellationToken))
         {
             throw new DataException("Something went wrong while updating");
         }

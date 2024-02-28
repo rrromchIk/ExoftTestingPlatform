@@ -7,21 +7,22 @@ using TestingApi.Services.Abstractions;
 namespace TestingApi.Controllers;
 
 [ApiController]
-[Route("api/tests/")]
+[Route("api/tests/questions-pools")]
 public class QuestionsPoolsController : ControllerBase
 {
     private readonly IQuestionsPoolService _questionsPoolService;
     private readonly ITestService _testService;
     private readonly ILogger<TestsController> _logger;
 
-    public QuestionsPoolsController(IQuestionsPoolService questionsPoolService, ILogger<TestsController> logger, ITestService testService)
+    public QuestionsPoolsController(IQuestionsPoolService questionsPoolService, ILogger<TestsController> logger,
+        ITestService testService)
     {
         _questionsPoolService = questionsPoolService;
         _logger = logger;
         _testService = testService;
     }
-    
-    [HttpGet("questions-pools/{id:guid}")]
+
+    [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(QuestionsPoolResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetQuestionsPoolById([FromRoute] Guid id, CancellationToken cancellationToken)
@@ -31,43 +32,16 @@ public class QuestionsPoolsController : ControllerBase
             DateTime.Now.ToString(),
             id
         );
-        
+
         var response = await _questionsPoolService.GetQuestionPoolByIdAsync(id, cancellationToken);
 
         if (response == null)
             return NotFound();
-        
+
         return Ok(response);
     }
-
-
-    [HttpPost("questions-pools")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionsPoolResponseDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
-    public async Task<IActionResult> CreateQuestionsPool([FromBody] QuestionsPoolDto questionsPoolDto,
-        CancellationToken cancellationToken)
-    {
-        _logger.LogInformation(
-            "{dt}. Creating questions pool: {dto}",
-            DateTime.Now.ToString(),
-            JsonSerializer.Serialize(questionsPoolDto)
-        );
-        
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
-        if (!await _testService.TestExistsAsync(questionsPoolDto.TestId, cancellationToken)) {
-            ModelState.AddModelError("TestId", "No test with such id");
-            return BadRequest(new ValidationProblemDetails(ModelState));
-        }
-
-        var response = await _questionsPoolService.CreateQuestionsPoolAsync(questionsPoolDto,
-            cancellationToken);
-
-        return CreatedAtAction(nameof(GetQuestionsPoolById), new { id = response.Id }, response);
-    }
     
-    [HttpPut("questions-pools/{id:guid}")]
+    [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -97,7 +71,7 @@ public class QuestionsPoolsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("questions-pools/{id:guid}")]
+    [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteQuestionsPool([FromRoute] Guid id, CancellationToken cancellationToken)
@@ -109,7 +83,7 @@ public class QuestionsPoolsController : ControllerBase
         );
 
         if (!await _questionsPoolService.QuestionsPoolExistsAsync(id, cancellationToken))
-            return NotFound(); 
+            return NotFound();
 
         if (!await _questionsPoolService.DeleteQuestionsPoolAsync(id, cancellationToken))
         {
