@@ -31,6 +31,14 @@ public class TestService : ITestService
         return _mapper.Map<TestResponseDto>(test);
     }
 
+    public async Task<TestWithQuestionsPoolResponseDto?> GetTestWithQuestionsPoolsByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var test = await _dataContext.Tests.AsNoTracking().Include(t => t.QuestionsPools)
+            .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+
+        return _mapper.Map<TestWithQuestionsPoolResponseDto>(test);
+    }
+
     public async Task<bool> TestExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dataContext.Tests.AnyAsync(e => e.Id.Equals(id), cancellationToken);

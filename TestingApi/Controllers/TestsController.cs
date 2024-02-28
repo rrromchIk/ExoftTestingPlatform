@@ -57,6 +57,25 @@ public class TestsController : ControllerBase
         
         return Ok(response);
     }
+    
+    [HttpGet("{id:guid}/questions-pools")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestWithQuestionsPoolResponseDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetTestWithQuestionsPoolsById([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation(
+            "{dt}. Getting test with id: {id}",
+            DateTime.Now.ToString(),
+            id
+        );
+        
+        var response = await _testService.GetTestWithQuestionsPoolsByIdAsync(id, cancellationToken);
+
+        if (response == null) 
+            return NotFound();
+        
+        return Ok(response);
+    }
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]

@@ -21,28 +21,6 @@ public class QuestionsPoolsController : ControllerBase
         _testService = testService;
     }
     
-    [HttpGet("{testId:guid}/questions-pools")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<QuestionsPoolResponseDto>))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
-    public async Task<IActionResult> GetQuestionsPoolsByTestId([FromRoute] Guid testId,
-        CancellationToken cancellationToken)
-    {
-        _logger.LogInformation(
-            "{dt}. Getting questions pools for test: {testId}",
-            DateTime.Now.ToString(), testId
-        );
-        
-        if (!await _testService.TestExistsAsync(testId, cancellationToken)) {
-            ModelState.AddModelError("TestId", "No test with such id");
-            return BadRequest(new ValidationProblemDetails(ModelState));
-        }
-        
-        var response = await _questionsPoolService.GetQuestionPoolsByTestIdAsync(
-            testId, cancellationToken);
-        return Ok(response);
-    }
-    
-    
     [HttpGet("questions-pools/{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(QuestionsPoolResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

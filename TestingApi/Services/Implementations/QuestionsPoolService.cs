@@ -21,18 +21,7 @@ public class QuestionsPoolService : IQuestionsPoolService
         _mapper = mapper;
         _logger = logger;
     }
-
-    public async Task<PagedList<QuestionsPoolResponseDto>> GetQuestionPoolsByTestIdAsync(Guid testId,
-        CancellationToken cancellationToken = default)
-    {
-        var test = await _dataContext.Tests
-            .Include(t => t.QuestionsPools)
-            .FirstAsync(t => t.Id == testId, cancellationToken);
-        var questionsPools = test.QuestionsPools;
-
-        return _mapper.Map<PagedList<QuestionsPoolResponseDto>>(questionsPools);
-    }
-
+    
     public async Task<QuestionsPoolResponseDto?> GetQuestionPoolByIdAsync(Guid id,
         CancellationToken cancellationToken = default)
     {
