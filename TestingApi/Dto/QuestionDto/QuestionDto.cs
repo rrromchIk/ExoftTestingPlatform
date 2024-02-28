@@ -4,6 +4,9 @@ namespace TestingApi.Dto.QuestionDto;
 
 public class QuestionDto
 {
+    [Required(ErrorMessage = "QuestionsPoolId is required")]
+    public Guid QuestionsPoolId { get; set; }
+    
     [Required(ErrorMessage = "Name is required")]
     [MaxLength(100, ErrorMessage = "Text cannot exceed 100 characters")]
     [MinLength(2, ErrorMessage = "Name must be at least 2 characters")]

@@ -1,9 +1,7 @@
 ﻿using System.Text.Json;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using TestingApi.Data;
-using TestingApi.Dto.AnswerDto;
 using TestingApi.Dto.QuestionDto;
 using TestingApi.Models;
 using TestingApi.Services.Abstractions;
@@ -26,7 +24,6 @@ public class QuestionService : IQuestionService
     public async Task<QuestionResponseDto> GetQuestionByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var questions = await _dataContext.Questions
-            .Include(q => q.Answers)
             .FirstOrDefaultAsync(q => q.Id.Equals(id), cancellationToken);
 
         return _mapper.Map<QuestionResponseDto>(questions);
@@ -37,16 +34,14 @@ public class QuestionService : IQuestionService
         return await _dataContext.Questions.AnyAsync(q => q.Id.Equals(id), cancellationToken);
     }
     
-    public async Task<QuestionResponseDto> CreateQuestionAsync(Guid questionsPoolId,
-        QuestionWithAnswersDto questionWithAnswersDto,
-        CancellationToken cancellationToken = default)
+    public async Task<QuestionResponseDto> CreateQuestionAsync(QuestionDto questionDto, CancellationToken cancellationToken = default)
     {
-        var questionToAdd = _mapper.Map<Question>(questionWithAnswersDto);
-        questionToAdd.QuestionsPoolId = questionsPoolId;
-        if (!questionWithAnswersDto.Answers.IsNullOrEmpty())
-        {
-            questionToAdd.Answers = _mapper.Map<ICollection<Answer>>(questionWithAnswersDto.Answers);
-        }
+        _logger.LogInformation(
+            "{dt}. Create question method. QuestionDto: {dto}",
+            DateTime.Now.ToString(),
+            JsonSerializer.Serialize(questionDto)
+        );
+        var questionToAdd = _mapper.Map<Question>(questionDto);
         
         var createdQuestion = await _dataContext.AddAsync(questionToAdd, cancellationToken);
 
@@ -86,7 +81,6 @@ public class QuestionService : IQuestionService
     {
         var questionsPool = await _dataContext.QuestionsPools
             .Include(qp => qp.Questions)
-            .ThenInclude(q => q.Answers)
             .FirstAsync(qp => qp.Id == questionsPoolId, cancellationToken);
         var questions = questionsPool.Questions;
 
