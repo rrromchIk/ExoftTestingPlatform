@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TestingApi.Dto.Request;
+namespace TestingApi.Dto.AnswerDto;
 
 public class AnswerDto
 {

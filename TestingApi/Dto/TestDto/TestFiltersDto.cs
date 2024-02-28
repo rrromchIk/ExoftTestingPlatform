@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TestingApi.Dto.Request;
-
+namespace TestingApi.Dto.TestDto;
 public class TestFiltersDto
 {
     public string? SearchTerm { get; set; }

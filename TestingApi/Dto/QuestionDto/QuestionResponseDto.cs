@@ -1,4 +1,4 @@
-﻿namespace TestingApi.Dto.Response;
+﻿namespace TestingApi.Dto.QuestionDto;
 
 public class QuestionResponseDto : BaseResponseDto
 {

@@ -1,5 +1,4 @@
-﻿using TestingApi.Dto.Request;
-using TestingApi.Dto.Response;
+﻿using TestingApi.Dto.AnswerDto;
 
 namespace TestingApi.Services.Abstractions;
 

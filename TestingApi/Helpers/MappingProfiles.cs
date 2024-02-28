@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
-using TestingApi.Dto.Request;
-using TestingApi.Dto.Response;
+using TestingApi.Dto.AnswerDto;
+using TestingApi.Dto.QuestionDto;
+using TestingApi.Dto.QuestionsPoolDto;
+using TestingApi.Dto.TestDto;
 using TestingApi.Models;
 
 namespace TestingApi.Helpers;

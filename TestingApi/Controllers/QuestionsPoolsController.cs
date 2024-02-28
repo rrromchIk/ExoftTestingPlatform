@@ -1,9 +1,7 @@
 ﻿using System.Data;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
-using TestingApi.Dto.Request;
-using TestingApi.Dto.Response;
-using TestingApi.Helpers;
+using TestingApi.Dto.QuestionsPoolDto;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Controllers;

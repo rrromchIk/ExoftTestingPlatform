@@ -3,9 +3,7 @@ using System.Text.Json;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
-using TestingApi.Dto.Request;
-using TestingApi.Dto.Response;
-using TestingApi.Helpers;
+using TestingApi.Dto.QuestionsPoolDto;
 using TestingApi.Models;
 using TestingApi.Services.Abstractions;
 

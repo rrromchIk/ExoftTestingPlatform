@@ -1,6 +1,4 @@
-﻿using TestingApi.Models;
-
-namespace TestingApi.Dto.Response;
+﻿namespace TestingApi.Dto.QuestionsPoolDto;
 
 public class QuestionsPoolResponseDto : BaseResponseDto
 {

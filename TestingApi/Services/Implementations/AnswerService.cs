@@ -2,8 +2,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
-using TestingApi.Dto.Request;
-using TestingApi.Dto.Response;
+using TestingApi.Dto.AnswerDto;
 using TestingApi.Models;
 using TestingApi.Services.Abstractions;
 
