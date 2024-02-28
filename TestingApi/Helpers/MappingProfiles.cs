@@ -24,6 +24,13 @@ public class MappingProfiles : Profile
                 opt => opt
                     .MapFrom(src => src.Difficulty.ToString())
             );
+        
+        CreateMap<Test, TestWithQuestionsPoolResponseDto>()
+            .ForMember(
+                dest => dest.Difficulty,
+                opt => opt
+                    .MapFrom(src => src.Difficulty.ToString())
+            );
 
         CreateMap<TestDto, Test>()
             .ForMember(

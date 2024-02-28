@@ -2,7 +2,7 @@
 
 namespace TestingApi.Dto.TestDto;
 
-public class TestWithQuestionsPoolResponseDto
+public class TestWithQuestionsPoolResponseDto : BaseResponseDto
 {
     public string Name { get; set; } = null!;
     public string Subject { get; set; } = null!;

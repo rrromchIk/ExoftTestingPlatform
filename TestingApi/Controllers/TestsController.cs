@@ -40,7 +40,7 @@ public class TestsController : ControllerBase
     }
 
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTestById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
