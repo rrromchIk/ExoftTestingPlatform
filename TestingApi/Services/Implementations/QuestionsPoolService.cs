@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
 using TestingApi.Dto.QuestionsPoolDto;
+using TestingAPI.Exceptions;
 using TestingApi.Models;
 using TestingApi.Services.Abstractions;
 

@@ -10,5 +10,5 @@ public class AnswerDto
     public string Text { get; set; } = null!;
     
     [Required(ErrorMessage = "IsCorrect property is required")]
-    public bool IsCorrect { get; set; }
+    public bool? IsCorrect { get; set; }
 }
