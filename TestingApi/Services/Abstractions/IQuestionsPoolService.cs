@@ -6,7 +6,8 @@ public interface IQuestionsPoolService
 {
     Task<QuestionsPoolResponseDto?> GetQuestionPoolByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<bool> QuestionsPoolExistsAsync(Guid id, CancellationToken cancellationToken = default);
-    
+    Task<QuestionsPoolResponseDto> CreateQuestionsPoolAsync(Guid testId, QuestionsPoolDto questionsPoolDto,
+        CancellationToken cancellationToken = default);
     Task<bool> UpdateQuestionsPoolAsync(Guid id, QuestionsPoolDto questionsPoolDto,
         CancellationToken cancellationToken = default);
     

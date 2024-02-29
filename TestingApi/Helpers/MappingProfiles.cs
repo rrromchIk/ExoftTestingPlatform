@@ -49,12 +49,12 @@ public class MappingProfiles : Profile
             );
 
 
-        CreateMap<QuestionsPool, QuestionsPoolDto>()
-            .ForMember(
-                dest => dest.GenerationStrategy,
-                opt => opt
-                    .MapFrom(src => src.GenerationStrategy.ToString())
-            );
+        // CreateMap<QuestionsPool, QuestionsPoolDto>()
+        //     .ForMember(
+        //         dest => dest.GenerationStrategy,
+        //         opt => opt
+        //             .MapFrom(src => src.GenerationStrategy.ToString())
+        //     );
 
         CreateMap<QuestionsPool, QuestionsPoolResponseDto>()
             .ForMember(
