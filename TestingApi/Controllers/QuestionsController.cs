@@ -88,11 +88,7 @@ public class QuestionsController : ControllerBase
         if (!await _questionService.QuestionExistsAsync(id, cancellationToken))
             return NotFound();
 
-        if (!await _questionService.UpdateQuestionAsync(id, questionDto, cancellationToken))
-        {
-            throw new DataException("Something went wrong while updating");
-        }
-
+        await _questionService.UpdateQuestionAsync(id, questionDto, cancellationToken);
         return NoContent();
     }
 
@@ -102,13 +98,9 @@ public class QuestionsController : ControllerBase
     public async Task<IActionResult> DeleteQuestion([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         if (!await _questionService.QuestionExistsAsync(id, cancellationToken))
-            return NotFound(); 
+            return NotFound();
 
-        if (!await _questionService.DeleteQuestionAsync(id, cancellationToken))
-        {
-            throw new DataException("Something went wrong while deleting");
-        }
-
+        await _questionService.DeleteQuestionAsync(id, cancellationToken);
         return NoContent();
     }
 }

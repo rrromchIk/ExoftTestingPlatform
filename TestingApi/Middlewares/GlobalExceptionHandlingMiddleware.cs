@@ -1,4 +1,6 @@
 ﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
+using TestingAPI.Exceptions;
 
 namespace TestingApi.Middlewares;
 
@@ -19,17 +21,27 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
         }
         catch (Exception e)
         {
-            _logger.LogError("{dt}. {error}", DateTime.Now.ToString(), e.Message);
-
-            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            var problemDetails = e switch
+            {
+                ApiException  apiException => new ProblemDetails()
+                {
+                    Status = apiException.StatusCode,
+                    Title = "Api exception occured",
+                    Detail = apiException.Message
+                },
+                _ => new ProblemDetails()
+                {
+                    Status = StatusCodes.Status500InternalServerError,
+                    Type = "https://tools.ietf.org/html/rfc7231#section-6.6.1",
+                    Title = "Server error",
+                    Detail = e.Message
+                }
+            };
+                
+            context.Response.StatusCode = problemDetails.Status ?? StatusCodes.Status500InternalServerError;
             context.Response.ContentType = ContentType.ApplicationJson.ToString();
 
-            await context.Response.WriteAsJsonAsync(
-                new
-                {
-                    Message = e.Message
-                }
-            );
+            await context.Response.WriteAsJsonAsync(problemDetails);
         }
     }
 }

@@ -9,8 +9,8 @@ public interface ITestService
     Task<TestWithQuestionsPoolResponseDto?> GetTestWithQuestionsPoolsByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<bool> TestExistsAsync(Guid id, CancellationToken cancellationToken = default);
     Task<TestWithQuestionsPoolResponseDto> CreateTestAsync(TestWithQuestionsPoolsDto testWithQuestionsPoolsDto, CancellationToken cancellationToken = default);
-    Task<bool> UpdateTestAsync(Guid id, TestDto testDto, CancellationToken cancellationToken = default);
-    Task<bool> DeleteTestAsync(Guid id, CancellationToken cancellationToken = default);
+    Task UpdateTestAsync(Guid id, TestDto testDto, CancellationToken cancellationToken = default);
+    Task DeleteTestAsync(Guid id, CancellationToken cancellationToken = default);
     Task<PagedList<TestResponseDto>> GetAllTestsAsync(TestFiltersDto testFiltersDto,
         CancellationToken cancellationToken = default);
 }

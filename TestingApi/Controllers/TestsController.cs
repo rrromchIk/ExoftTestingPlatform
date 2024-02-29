@@ -119,11 +119,7 @@ public class TestsController : ControllerBase
         if (!await _testService.TestExistsAsync(id, cancellationToken))
             return NotFound();
 
-        if (!await _testService.UpdateTestAsync(id, testDto, cancellationToken))
-        {
-            throw new DataException("Something went wrong while updating");
-        }
-
+        await _testService.UpdateTestAsync(id, testDto, cancellationToken);
         return NoContent();
     }
 
@@ -141,11 +137,7 @@ public class TestsController : ControllerBase
         if (!await _testService.TestExistsAsync(id, cancellationToken))
             return NotFound(); 
 
-        if (!await _testService.DeleteTestAsync(id, cancellationToken))
-        {
-            throw new DataException("Something went wrong while deleting");
-        }
-
+        await _testService.DeleteTestAsync(id, cancellationToken);
         return NoContent();
     }
 }

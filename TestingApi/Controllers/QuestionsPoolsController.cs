@@ -91,11 +91,7 @@ public class QuestionsPoolsController : ControllerBase
         if (!await _questionsPoolService.QuestionsPoolExistsAsync(id, cancellationToken))
             return NotFound();
 
-        if (!await _questionsPoolService.UpdateQuestionsPoolAsync(id, questionsPoolDto, cancellationToken))
-        {
-            throw new DataException("Something went wrong while updating");
-        }
-
+        await _questionsPoolService.UpdateQuestionsPoolAsync(id, questionsPoolDto, cancellationToken);
         return NoContent();
     }
 
@@ -113,11 +109,7 @@ public class QuestionsPoolsController : ControllerBase
         if (!await _questionsPoolService.QuestionsPoolExistsAsync(id, cancellationToken))
             return NotFound();
 
-        if (!await _questionsPoolService.DeleteQuestionsPoolAsync(id, cancellationToken))
-        {
-            throw new DataException("Something went wrong while deleting");
-        }
-
+        await _questionsPoolService.DeleteQuestionsPoolAsync(id, cancellationToken);
         return NoContent();
     }
 }

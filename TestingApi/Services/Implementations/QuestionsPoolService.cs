@@ -54,16 +54,19 @@ public class QuestionsPoolService : IQuestionsPoolService
         );
         
         if (collision)
-            throw new DataException("Questions pool name has to be unique for the each test");
-        
+            throw new ApiException(
+                "Questions pool name has to be unique for the each test",
+                StatusCodes.Status409Conflict
+            );
+
         var createdQuestionsPool = await _dataContext.AddAsync(questionsPoolToAdd, cancellationToken);
-        
+
         await _dataContext.SaveChangesAsync(cancellationToken);
 
         return _mapper.Map<QuestionsPoolResponseDto>(createdQuestionsPool.Entity);
     }
-    
-    public async Task<bool> UpdateQuestionsPoolAsync(Guid id, QuestionsPoolDto questionsPoolDto,
+
+    public async Task UpdateQuestionsPoolAsync(Guid id, QuestionsPoolDto questionsPoolDto,
         CancellationToken cancellationToken = default)
     {
         var questionsPoolFounded = await _dataContext.QuestionsPools
@@ -84,21 +87,24 @@ public class QuestionsPoolService : IQuestionsPoolService
         );
         
         if (collision)
-            throw new DataException("Questions pool name has to be unique for the each test");
+            throw new ApiException(
+                "Questions pool name has to be unique for the each test",
+                StatusCodes.Status409Conflict
+            );
 
         questionsPoolFounded.Name = updatedQuestionsPool.Name;
         questionsPoolFounded.NumOfQuestionsToBeGenerated = updatedQuestionsPool.NumOfQuestionsToBeGenerated;
         questionsPoolFounded.GenerationStrategy = updatedQuestionsPool.GenerationStrategy;
 
-        return await _dataContext.SaveChangesAsync(cancellationToken) >= 0;
+        await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> DeleteQuestionsPoolAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteQuestionsPoolAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var questionsPoolToDelete = await _dataContext.QuestionsPools
             .FirstAsync(qp => qp.Id.Equals(id), cancellationToken);
 
         _dataContext.Remove(questionsPoolToDelete);
-        return await _dataContext.SaveChangesAsync(cancellationToken) > 0;
+        await _dataContext.SaveChangesAsync(cancellationToken);
     }
 }

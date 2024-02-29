@@ -70,11 +70,7 @@ public class AnswersController : ControllerBase
         if (!await _answerService.AnswerExistsAsync(id, cancellationToken))
             return NotFound();
 
-        if (!await _answerService.UpdateAnswerAsync(id, answerDto, cancellationToken))
-        {
-            throw new DataException("Something went wrong while updating");
-        }
-
+        await _answerService.UpdateAnswerAsync(id, answerDto, cancellationToken);
         return NoContent();
     }
 
@@ -84,13 +80,9 @@ public class AnswersController : ControllerBase
     public async Task<IActionResult> DeleteAnswer([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         if (!await _answerService.AnswerExistsAsync(id, cancellationToken))
-            return NotFound(); 
+            return NotFound();
 
-        if (!await _answerService.DeleteAnswerAsync(id, cancellationToken))
-        {
-            throw new DataException("Something went wrong while deleting");
-        }
-
+        await _answerService.DeleteAnswerAsync(id, cancellationToken);
         return NoContent();
     }
 }

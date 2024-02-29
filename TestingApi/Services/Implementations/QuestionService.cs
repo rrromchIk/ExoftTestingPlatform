@@ -55,7 +55,7 @@ public class QuestionService : IQuestionService
         return _mapper.Map<QuestionResponseDto>(createdQuestion.Entity);
     }
     
-    public async Task<bool> UpdateQuestionAsync(Guid id, QuestionDto questionDto, CancellationToken cancellationToken = default)
+    public async Task UpdateQuestionAsync(Guid id, QuestionDto questionDto, CancellationToken cancellationToken = default)
     {
         var questionFounded = await _dataContext.Questions
             .FirstAsync(q => q.Id == id, cancellationToken);
@@ -70,16 +70,16 @@ public class QuestionService : IQuestionService
         questionFounded.Text = updatedQuestion.Text;
         questionFounded.MaxScore = updatedQuestion.MaxScore;
 
-        return await _dataContext.SaveChangesAsync(cancellationToken) >= 0;
+        await _dataContext.SaveChangesAsync(cancellationToken);
     }
     
-    public async Task<bool> DeleteQuestionAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteQuestionAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var questionToDelete = await _dataContext.Questions
             .FirstAsync(q => q.Id.Equals(id), cancellationToken);
 
         _dataContext.Remove(questionToDelete);
-        return await _dataContext.SaveChangesAsync(cancellationToken) > 0;
+        await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task<ICollection<QuestionResponseDto>> GetQuestionsByQuestionsPoolIdAsync(Guid questionsPoolId, CancellationToken cancellationToken = default)

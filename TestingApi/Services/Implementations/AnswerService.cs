@@ -46,7 +46,7 @@ public class AnswerService : IAnswerService
         return _mapper.Map<AnswerResponseDto>(createdAnswer.Entity);
     }
 
-    public async Task<bool> UpdateAnswerAsync(Guid id, AnswerDto answerDto, CancellationToken cancellationToken = default)
+    public async Task UpdateAnswerAsync(Guid id, AnswerDto answerDto, CancellationToken cancellationToken = default)
     {
         var answerFounded = await _dataContext.Answers
             .FirstAsync(a => a.Id == id, cancellationToken);
@@ -61,15 +61,15 @@ public class AnswerService : IAnswerService
         answerFounded.Text = updatedAnswer.Text;
         answerFounded.IsCorrect = updatedAnswer.IsCorrect;
 
-        return await _dataContext.SaveChangesAsync(cancellationToken) >= 0;
+        await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<bool> DeleteAnswerAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteAnswerAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var answerToDelete = await _dataContext.Answers
             .FirstAsync(a => a.Id.Equals(id), cancellationToken);
 
         _dataContext.Remove(answerToDelete);
-        return await _dataContext.SaveChangesAsync(cancellationToken) > 0;
+        await _dataContext.SaveChangesAsync(cancellationToken);
     }
 }
