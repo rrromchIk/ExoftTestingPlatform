@@ -23,7 +23,7 @@ public class QuestionService : IQuestionService
         _logger = logger;
     }
     
-    public async Task<QuestionResponseDto> GetQuestionByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<QuestionResponseDto?> GetQuestionByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var questions = await _dataContext.Questions
             .Include(q => q.Answers)

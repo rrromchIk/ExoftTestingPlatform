@@ -4,7 +4,7 @@ namespace TestingApi.Services.Abstractions;
 
 public interface IQuestionService 
 {
-    Task<QuestionResponseDto> GetQuestionByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<QuestionResponseDto?> GetQuestionByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<bool> QuestionExistsAsync(Guid id, CancellationToken cancellationToken = default);
     Task<QuestionResponseDto> CreateQuestionAsync(Guid questionsPoolId, QuestionWithAnswersDto questionWithAnswersDto,
         CancellationToken cancellationToken = default);
