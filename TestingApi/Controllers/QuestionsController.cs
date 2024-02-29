@@ -24,6 +24,9 @@ public class QuestionsController : ControllerBase
     public async Task<IActionResult> GetQuestionsByQuestionsPoolId([FromRoute] Guid questionsPoolId,
         CancellationToken cancellationToken)
     {
+        if (!await _questionsPoolService.QuestionsPoolExistsAsync(questionsPoolId, cancellationToken))
+            return NotFound();
+        
         var response = await _questionService
             .GetQuestionsByQuestionsPoolIdAsync(questionsPoolId, cancellationToken);
 
