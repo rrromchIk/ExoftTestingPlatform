@@ -193,10 +193,10 @@ namespace TestingApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
-
                     b.HasIndex("TestId");
+
+                    b.HasIndex("Name", "TestId")
+                        .IsUnique();
 
                     b.ToTable("QuestionsPools");
                 });

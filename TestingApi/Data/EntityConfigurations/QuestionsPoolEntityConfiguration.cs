@@ -17,7 +17,7 @@ public class QuestionsPoolEntityConfiguration : BaseEntityConfiguration<Question
             .OnDelete(DeleteBehavior.Cascade);
         
         builder
-            .HasIndex(t => t.Name)
+            .HasIndex(t => new {t.Name, t.TestId})
             .IsUnique();
     }
 }

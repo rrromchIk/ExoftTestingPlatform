@@ -41,6 +41,34 @@ public class QuestionsPoolsController : ControllerBase
         return Ok(response);
     }
     
+    [HttpPost("/api/tests/{testId}/questions-pools")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionsPoolResponseDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    public async Task<IActionResult> CreateQuestionsPool(
+        [FromRoute] Guid testId,
+        [FromBody] QuestionsPoolDto questionsPoolDto,
+        CancellationToken cancellationToken)
+    {
+        _logger.LogInformation(
+            "{dt}. Creating questions pool: {dto}",
+            DateTime.Now.ToString(),
+            JsonSerializer.Serialize(questionsPoolDto)
+        );
+        
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+        
+        if (!await _testService.TestExistsAsync(testId, cancellationToken))
+        {
+            return NotFound();
+        }
+        
+        var response = await _questionsPoolService.CreateQuestionsPoolAsync(testId, questionsPoolDto,
+            cancellationToken);
+
+        return CreatedAtAction(nameof(GetQuestionsPoolById), new { id = response.Id }, response);
+    }
+    
     [HttpPut("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
