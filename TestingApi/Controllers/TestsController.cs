@@ -103,14 +103,14 @@ public class TestsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> UpdateTest(
         [FromRoute] Guid id,
-        [FromBody] TestDto testWithQuestionsPoolsDto,
+        [FromBody] TestDto testDto,
         CancellationToken cancellationToken)
     {
         _logger.LogInformation(
             "{dt}. Updating test with id: {id}. New test info: {dto}",
             DateTime.Now.ToString(),
             id,
-            JsonSerializer.Serialize(testWithQuestionsPoolsDto)
+            JsonSerializer.Serialize(testDto)
         );
 
         if (!ModelState.IsValid)
@@ -119,7 +119,7 @@ public class TestsController : ControllerBase
         if (!await _testService.TestExistsAsync(id, cancellationToken))
             return NotFound();
 
-        if (!await _testService.UpdateTestAsync(id, testWithQuestionsPoolsDto, cancellationToken))
+        if (!await _testService.UpdateTestAsync(id, testDto, cancellationToken))
         {
             throw new DataException("Something went wrong while updating");
         }
