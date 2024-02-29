@@ -20,17 +20,32 @@ public class AnswerService : IAnswerService
         _mapper = mapper;
         _logger = logger;
     }
-    
-    public async Task<ICollection<AnswerResponseDto>> GetAnswersByQuestionIdAsync(Guid questionId, CancellationToken cancellationToken = default)
-    {
-        var question = await _dataContext.Questions
-            .Include(q => q.Answers)
-            .FirstAsync(q => q.Id == questionId, cancellationToken);
-        var answers = question.Answers;
 
-        return _mapper.Map<ICollection<AnswerResponseDto>>(answers);
+    public async Task<AnswerResponseDto?> GetAnswerById(Guid id, CancellationToken cancellationToken = default)
+    {
+        var answers = await _dataContext.Answers
+            .FirstOrDefaultAsync(a => a.Id.Equals(id), cancellationToken);
+
+        return _mapper.Map<AnswerResponseDto>(answers);
     }
-    
+
+    public async Task<bool> AnswerExistsAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _dataContext.Answers.AnyAsync(a => a.Id.Equals(id), cancellationToken);
+    }
+
+    public async Task<AnswerResponseDto> CreateAnswerAsync(Guid questionId, AnswerDto answerDto, CancellationToken cancellationToken = default)
+    {
+        var answerToAdd = _mapper.Map<Answer>(answerDto);
+        answerToAdd.QuestionId = questionId;
+        
+        var createdAnswer = await _dataContext.AddAsync(answerToAdd, cancellationToken);
+
+        await _dataContext.SaveChangesAsync(cancellationToken);
+
+        return _mapper.Map<AnswerResponseDto>(createdAnswer.Entity);
+    }
+
     public async Task<bool> UpdateAnswerAsync(Guid id, AnswerDto answerDto, CancellationToken cancellationToken = default)
     {
         var answerFounded = await _dataContext.Answers
