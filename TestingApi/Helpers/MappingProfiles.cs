@@ -12,13 +12,6 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
-        CreateMap<TestDto, Test>()
-            .ForMember(
-                dest => dest.Difficulty,
-                opt => opt
-                    .MapFrom(src => src.Difficulty.ToString())
-            );
-
         CreateMap<Test, TestResponseDto>()
             .ForMember(
                 dest => dest.Difficulty,
@@ -81,8 +74,20 @@ public class MappingProfiles : Profile
         CreateMap<AnswerDto, Answer>();
         CreateMap<Answer, AnswerResponseDto>();
 
-        CreateMap<UserDto, User>();
-        CreateMap<User, UserResponseDto>();
+        
+        CreateMap<UserDto, User>()
+            .ForMember(
+                dest => dest.UserRole,
+                opt => opt
+                    .MapFrom(src => Enum.Parse(typeof(UserRole), src.UserRole, true))
+            );
+
+        CreateMap<User, UserResponseDto>()
+            .ForMember(
+                dest => dest.UserRole,
+                opt => opt
+                    .MapFrom(src => src.UserRole.ToString())
+            );
         
         CreateMap<PagedList<User>, PagedList<UserResponseDto>>()
             .ConvertUsing(

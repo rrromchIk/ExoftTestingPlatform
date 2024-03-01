@@ -58,6 +58,26 @@ public class UsersController : ControllerBase
 
         return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, response);
     }
+    
+    
+    [HttpPut("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    public async Task<IActionResult> UpdateUser(
+        [FromRoute] Guid id,
+        [FromBody] UserDto userDto,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        if (!await _userService.UserExistsAsync(id, cancellationToken))
+            return NotFound();
+
+        await _userService.UpdateUserAsync(id, userDto, cancellationToken);
+        return NoContent();
+    }
 
 
     [HttpDelete("{id:guid}")]

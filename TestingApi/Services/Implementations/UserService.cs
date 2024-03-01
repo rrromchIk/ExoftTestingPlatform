@@ -89,9 +89,16 @@ public class UserService : IUserService
         return _mapper.Map<UserResponseDto>(createdUser.Entity);
     }
 
-    public Task UpdateUserAsync(Guid id, UserDto userDto, CancellationToken cancellationToken = default)
+    public async Task UpdateUserAsync(Guid id, UserDto userDto, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var userFounded = await _dataContext.Users.FirstAsync(u => u.Id == id, cancellationToken);
+        var updatedUser = _mapper.Map<User>(userDto);
+        
+        userFounded.Name = updatedUser.Name;
+        userFounded.Surname = updatedUser.Surname;
+        userFounded.UserRole = updatedUser.UserRole;
+
+        await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
     public async Task DeleteUserAsync(Guid id, CancellationToken cancellationToken = default)
