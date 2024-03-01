@@ -3,6 +3,7 @@ using TestingApi.Dto.AnswerDto;
 using TestingApi.Dto.QuestionDto;
 using TestingApi.Dto.QuestionsPoolDto;
 using TestingApi.Dto.TestDto;
+using TestingApi.Dto.UserDto;
 using TestingApi.Models;
 
 namespace TestingApi.Helpers;
@@ -87,5 +88,17 @@ public class MappingProfiles : Profile
         
         CreateMap<AnswerDto, Answer>();
         CreateMap<Answer, AnswerResponseDto>();
+
+        CreateMap<UserDto, User>();
+        CreateMap<User, UserResponseDto>();
+        
+        CreateMap<PagedList<User>, PagedList<UserResponseDto>>()
+            .ConvertUsing(
+                (src, dest, context) =>
+                {
+                    var mappedItems = context.Mapper.Map<List<UserResponseDto>>(src.Items);
+                    return new PagedList<UserResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
+                }
+            );
     }
 }
