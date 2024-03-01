@@ -24,14 +24,14 @@ public class AnswerService : IAnswerService
     public async Task<AnswerResponseDto?> GetAnswerById(Guid id, CancellationToken cancellationToken = default)
     {
         var answers = await _dataContext.Answers
-            .FirstOrDefaultAsync(a => a.Id.Equals(id), cancellationToken);
+            .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
 
         return _mapper.Map<AnswerResponseDto>(answers);
     }
 
     public async Task<bool> AnswerExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _dataContext.Answers.AnyAsync(a => a.Id.Equals(id), cancellationToken);
+        return await _dataContext.Answers.AnyAsync(a => a.Id == id, cancellationToken);
     }
 
     public async Task<AnswerResponseDto> CreateAnswerAsync(Guid questionId, AnswerDto answerDto, CancellationToken cancellationToken = default)
@@ -51,12 +51,6 @@ public class AnswerService : IAnswerService
         var answerFounded = await _dataContext.Answers
             .FirstAsync(a => a.Id == id, cancellationToken);
         var updatedAnswer = _mapper.Map<Answer>(answerDto);
-
-        _logger.LogInformation(
-            "Test to update: {ttu}. Updated test: {ut}",
-            JsonSerializer.Serialize(answerFounded),
-            JsonSerializer.Serialize(updatedAnswer)
-        );
         
         answerFounded.Text = updatedAnswer.Text;
         answerFounded.IsCorrect = updatedAnswer.IsCorrect;
@@ -67,7 +61,7 @@ public class AnswerService : IAnswerService
     public async Task DeleteAnswerAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var answerToDelete = await _dataContext.Answers
-            .FirstAsync(a => a.Id.Equals(id), cancellationToken);
+            .FirstAsync(a => a.Id == id, cancellationToken);
 
         _dataContext.Remove(answerToDelete);
         await _dataContext.SaveChangesAsync(cancellationToken);

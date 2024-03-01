@@ -1,6 +1,4 @@
-﻿using System.Data;
-using System.Linq.Expressions;
-using System.Text.Json;
+﻿using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -18,24 +16,29 @@ public class TestService : ITestService
     private readonly DataContext _dataContext;
     private readonly IMapper _mapper;
     private readonly ILogger<TestService> _logger;
+
     public TestService(DataContext dataContext, ILogger<TestService> logger, IMapper mapper)
     {
         _dataContext = dataContext;
         _mapper = mapper;
         _logger = logger;
     }
-    
+
     public async Task<TestResponseDto?> GetTestByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var test = await _dataContext.Tests.AsNoTracking()
+        var test = await _dataContext.Tests
+            .AsNoTracking()
             .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
 
         return _mapper.Map<TestResponseDto>(test);
     }
 
-    public async Task<TestWithQuestionsPoolResponseDto?> GetTestWithQuestionsPoolsByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<TestWithQuestionsPoolResponseDto?> GetTestWithQuestionsPoolsByIdAsync(Guid id,
+        CancellationToken cancellationToken = default)
     {
-        var test = await _dataContext.Tests.AsNoTracking().Include(t => t.QuestionsPools)
+        var test = await _dataContext.Tests
+            .AsNoTracking()
+            .Include(t => t.QuestionsPools)
             .FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
 
         return _mapper.Map<TestWithQuestionsPoolResponseDto>(test);
@@ -43,35 +46,35 @@ public class TestService : ITestService
 
     public async Task<bool> TestExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _dataContext.Tests.AnyAsync(e => e.Id.Equals(id), cancellationToken);
+        return await _dataContext.Tests
+            .AnyAsync(e => e.Id == id, cancellationToken);
     }
-    
-    public async Task<TestWithQuestionsPoolResponseDto> CreateTestAsync(TestWithQuestionsPoolsDto testWithQuestionsPoolsDto, CancellationToken cancellationToken = default)
+
+    public async Task<TestWithQuestionsPoolResponseDto> CreateTestAsync(
+        TestWithQuestionsPoolsDto testWithQuestionsPoolsDto, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation(
-            "{dt}. Create test method. TestDto: {dto}",
-            DateTime.Now.ToString(),
-            JsonSerializer.Serialize(testWithQuestionsPoolsDto)
-        );
         var testToAdd = _mapper.Map<Test>(testWithQuestionsPoolsDto);
 
         //TODO check qp unique
         if (!testWithQuestionsPoolsDto.QuestionsPools.IsNullOrEmpty())
         {
-            testToAdd.QuestionsPools = _mapper.Map<ICollection<QuestionsPool>>(testWithQuestionsPoolsDto.QuestionsPools);
+            testToAdd.QuestionsPools =
+                _mapper.Map<ICollection<QuestionsPool>>(testWithQuestionsPoolsDto.QuestionsPools);
         }
-        
-        var collision = await _dataContext.Tests.AnyAsync(
-            t => t.Name == testToAdd.Name,
-            cancellationToken
-        );
+
+        var collision = await _dataContext.Tests
+            .AnyAsync(
+                t => t.Name == testToAdd.Name,
+                cancellationToken
+            );
+
         if (collision)
             throw new ApiException("Test name has to be unique", StatusCodes.Status409Conflict);
 
         var createdTest = await _dataContext.AddAsync(testToAdd, cancellationToken);
 
         await _dataContext.SaveChangesAsync(cancellationToken);
-        
+
         return _mapper.Map<TestWithQuestionsPoolResponseDto>(createdTest.Entity);
     }
 
@@ -79,18 +82,15 @@ public class TestService : ITestService
     {
         var testFounded = await _dataContext.Tests.FirstAsync(e => e.Id == id, cancellationToken);
         var updatedTest = _mapper.Map<Test>(testDto);
-
-        _logger.LogInformation(
-            "Test to update: {ttu}. Updated test: {ut}",
-            JsonSerializer.Serialize(testFounded),
-            JsonSerializer.Serialize(updatedTest)
-        );
-
-        var collision = await _dataContext.Tests.AnyAsync(
-            t => t.Name == updatedTest.Name && t.Id != testFounded.Id,
-            cancellationToken
-        );
         
+        var collision = await _dataContext.Tests
+            .AnyAsync(
+                t => 
+                    t.Name == updatedTest.Name &&
+                     t.Id != testFounded.Id,
+                cancellationToken
+            );
+
         if (collision)
             throw new ApiException("Test name has to be unique", StatusCodes.Status409Conflict);
 
@@ -98,13 +98,14 @@ public class TestService : ITestService
         testFounded.Subject = updatedTest.Subject;
         testFounded.Difficulty = updatedTest.Difficulty;
         testFounded.Duration = updatedTest.Duration;
-        
-         await _dataContext.SaveChangesAsync(cancellationToken);
+
+        await _dataContext.SaveChangesAsync(cancellationToken);
     }
-    
+
     public async Task DeleteTestAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var testToDelete = await _dataContext.Tests.FirstAsync(e => e.Id == id, cancellationToken);
+        var testToDelete = await _dataContext.Tests
+            .FirstAsync(e => e.Id == id, cancellationToken);
 
         _dataContext.Remove(testToDelete);
         await _dataContext.SaveChangesAsync(cancellationToken);
@@ -134,7 +135,7 @@ public class TestService : ITestService
             testFiltersDto.PageSize,
             cancellationToken
         );
-        
+
         return _mapper.Map<PagedList<TestResponseDto>>(tests);
     }
 

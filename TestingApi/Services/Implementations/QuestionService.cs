@@ -3,7 +3,6 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Data;
-using TestingApi.Dto.AnswerDto;
 using TestingApi.Dto.QuestionDto;
 using TestingApi.Models;
 using TestingApi.Services.Abstractions;
@@ -27,14 +26,15 @@ public class QuestionService : IQuestionService
     {
         var questions = await _dataContext.Questions
             .Include(q => q.Answers)
-            .FirstOrDefaultAsync(q => q.Id.Equals(id), cancellationToken);
+            .FirstOrDefaultAsync(q => q.Id == id, cancellationToken);
 
         return _mapper.Map<QuestionResponseDto>(questions);
     }
     
     public async Task<bool> QuestionExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _dataContext.Questions.AnyAsync(q => q.Id.Equals(id), cancellationToken);
+        return await _dataContext.Questions
+            .AnyAsync(q => q.Id == id, cancellationToken);
     }
     
     public async Task<QuestionResponseDto> CreateQuestionAsync(Guid questionsPoolId,
@@ -43,6 +43,7 @@ public class QuestionService : IQuestionService
     {
         var questionToAdd = _mapper.Map<Question>(questionWithAnswersDto);
         questionToAdd.QuestionsPoolId = questionsPoolId;
+        
         if (!questionWithAnswersDto.Answers.IsNullOrEmpty())
         {
             questionToAdd.Answers = _mapper.Map<ICollection<Answer>>(questionWithAnswersDto.Answers);
@@ -59,13 +60,8 @@ public class QuestionService : IQuestionService
     {
         var questionFounded = await _dataContext.Questions
             .FirstAsync(q => q.Id == id, cancellationToken);
+        
         var updatedQuestion = _mapper.Map<Question>(questionDto);
-
-        _logger.LogInformation(
-            "Question to update: {ttu}. Updated question: {ut}",
-            JsonSerializer.Serialize(questionFounded),
-            JsonSerializer.Serialize(updatedQuestion)
-        );
         
         questionFounded.Text = updatedQuestion.Text;
         questionFounded.MaxScore = updatedQuestion.MaxScore;
@@ -76,7 +72,7 @@ public class QuestionService : IQuestionService
     public async Task DeleteQuestionAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var questionToDelete = await _dataContext.Questions
-            .FirstAsync(q => q.Id.Equals(id), cancellationToken);
+            .FirstAsync(q => q.Id == id, cancellationToken);
 
         _dataContext.Remove(questionToDelete);
         await _dataContext.SaveChangesAsync(cancellationToken);

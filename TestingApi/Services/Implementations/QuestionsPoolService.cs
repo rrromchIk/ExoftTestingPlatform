@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Text.Json;
+﻿using System.Text.Json;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
@@ -22,38 +21,36 @@ public class QuestionsPoolService : IQuestionsPoolService
         _mapper = mapper;
         _logger = logger;
     }
-    
+
     public async Task<QuestionsPoolResponseDto?> GetQuestionPoolByIdAsync(Guid id,
         CancellationToken cancellationToken = default)
     {
         var questionsPool = await _dataContext.QuestionsPools
-            .FirstOrDefaultAsync(qp => qp.Id.Equals(id), cancellationToken);
+            .FirstOrDefaultAsync(qp => qp.Id == id, cancellationToken);
 
         return _mapper.Map<QuestionsPoolResponseDto>(questionsPool);
     }
 
     public async Task<bool> QuestionsPoolExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        return await _dataContext.QuestionsPools.AnyAsync(qp => qp.Id.Equals(id), cancellationToken);
+        return await _dataContext.QuestionsPools
+            .AnyAsync(qp => qp.Id == id, cancellationToken);
     }
-    
+
     public async Task<QuestionsPoolResponseDto> CreateQuestionsPoolAsync(Guid testId, QuestionsPoolDto questionsPoolDto,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation(
-            "{dt}. Create questions pool method. TestDto: {dto}",
-            DateTime.Now.ToString(),
-            JsonSerializer.Serialize(questionsPoolDto)
-        );
         var questionsPoolToAdd = _mapper.Map<QuestionsPool>(questionsPoolDto);
         questionsPoolToAdd.TestId = testId;
-        
-        var collision = await _dataContext.QuestionsPools.AnyAsync(
-            qp => qp.Name == questionsPoolToAdd.Name 
-                  && qp.TestId == questionsPoolToAdd.TestId,
-            cancellationToken
-        );
-        
+
+        var collision = await _dataContext.QuestionsPools
+            .AnyAsync(
+                qp =>
+                    qp.Name == questionsPoolToAdd.Name &&
+                    qp.TestId == questionsPoolToAdd.TestId,
+                cancellationToken
+            );
+
         if (collision)
             throw new ApiException(
                 "Questions pool name has to be unique for the each test",
@@ -73,20 +70,16 @@ public class QuestionsPoolService : IQuestionsPoolService
         var questionsPoolFounded = await _dataContext.QuestionsPools
             .FirstAsync(qp => qp.Id == id, cancellationToken);
         var updatedQuestionsPool = _mapper.Map<QuestionsPool>(questionsPoolDto);
+        
+        var collision = await _dataContext.QuestionsPools
+            .AnyAsync(
+                qp =>
+                    qp.Name == updatedQuestionsPool.Name &&
+                    qp.TestId == updatedQuestionsPool.TestId &&
+                    qp.Id != questionsPoolFounded.Id,
+                cancellationToken
+            );
 
-        _logger.LogInformation(
-            "Test to update: {ttu}. Updated test: {ut}",
-            JsonSerializer.Serialize(questionsPoolFounded),
-            JsonSerializer.Serialize(updatedQuestionsPool)
-        );
-        
-        var collision = await _dataContext.QuestionsPools.AnyAsync(
-            qp => qp.Name == updatedQuestionsPool.Name 
-                  && qp.TestId == updatedQuestionsPool.TestId
-                  && qp.Id != questionsPoolFounded.Id,
-            cancellationToken
-        );
-        
         if (collision)
             throw new ApiException(
                 "Questions pool name has to be unique for the each test",
@@ -103,7 +96,7 @@ public class QuestionsPoolService : IQuestionsPoolService
     public async Task DeleteQuestionsPoolAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var questionsPoolToDelete = await _dataContext.QuestionsPools
-            .FirstAsync(qp => qp.Id.Equals(id), cancellationToken);
+            .FirstAsync(qp => qp.Id == id, cancellationToken);
 
         _dataContext.Remove(questionsPoolToDelete);
         await _dataContext.SaveChangesAsync(cancellationToken);
