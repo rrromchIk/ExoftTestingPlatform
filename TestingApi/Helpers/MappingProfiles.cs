@@ -48,15 +48,7 @@ public class MappingProfiles : Profile
                     return new PagedList<TestResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
                 }
             );
-
-
-        // CreateMap<QuestionsPool, QuestionsPoolDto>()
-        //     .ForMember(
-        //         dest => dest.GenerationStrategy,
-        //         opt => opt
-        //             .MapFrom(src => src.GenerationStrategy.ToString())
-        //     );
-
+        
         CreateMap<QuestionsPool, QuestionsPoolResponseDto>()
             .ForMember(
                 dest => dest.GenerationStrategy,
