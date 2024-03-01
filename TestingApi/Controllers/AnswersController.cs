@@ -1,5 +1,4 @@
-﻿using System.Data;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TestingApi.Dto.AnswerDto;
 using TestingApi.Services.Abstractions;
 
@@ -34,7 +33,7 @@ public class AnswersController : ControllerBase
     }
     
     
-    [HttpPost("{questionId}/answers")]
+    [HttpPost("{questionId:guid}/answers")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AnswerResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> CreateAnswer(

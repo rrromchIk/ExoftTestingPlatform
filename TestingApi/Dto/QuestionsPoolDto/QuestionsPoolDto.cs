@@ -11,7 +11,7 @@ public class QuestionsPoolDto
     
     [Required(ErrorMessage = "NumOfQuestionsToBeGenerated is required")]
     [Range(1, int.MaxValue, ErrorMessage = "NumOfQuestionsToBeGenerated must be greater than 0")]
-    public int NumOfQuestionsToBeGenerated { get; set; }
+    public int? NumOfQuestionsToBeGenerated { get; set; }
     
     [Required(ErrorMessage = "GenerationStrategy is required")]
     [RegularExpression(

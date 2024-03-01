@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using TestingApi.Dto.QuestionsPoolDto;
 using TestingApi.Services.Abstractions;
@@ -41,7 +40,7 @@ public class QuestionsPoolsController : ControllerBase
         return Ok(response);
     }
     
-    [HttpPost("/api/tests/{testId}/questions-pools")]
+    [HttpPost("/api/tests/{testId:guid}/questions-pools")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionsPoolResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> CreateQuestionsPool(

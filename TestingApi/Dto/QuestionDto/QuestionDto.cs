@@ -11,5 +11,5 @@ public class QuestionDto
     
     [Required(ErrorMessage = "MaxScore is required")]
     [Range(1, int.MaxValue, ErrorMessage = "MaxScore must be greater than 0")]
-    public int MaxScore { get; set; }
+    public int? MaxScore { get; set; }
 }
