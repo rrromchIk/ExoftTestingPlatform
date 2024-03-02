@@ -20,6 +20,6 @@ public class QuestionEntityConfiguration : BaseEntityConfiguration<Question>
             .HasMany(q => q.UserAnswers)
             .WithOne(ua => ua.Question)
             .HasForeignKey(ua => ua.QuestionId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

@@ -482,7 +482,7 @@ namespace TestingApi.Migrations
                     b.HasOne("TestingApi.Models.Question", "Question")
                         .WithMany("UserAnswers")
                         .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("TestingApi.Models.User", "User")
