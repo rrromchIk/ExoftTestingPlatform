@@ -62,7 +62,7 @@ public class UserAnswersController : ControllerBase
     }
 
     [HttpDelete("{userId:guid}/questions/{questionId:guid}/answers/{answerId:guid}")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteUserAnswer(
         [FromRoute] Guid userId,

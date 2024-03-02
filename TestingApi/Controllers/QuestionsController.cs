@@ -21,6 +21,8 @@ public class QuestionsController : ControllerBase
     }
     
     [HttpGet("{questionsPoolId:guid}/questions")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<QuestionResponseDto>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetQuestionsByQuestionsPoolId([FromRoute] Guid questionsPoolId,
         CancellationToken cancellationToken)
     {
@@ -58,6 +60,7 @@ public class QuestionsController : ControllerBase
     [HttpPost("{questionsPoolId:guid}/questions")]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionResponseDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CreateQuestion(
         [FromRoute] Guid questionsPoolId,
         [FromBody] QuestionWithAnswersDto questionWithAnswersDto,

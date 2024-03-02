@@ -36,6 +36,7 @@ public class AnswersController : ControllerBase
     [HttpPost("{questionId:guid}/answers")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AnswerResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CreateAnswer(
         [FromRoute] Guid questionId,
         [FromBody] AnswerDto answerDto,
