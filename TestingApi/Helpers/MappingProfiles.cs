@@ -5,6 +5,7 @@ using TestingApi.Dto.QuestionsPoolDto;
 using TestingApi.Dto.TestDto;
 using TestingApi.Dto.UserAnswerDto;
 using TestingApi.Dto.UserDto;
+using TestingApi.Dto.UserTestDto;
 using TestingApi.Models;
 
 namespace TestingApi.Helpers;
@@ -101,5 +102,12 @@ public class MappingProfiles : Profile
         
         CreateMap<UserAnswerDto, UserAnswer>()
             .ReverseMap();
+
+        CreateMap<UserTest, UserTestResponseDto>()
+            .ForMember(
+                dest => dest.UserTestStatus,
+                opt => opt
+                    .MapFrom(src => src.UserTestStatus.ToString())
+            );
     }
 }

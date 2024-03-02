@@ -2,7 +2,7 @@
 
 public enum UserTestStatus
 {
-    NotStarted,
+    NotStarted = 0,
     InProcess,
     Completed
 }
