@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
 using TestingApi.Dto.UserDto;
+using TestingAPI.Exceptions;
 using TestingApi.Helpers;
 using TestingApi.Models;
 using TestingApi.Services.Abstractions;
@@ -82,6 +83,14 @@ public class UserService : IUserService
     {
         var userToAdd = _mapper.Map<User>(userDto);
 
+        var collision = await _dataContext.Users
+            .AnyAsync(
+                u => u.Email == userToAdd.Email,
+                cancellationToken
+            );
+
+        if (collision)
+            throw new ApiException("User email has to be unique", StatusCodes.Status409Conflict);
         var createdUser = await _dataContext.AddAsync(userToAdd, cancellationToken);
 
         await _dataContext.SaveChangesAsync(cancellationToken);
