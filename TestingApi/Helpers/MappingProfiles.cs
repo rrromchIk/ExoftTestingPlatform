@@ -3,6 +3,7 @@ using TestingApi.Dto.AnswerDto;
 using TestingApi.Dto.QuestionDto;
 using TestingApi.Dto.QuestionsPoolDto;
 using TestingApi.Dto.TestDto;
+using TestingApi.Dto.UserAnswerDto;
 using TestingApi.Dto.UserDto;
 using TestingApi.Models;
 
@@ -97,5 +98,8 @@ public class MappingProfiles : Profile
                     return new PagedList<UserResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
                 }
             );
+        
+        CreateMap<UserAnswerDto, UserAnswer>()
+            .ReverseMap();
     }
 }

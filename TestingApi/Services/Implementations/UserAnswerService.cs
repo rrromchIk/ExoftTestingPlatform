@@ -57,8 +57,8 @@ public class UserAnswerService : IUserAnswerService
     public async Task DeleteUserAnswerAsync(Guid userId, Guid questionId, Guid answerId,
         CancellationToken cancellationToken = default)
     {
-        var userAnswerToDelete = _dataContext.UserAnswers
-            .FirstOrDefaultAsync(
+        var userAnswerToDelete = await _dataContext.UserAnswers
+            .FirstAsync(
                 ua => ua.UserId == userId &&
                       ua.QuestionId == questionId &&
                       ua.AnswerId == answerId,
