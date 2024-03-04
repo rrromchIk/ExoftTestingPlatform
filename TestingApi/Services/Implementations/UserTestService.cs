@@ -32,7 +32,8 @@ public class UserTestService : IUserTestService
         return _mapper.Map<UserTestResponseDto>(userTestFounded);
     }
 
-    public async Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(TestFiltersDto testFiltersDto, Guid userId,
+    public async Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(TestFiltersDto testFiltersDto,
+        Guid userId,
         CancellationToken cancellationToken = default)
     {
         var testsQuery = _dataContext.Tests
@@ -74,7 +75,7 @@ public class UserTestService : IUserTestService
             cancellationToken
         );
     }
-    
+
     public async Task<PagedList<StartedTestResponseDto>> GetAllStartedTestsForUserAsync(TestFiltersDto testFiltersDto,
         Guid userId, CancellationToken cancellationToken = default)
     {
@@ -97,35 +98,60 @@ public class UserTestService : IUserTestService
                     }
                 }
             );
-        
-         if (!string.IsNullOrWhiteSpace(testFiltersDto.SearchTerm))
-         {
-             testsQuery = testsQuery.Where(
-                 t =>
-                     t.Test.Name.Contains(testFiltersDto.SearchTerm) ||
-                     t.Test.Subject.Contains(testFiltersDto.SearchTerm)
-             );
-         }
-    
-         testsQuery = testFiltersDto.SortOrder?.ToLower() == "desc"
-             ? testsQuery.OrderByDescending(GetSortPropertyForStartedTest(testFiltersDto.SortColumn))
-             : testsQuery.OrderBy(GetSortPropertyForStartedTest(testFiltersDto.SortColumn));
-    
-         return await PagedList<StartedTestResponseDto>.CreateAsync(
-             testsQuery,
-             testFiltersDto.Page,
-             testFiltersDto.PageSize,
-             cancellationToken
-         );
+
+        if (!string.IsNullOrWhiteSpace(testFiltersDto.SearchTerm))
+        {
+            testsQuery = testsQuery.Where(
+                t =>
+                    t.Test.Name.Contains(testFiltersDto.SearchTerm) ||
+                    t.Test.Subject.Contains(testFiltersDto.SearchTerm)
+            );
+        }
+
+        testsQuery = testFiltersDto.SortOrder?.ToLower() == "desc"
+            ? testsQuery.OrderByDescending(GetSortPropertyForStartedTest(testFiltersDto.SortColumn))
+            : testsQuery.OrderBy(GetSortPropertyForStartedTest(testFiltersDto.SortColumn));
+
+        return await PagedList<StartedTestResponseDto>.CreateAsync(
+            testsQuery,
+            testFiltersDto.Page,
+            testFiltersDto.PageSize,
+            cancellationToken
+        );
     }
-    
+
+    public async Task<ICollection<TestPassingQuestionsPoolResponseDto>> GetQuestionsForUserTest(Guid userId,
+        Guid testId, CancellationToken cancellationToken = default)
+    {
+        return await _dataContext.QuestionsPools
+            .Include(qp => qp.Questions)
+            .Where(qp => qp.TestId == testId)
+            .Select(
+                qp => new TestPassingQuestionsPoolResponseDto
+                {
+                    QuestionsPoolId = qp.Id,
+                    GenerationStrategy = qp.GenerationStrategy.ToString(),
+                    NumOfQuestionsToBeGenerated = qp.NumOfQuestionsToBeGenerated,
+                    UserQuestions = qp.Questions
+                        .Select(
+                            q => new UserQuestionResponseDto
+                            {
+                                QuestionId = q.Id,
+                                IsAnswered = _dataContext.UserAnswers.Any(ua => ua.QuestionId == q.Id)
+                            }
+                        ).ToList()
+                }
+            ).ToListAsync(cancellationToken);
+    }
+
     public async Task<bool> UserTestExistsAsync(Guid userId, Guid testId, CancellationToken cancellationToken = default)
     {
         return await _dataContext.UserTests
             .AnyAsync(ut => ut.UserId == userId && ut.TestId == testId, cancellationToken);
     }
 
-    public async Task<UserTestResponseDto> CreateUserTestAsync(Guid userId, Guid testId, CancellationToken cancellationToken = default)
+    public async Task<UserTestResponseDto> CreateUserTestAsync(Guid userId, Guid testId,
+        CancellationToken cancellationToken = default)
     {
         var userTestToAdd = new UserTest()
         {
@@ -161,7 +187,7 @@ public class UserTestService : IUserTestService
 
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
-    
+
     private static Expression<Func<TestToPassResponseDto, object>> GetSortPropertyForTestToPass(string? sortColumn)
     {
         return sortColumn?.ToLower() switch
@@ -174,7 +200,7 @@ public class UserTestService : IUserTestService
             _ => t => t.Id
         };
     }
-    
+
     private static Expression<Func<StartedTestResponseDto, object>> GetSortPropertyForStartedTest(string? sortColumn)
     {
         return sortColumn?.ToLower() switch
