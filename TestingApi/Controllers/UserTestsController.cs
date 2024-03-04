@@ -79,6 +79,9 @@ public class UserTestsController : ControllerBase
               await _testService.TestExistsAsync(testId, cancellationToken)))
             return NotFound();
 
+        if (await _userTestService.UserTestExistsAsync(userId, testId, cancellationToken))
+            return BadRequest();
+
 
         var response = await _userTestService.CreateUserTestAsync(userId, testId, cancellationToken);
 
