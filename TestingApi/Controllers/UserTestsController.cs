@@ -44,12 +44,13 @@ public class UserTestsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllTestsForUser(
         [FromQuery] TestFiltersDto testFiltersDto,
-        [FromRoute] Guid userId) {
-        if (!await _userService.UserExistsAsync(userId))
+        [FromRoute] Guid userId,
+        CancellationToken cancellationToken) {
+        if (!await _userService.UserExistsAsync(userId, cancellationToken))
             return NotFound();
 
         var response = await _userTestService
-            .GetAllTestsForUserAsync(testFiltersDto, userId);
+            .GetAllTestsForUserAsync(testFiltersDto, userId, cancellationToken);
 
         if (response.Items.IsNullOrEmpty())
             return NotFound();
@@ -62,12 +63,13 @@ public class UserTestsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllStartedTestsForUserAsync(
         [FromQuery] TestFiltersDto testFiltersDto,
-        [FromRoute] Guid userId) {
-        if (!await _userService.UserExistsAsync(userId))
+        [FromRoute] Guid userId,
+        CancellationToken cancellationToken) {
+        if (!await _userService.UserExistsAsync(userId, cancellationToken))
             return NotFound();
 
         var response = await _userTestService
-            .GetAllStartedTestsForUserAsync(testFiltersDto, userId);
+            .GetAllStartedTestsForUserAsync(testFiltersDto, userId, cancellationToken);
         
         if (response.Items.IsNullOrEmpty())
             return NotFound();
