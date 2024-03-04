@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto.QuestionDto;
 using TestingApi.Services.Abstractions;
 
@@ -32,7 +33,7 @@ public class QuestionsController : ControllerBase
         var response = await _questionService
             .GetQuestionsByQuestionsPoolIdAsync(questionsPoolId, cancellationToken);
 
-        if (response == null) 
+        if (response.IsNullOrEmpty()) 
             return NotFound();
         
         return Ok(response);

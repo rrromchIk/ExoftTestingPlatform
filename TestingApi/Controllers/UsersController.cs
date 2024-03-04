@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto.UserDto;
 using TestingApi.Helpers;
 using TestingApi.Services.Abstractions; 
@@ -29,8 +30,12 @@ public class UsersController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         
-        var users = await _userService.GetAllUsersAsync(userFiltersDto, cancellationToken);
-        return Ok(users);
+        var response = await _userService.GetAllUsersAsync(userFiltersDto, cancellationToken);
+
+        if (response.Items.IsNullOrEmpty())
+            return NotFound();
+        
+        return Ok(response);
     }
 
     [HttpGet("{id:guid}")]

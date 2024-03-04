@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto.TestDto;
 using TestingApi.Helpers;
 using TestingApi.Services.Abstractions;
@@ -36,6 +37,10 @@ public class TestsController : ControllerBase
             return BadRequest(ModelState);
 
         var response = await _testService.GetAllTestsAsync(testFiltersDto, cancellationToken);
+
+        if (response.Items.IsNullOrEmpty())
+            return NotFound();
+        
         return Ok(response);
     }
 

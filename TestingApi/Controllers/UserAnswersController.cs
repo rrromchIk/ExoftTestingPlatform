@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto.UserAnswerDto;
 using TestingApi.Services.Abstractions;
 
@@ -25,14 +26,17 @@ public class UserAnswersController : ControllerBase
     [HttpGet("{userId:guid}/questions/{questionId:guid}/answers")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserAnswerDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetUserAnswer(
+    public async Task<IActionResult> GetUserAnswers(
         [FromRoute] Guid userId,
         [FromRoute] Guid questionId,
         CancellationToken cancellationToken
     )
     {
-        var response = await _userAnswerService.GetUserAnswerAsync(userId, questionId, cancellationToken);
+        var response = await _userAnswerService.GetUserAnswersAsync(userId, questionId, cancellationToken);
 
+        if (response.IsNullOrEmpty())
+            return NotFound();
+        
         return Ok(response);
     }
 
@@ -55,7 +59,7 @@ public class UserAnswersController : ControllerBase
         var response = await _userAnswerService.CreateUserAnswerAsync(userAnswerDto, cancellationToken);
 
         return CreatedAtAction(
-            nameof(GetUserAnswer),
+            nameof(GetUserAnswers),
             new { userId = response.UserId, questionId = response.QuestionId },
             response
         );

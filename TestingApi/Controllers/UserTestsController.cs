@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto.UserTestDto;
 using TestingApi.Services.Abstractions;
 
@@ -44,6 +45,10 @@ public class UserTestsController : ControllerBase
             return NotFound();
 
         var response = await _userTestService.GetAllTestsForUserAsync(userId);
+
+        if (response.IsNullOrEmpty())
+            return NotFound();
+        
         return Ok(response);
     }
     
@@ -55,6 +60,10 @@ public class UserTestsController : ControllerBase
             return NotFound();
 
         var response = await _userTestService.GetAllStartedTestsForUserAsync(userId);
+        
+        if (response.IsNullOrEmpty())
+            return NotFound();
+        
         return Ok(response);
     }
     
