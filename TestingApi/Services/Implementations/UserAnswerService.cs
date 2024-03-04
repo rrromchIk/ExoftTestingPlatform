@@ -21,7 +21,7 @@ public class UserAnswerService : IUserAnswerService
         _logger = logger;
     }
 
-    public async Task<ICollection<UserAnswerDto>> GetUserAnswerAsync(Guid userId, Guid questionId,
+    public async Task<ICollection<UserAnswerDto>> GetUserAnswersAsync(Guid userId, Guid questionId,
         CancellationToken cancellationToken = default)
     {
         var userAnswers = await _dataContext.UserAnswers
