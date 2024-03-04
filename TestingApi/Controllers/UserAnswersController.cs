@@ -24,7 +24,7 @@ public class UserAnswersController : ControllerBase
     }
 
     [HttpGet("{userId:guid}/questions/{questionId:guid}/answers")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserAnswerDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<UserAnswerResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserAnswers(
         [FromRoute] Guid userId,
@@ -41,7 +41,7 @@ public class UserAnswersController : ControllerBase
     }
 
     [HttpPost("answers")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserAnswerResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> CreateUserAnswer([FromBody] UserAnswerDto userAnswerDto,

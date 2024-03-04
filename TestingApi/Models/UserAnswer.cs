@@ -10,4 +10,5 @@ public class UserAnswer
 
     public Guid AnswerId { get; set; }
     public Answer Answer { get; set; } = null!;
+    public DateTime AnsweringTime { get; set; }
 }

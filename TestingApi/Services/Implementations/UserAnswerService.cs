@@ -21,14 +21,14 @@ public class UserAnswerService : IUserAnswerService
         _logger = logger;
     }
 
-    public async Task<ICollection<UserAnswerDto>> GetUserAnswersAsync(Guid userId, Guid questionId,
+    public async Task<ICollection<UserAnswerResponseDto>> GetUserAnswersAsync(Guid userId, Guid questionId,
         CancellationToken cancellationToken = default)
     {
         var userAnswers = await _dataContext.UserAnswers
             .Where(ua => ua.UserId == userId && ua.QuestionId == questionId)
             .ToListAsync(cancellationToken);
 
-        return _mapper.Map<ICollection<UserAnswerDto>>(userAnswers);
+        return _mapper.Map<ICollection<UserAnswerResponseDto>>(userAnswers);
     }
 
     public async Task<bool> UserAnswerExistAsync(Guid userId, Guid questionId, Guid answerId,
@@ -42,16 +42,17 @@ public class UserAnswerService : IUserAnswerService
         );
     }
 
-    public async Task<UserAnswerDto> CreateUserAnswerAsync(UserAnswerDto userAnswer,
+    public async Task<UserAnswerResponseDto> CreateUserAnswerAsync(UserAnswerDto userAnswer,
         CancellationToken cancellationToken = default)
     {
         var userAnswerToCreate = _mapper.Map<UserAnswer>(userAnswer);
+        userAnswerToCreate.AnsweringTime = DateTime.Now;
 
         var createdUserAnswer = _dataContext.Add(userAnswerToCreate);
 
         await _dataContext.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<UserAnswerDto>(createdUserAnswer.Entity);
+        return _mapper.Map<UserAnswerResponseDto>(createdUserAnswer.Entity);
     }
 
     public async Task DeleteUserAnswerAsync(Guid userId, Guid questionId, Guid answerId,

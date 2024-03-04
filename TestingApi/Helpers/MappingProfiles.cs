@@ -99,10 +99,10 @@ public class MappingProfiles : Profile
                     return new PagedList<UserResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
                 }
             );
-        
-        CreateMap<UserAnswerDto, UserAnswer>()
-            .ReverseMap();
 
+        CreateMap<UserAnswerDto, UserAnswer>();
+        CreateMap<UserAnswer, UserAnswerResponseDto>();
+        
         CreateMap<UserTest, UserTestResponseDto>()
             .ForMember(
                 dest => dest.UserTestStatus,
