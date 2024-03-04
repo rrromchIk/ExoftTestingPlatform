@@ -9,6 +9,7 @@ public class TestToPassResponseDto
     public string Subject { get; set; } = null!;
     public int Duration { get; set; }
     public string Difficulty { get; set; } = null!;
+    public DateTime CreatedTimestamp { get; set; }
 
     public string UserTestStatus { get; set; } = null!;
 }

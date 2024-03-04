@@ -1,8 +1,10 @@
-﻿using AutoMapper;
+﻿using System.Linq.Expressions;
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
 using TestingApi.Dto.TestDto;
 using TestingApi.Dto.UserTestDto;
+using TestingApi.Helpers;
 using TestingApi.Models;
 using TestingApi.Services.Abstractions;
 
@@ -30,10 +32,10 @@ public class UserTestService : IUserTestService
         return _mapper.Map<UserTestResponseDto>(userTestFounded);
     }
 
-    public async Task<ICollection<TestToPassResponseDto>> GetAllTestsForUserAsync(Guid userId,
+    public async Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(TestFiltersDto testFiltersDto, Guid userId,
         CancellationToken cancellationToken = default)
     {
-        return await _dataContext.Tests
+        var testsQuery = _dataContext.Tests
             .Include(t => t.UserTests)
             .Select(
                 t => new TestToPassResponseDto
@@ -42,6 +44,7 @@ public class UserTestService : IUserTestService
                     Name = t.Name,
                     Subject = t.Subject,
                     Duration = t.Duration,
+                    CreatedTimestamp = t.CreatedTimestamp,
                     Difficulty = t.Difficulty.ToString(),
                     UserTestStatus = t.UserTests
                         .Where(ut => ut.UserId == userId)
@@ -49,25 +52,73 @@ public class UserTestService : IUserTestService
                         .FirstOrDefault()
                         .ToString()
                 }
-            ).ToListAsync(cancellationToken);
-    }
+            );
 
-    public async Task<ICollection<StartedTestResponseDto>> GetAllStartedTestsForUserAsync(Guid userId,
-        CancellationToken cancellationToken = default)
+        if (!string.IsNullOrWhiteSpace(testFiltersDto.SearchTerm))
+        {
+            testsQuery = testsQuery.Where(
+                t =>
+                    t.Name.Contains(testFiltersDto.SearchTerm) ||
+                    t.Subject.Contains(testFiltersDto.SearchTerm)
+            );
+        }
+
+        testsQuery = testFiltersDto.SortOrder?.ToLower() == "desc"
+            ? testsQuery.OrderByDescending(GetSortPropertyForTestToPass(testFiltersDto.SortColumn))
+            : testsQuery.OrderBy(GetSortPropertyForTestToPass(testFiltersDto.SortColumn));
+
+        return await PagedList<TestToPassResponseDto>.CreateAsync(
+            testsQuery,
+            testFiltersDto.Page,
+            testFiltersDto.PageSize,
+            cancellationToken
+        );
+    }
+    
+    public async Task<PagedList<StartedTestResponseDto>> GetAllStartedTestsForUserAsync(TestFiltersDto testFiltersDto,
+        Guid userId, CancellationToken cancellationToken = default)
     {
-        return await _dataContext.UserTests
+        var testsQuery = _dataContext.UserTests
             .Include(ut => ut.Test)
-            .Select(ut => new StartedTestResponseDto
-            {
-                Result = ut.Result,
-                StartingTime = ut.StartingTime,
-                EndingTime = ut.EndingTime,
-                UserTestStatus = ut.UserTestStatus.ToString(),
-                Test = _mapper.Map<TestResponseDto>(ut.Test)
-            })
-            .ToListAsync(cancellationToken);
+            .Select(
+                ut => new StartedTestResponseDto
+                {
+                    Result = ut.Result,
+                    StartingTime = ut.StartingTime,
+                    EndingTime = ut.EndingTime,
+                    UserTestStatus = ut.UserTestStatus.ToString(),
+                    Test = new TestResponseDto()
+                    {
+                        Name = ut.Test.Name,
+                        Subject = ut.Test.Subject,
+                        Duration = ut.Test.Duration,
+                        IsPublished = ut.Test.IsPublished,
+                        Difficulty = ut.Test.Difficulty.ToString(),
+                    }
+                }
+            );
+        
+         if (!string.IsNullOrWhiteSpace(testFiltersDto.SearchTerm))
+         {
+             testsQuery = testsQuery.Where(
+                 t =>
+                     t.Test.Name.Contains(testFiltersDto.SearchTerm) ||
+                     t.Test.Subject.Contains(testFiltersDto.SearchTerm)
+             );
+         }
+    
+         testsQuery = testFiltersDto.SortOrder?.ToLower() == "desc"
+             ? testsQuery.OrderByDescending(GetSortPropertyForStartedTest(testFiltersDto.SortColumn))
+             : testsQuery.OrderBy(GetSortPropertyForStartedTest(testFiltersDto.SortColumn));
+    
+         return await PagedList<StartedTestResponseDto>.CreateAsync(
+             testsQuery,
+             testFiltersDto.Page,
+             testFiltersDto.PageSize,
+             cancellationToken
+         );
     }
-
+    
     public async Task<bool> UserTestExistsAsync(Guid userId, Guid testId, CancellationToken cancellationToken = default)
     {
         return await _dataContext.UserTests
@@ -109,5 +160,32 @@ public class UserTestService : IUserTestService
         _dataContext.Remove(userTestToDelete);
 
         await _dataContext.SaveChangesAsync(cancellationToken);
+    }
+    
+    private static Expression<Func<TestToPassResponseDto, object>> GetSortPropertyForTestToPass(string? sortColumn)
+    {
+        return sortColumn?.ToLower() switch
+        {
+            "name" => t => t.Name,
+            "subject" => t => t.Subject,
+            "difficulty" => t => t.Difficulty,
+            "duration" => t => t.Duration,
+            "creationTime" => t => t.CreatedTimestamp,
+            _ => t => t.Id
+        };
+    }
+    
+    private static Expression<Func<StartedTestResponseDto, object>> GetSortPropertyForStartedTest(string? sortColumn)
+    {
+        return sortColumn?.ToLower() switch
+        {
+            "name" => t => t.Test.Name,
+            "subject" => t => t.Test.Subject,
+            "difficulty" => t => t.Test.Difficulty,
+            "duration" => t => t.Test.Duration,
+            "startingTime" => t => t.StartingTime,
+            "endingTime" => t => t.EndingTime,
+            _ => t => t.Test.Name
+        };
     }
 }

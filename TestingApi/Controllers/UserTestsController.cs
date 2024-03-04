@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using TestingApi.Dto.TestDto;
 using TestingApi.Dto.UserTestDto;
+using TestingApi.Helpers;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Controllers;
@@ -38,30 +40,36 @@ public class UserTestsController : ControllerBase
     }
     
     [HttpGet("")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<TestToPassResponseDto>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestToPassResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllTestsForUser([FromRoute] Guid userId) {
+    public async Task<IActionResult> GetAllTestsForUser(
+        [FromQuery] TestFiltersDto testFiltersDto,
+        [FromRoute] Guid userId) {
         if (!await _userService.UserExistsAsync(userId))
             return NotFound();
 
-        var response = await _userTestService.GetAllTestsForUserAsync(userId);
+        var response = await _userTestService
+            .GetAllTestsForUserAsync(testFiltersDto, userId);
 
-        if (response.IsNullOrEmpty())
+        if (response.Items.IsNullOrEmpty())
             return NotFound();
         
         return Ok(response);
     }
     
     [HttpGet("started")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<StartedTestResponseDto>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<StartedTestResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllStartedTestsForUserAsync([FromRoute] Guid userId) {
+    public async Task<IActionResult> GetAllStartedTestsForUserAsync(
+        [FromQuery] TestFiltersDto testFiltersDto,
+        [FromRoute] Guid userId) {
         if (!await _userService.UserExistsAsync(userId))
             return NotFound();
 
-        var response = await _userTestService.GetAllStartedTestsForUserAsync(userId);
+        var response = await _userTestService
+            .GetAllStartedTestsForUserAsync(testFiltersDto, userId);
         
-        if (response.IsNullOrEmpty())
+        if (response.Items.IsNullOrEmpty())
             return NotFound();
         
         return Ok(response);
