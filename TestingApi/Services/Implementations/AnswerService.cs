@@ -12,9 +12,9 @@ public class AnswerService : IAnswerService
 {
     private readonly DataContext _dataContext;
     private readonly IMapper _mapper;
-    private readonly ILogger<TestService> _logger;
+    private readonly ILogger<AnswerService> _logger;
 
-    public AnswerService(DataContext dataContext, ILogger<TestService> logger, IMapper mapper)
+    public AnswerService(DataContext dataContext, ILogger<AnswerService> logger, IMapper mapper)
     {
         _dataContext = dataContext;
         _mapper = mapper;

@@ -1,5 +1,4 @@
-﻿using System.Data;
-using System.Text.Json;
+﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto.TestDto;

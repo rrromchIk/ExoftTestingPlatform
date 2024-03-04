@@ -10,9 +10,9 @@ public class AnswersController : ControllerBase
 {
     private readonly IAnswerService _answerService;
     private readonly IQuestionService _questionService;
-    private readonly ILogger<TestsController> _logger;
+    private readonly ILogger<AnswersController> _logger;
 
-    public AnswersController(IQuestionService questionService, ILogger<TestsController> logger, IAnswerService answerService)
+    public AnswersController(IQuestionService questionService, ILogger<AnswersController> logger, IAnswerService answerService)
     {
         _questionService = questionService;
         _logger = logger;

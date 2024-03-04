@@ -13,9 +13,9 @@ public class QuestionService : IQuestionService
 {
     private readonly DataContext _dataContext;
     private readonly IMapper _mapper;
-    private readonly ILogger<TestService> _logger;
+    private readonly ILogger<QuestionService> _logger;
 
-    public QuestionService(DataContext dataContext, ILogger<TestService> logger, IMapper mapper)
+    public QuestionService(DataContext dataContext, ILogger<QuestionService> logger, IMapper mapper)
     {
         _dataContext = dataContext;
         _mapper = mapper;

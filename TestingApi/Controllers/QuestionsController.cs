@@ -12,9 +12,9 @@ public class QuestionsController : ControllerBase
 {
     private readonly IQuestionsPoolService _questionsPoolService;
     private readonly IQuestionService _questionService;
-    private readonly ILogger<TestsController> _logger;
+    private readonly ILogger<QuestionsController> _logger;
 
-    public QuestionsController(IQuestionService questionService, ILogger<TestsController> logger, IQuestionsPoolService questionsPoolService)
+    public QuestionsController(IQuestionService questionService, ILogger<QuestionsController> logger, IQuestionsPoolService questionsPoolService)
     {
         _questionService = questionService;
         _logger = logger;

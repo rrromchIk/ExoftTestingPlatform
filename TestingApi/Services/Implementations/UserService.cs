@@ -14,9 +14,9 @@ public class UserService : IUserService
 {
     private readonly DataContext _dataContext;
     private readonly IMapper _mapper;
-    private readonly ILogger<TestService> _logger;
+    private readonly ILogger<UserService> _logger;
 
-    public UserService(DataContext dataContext, ILogger<TestService> logger, IMapper mapper)
+    public UserService(DataContext dataContext, ILogger<UserService> logger, IMapper mapper)
     {
         _dataContext = dataContext;
         _mapper = mapper;
