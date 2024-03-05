@@ -84,7 +84,8 @@ public class UserTestService : IUserTestService
             .Select(
                 ut => new StartedTestResponseDto
                 {
-                    Result = ut.Result,
+                    TotalScore = ut.TotalScore,
+                    UserScore = ut.UserScore,
                     StartingTime = ut.StartingTime,
                     EndingTime = ut.EndingTime,
                     UserTestStatus = ut.UserTestStatus.ToString(),
@@ -151,12 +152,13 @@ public class UserTestService : IUserTestService
     }
 
     public async Task<UserTestResponseDto> CreateUserTestAsync(Guid userId, Guid testId,
-        CancellationToken cancellationToken = default)
+        float totalScore, CancellationToken cancellationToken = default)
     {
         var userTestToAdd = new UserTest()
         {
             UserId = userId,
             TestId = testId,
+            TotalScore = totalScore,
             StartingTime = DateTime.Now,
             UserTestStatus = UserTestStatus.InProcess
         };

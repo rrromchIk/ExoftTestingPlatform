@@ -391,11 +391,14 @@ namespace TestingApi.Migrations
                     b.Property<DateTime>("EndingTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<float>("Result")
-                        .HasColumnType("real");
-
                     b.Property<DateTime>("StartingTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<float>("TotalScore")
+                        .HasColumnType("real");
+
+                    b.Property<float>("UserScore")
+                        .HasColumnType("real");
 
                     b.Property<string>("UserTestStatus")
                         .IsRequired()

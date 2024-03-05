@@ -102,6 +102,7 @@ public class UserTestsController : ControllerBase
     public async Task<IActionResult> CreateUserTest(
         [FromRoute] Guid userId,
         [FromRoute] Guid testId,
+        [FromBody] float totalScore,
         CancellationToken cancellationToken)
     {
         if (!(await _userService.UserExistsAsync(userId, cancellationToken) &&
@@ -112,7 +113,7 @@ public class UserTestsController : ControllerBase
             return BadRequest();
 
 
-        var response = await _userTestService.CreateUserTestAsync(userId, testId, cancellationToken);
+        var response = await _userTestService.CreateUserTestAsync(userId, testId, totalScore, cancellationToken);
 
         return CreatedAtAction(
             nameof(GetUserTest),
@@ -129,8 +130,9 @@ public class UserTestsController : ControllerBase
             return NotFound();
 
         await _userTestService.CompleteUserTestAsync(userId, testId, cancellationToken);
-            
-        return Ok("Test completed successfully");
+
+        var response = await _userTestService.GetUserTestAsync(userId, testId, cancellationToken);
+        return Ok(response);
     }
     
     [HttpDelete("{testId:guid}")]
