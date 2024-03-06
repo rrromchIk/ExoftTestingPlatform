@@ -175,7 +175,7 @@ public class UserTestService : IUserTestService
             .FirstAsync(ut => ut.UserId == userId && ut.TestId == testId, cancellationToken);
 
         userTestToComplete.UserTestStatus = UserTestStatus.Completed;
-        userTestToComplete.Result = 0f;
+        userTestToComplete.UserScore = await CalculateUserScore(userId, testId, cancellationToken);
 
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
@@ -188,6 +188,62 @@ public class UserTestService : IUserTestService
         _dataContext.Remove(userTestToDelete);
 
         await _dataContext.SaveChangesAsync(cancellationToken);
+    }
+
+    private async ValueTask<float> CalculateUserScore(Guid userId, Guid testId,
+        CancellationToken cancellationToken = default)
+    {
+        var userAnswersDetailsQuery = _dataContext.UserAnswers
+            .Include(ua => ua.Question)
+            .ThenInclude(q => q.QuestionsPool)
+            .Where(ua => ua.UserId == userId && ua.Question.QuestionsPool.TestId == testId)
+            .SelectMany(
+                ua => _dataContext.Answers
+                    .Where(a => a.QuestionId == ua.QuestionId)
+                    .Select(
+                        a => new
+                        {
+                            ua.QuestionId,
+                            AnswerId = a.Id,
+                            ua.Question.MaxScore,
+                            IsAnswerCorrect = a.IsCorrect,
+                            UserAnsweredCorrect = a.IsCorrect && ua.AnswerId == a.Id,
+                            UserAnsweredWrong = ua.AnswerId == a.Id && !a.IsCorrect
+                        }
+                    )
+            )
+            .GroupBy(userAnswers => new { userAnswers.QuestionId, userAnswers.AnswerId })
+            .Select(
+                group => new
+                {
+                    group.Key.QuestionId,
+                    group.Key.AnswerId,
+                    group.First().MaxScore,
+                    group.First().IsAnswerCorrect,
+                    UserAnsweredCorrect = group.Any(userAnswers => userAnswers.UserAnsweredCorrect),
+                    UserAnsweredWrong = group.Any(userAnswers => userAnswers.UserAnsweredWrong)
+                }
+            )
+            .GroupBy(userAnswers => userAnswers.QuestionId)
+            .Select(
+                userAnswersGroup => new
+                {
+                    userAnswersGroup.First().MaxScore,
+                    TotalCorrectAnswersCount = userAnswersGroup.Count(userAnswers => userAnswers.IsAnswerCorrect),
+                    UserCorrectAnswersCount = userAnswersGroup.Count(userAnswers => userAnswers.UserAnsweredCorrect),
+                    UserWrongAnswersCount = userAnswersGroup.Count(userAnswers => userAnswers.UserAnsweredWrong)
+                }
+            );
+        
+        var userScore = await userAnswersDetailsQuery
+            .Where(res => (res.UserCorrectAnswersCount - res.UserWrongAnswersCount) > 0)
+            .SumAsync(
+                res => 
+                    (res.UserCorrectAnswersCount - res.UserWrongAnswersCount) * res.MaxScore / res.TotalCorrectAnswersCount,
+                cancellationToken
+            );
+        
+        return userScore;
     }
 
     private static Expression<Func<TestToPassResponseDto, object>> GetSortPropertyForTestToPass(string? sortColumn)
