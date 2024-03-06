@@ -17,5 +17,6 @@ public static class RegisterServices
         serviceCollection.AddScoped<IUserService, UserService>();
         serviceCollection.AddScoped<IUserAnswerService, UserAnswerService>();
         serviceCollection.AddScoped<IUserTestService, UserTestService>();
+        serviceCollection.AddScoped<IFileService, FileService>();
     }
 }

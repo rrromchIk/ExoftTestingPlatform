@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using TestingApi.Data;
 using TestingApi.Extensions;
 using TestingApi.Middlewares;
@@ -44,6 +45,14 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAny");
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), app.Configuration["FileStorage:PhysicalFileProviderRoot"])
+        ),
+    RequestPath = new PathString(app.Configuration["FileStorage:RequestPath"])
+});
 app.UseAuthorization();
 
 app.MapControllers();

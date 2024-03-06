@@ -110,6 +110,15 @@ public class UserService : IUserService
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task UpdateUserAvatarAsync(Guid id, string profilePictureFilePath, CancellationToken cancellationToken = default)
+    {
+        var userToUpdate = await _dataContext.Users.FirstAsync(u => u.Id == id, cancellationToken);
+
+        userToUpdate.ProfilePictureFilePath = profilePictureFilePath;
+
+        await _dataContext.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task DeleteUserAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var userToDelete = await _dataContext.Users

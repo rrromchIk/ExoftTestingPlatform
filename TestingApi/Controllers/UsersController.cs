@@ -11,12 +11,14 @@ namespace TestingApi.Controllers;
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IFileService _fileService;
     private readonly ILogger<UsersController> _logger;
 
-    public UsersController(IUserService userService, ILogger<UsersController> logger)
+    public UsersController(IUserService userService, ILogger<UsersController> logger, IFileService fileService)
     {
         _userService = userService;
         _logger = logger;
+        _fileService = fileService;
     }
 
     [HttpGet]
@@ -83,6 +85,47 @@ public class UsersController : ControllerBase
 
         await _userService.UpdateUserAsync(id, userDto, cancellationToken);
         return NoContent();
+    }
+
+    [HttpPatch("{id:guid}/avatar")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> UpdateUserAvatar(
+        [FromRoute] Guid id,
+        [FromForm] IFormFile profilePicture,
+        CancellationToken cancellationToken)
+    {
+        if (!await _userService.UserExistsAsync(id, cancellationToken))
+            return NotFound();
+
+        if (profilePicture.Length <= 0)
+            return BadRequest();
+        
+        await _fileService.RemoveFilesIfExistsAsync(name: id.ToString(), cancellationToken);
+        var filePath = await _fileService.StoreFileAsync(profilePicture, id.ToString(), cancellationToken);
+
+        await _userService.UpdateUserAvatarAsync(id, filePath, cancellationToken);
+        
+        return NoContent();
+    }
+    
+    
+    [HttpGet("{id:guid}/avatar/download")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DownloadUserAvatar(Guid id, CancellationToken cancellationToken)
+    {
+        if (!await _userService.UserExistsAsync(id, cancellationToken))
+            return NotFound();
+
+        var user = await _userService.GetUserByIdAsync(id, cancellationToken);
+        var filePath = user.ProfilePictureFilePath;
+        
+        if (filePath.IsNullOrEmpty())
+            return NotFound();
+
+        var fileDto = await _fileService.GetFileAsync(filePath, cancellationToken);
+        return File(fileDto.Content, fileDto.MimeType, fileDto.FileName);
     }
 
 
