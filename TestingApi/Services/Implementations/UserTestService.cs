@@ -138,7 +138,11 @@ public class UserTestService : IUserTestService
                             q => new UserQuestionResponseDto
                             {
                                 QuestionId = q.Id,
-                                IsAnswered = _dataContext.UserAnswers.Any(ua => ua.QuestionId == q.Id)
+                                IsAnswered = _dataContext.UserAnswers
+                                    .Any(
+                                        ua => ua.UserId == userId && 
+                                              ua.QuestionId == q.Id
+                                    )
                             }
                         ).ToList()
                 }
