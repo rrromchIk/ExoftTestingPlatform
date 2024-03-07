@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TestingApi.Models;
+using TestingApi.Models.TestTemplate;
 
 namespace TestingApi.Data.EntityConfigurations;
 
@@ -9,22 +10,15 @@ public class TestTemplateEntityConfiguration : BaseEntityConfiguration<TestTempl
     public override void Configure(EntityTypeBuilder<TestTemplate> builder)
     {
         base.Configure(builder);
-        
+
         builder
             .HasMany(t => t.QuestionsPoolTemplates)
             .WithOne(qp => qp.TestTemplate)
-            .OnDelete(DeleteBehavior.Cascade)
-            .HasForeignKey(qp => qp.TestTemplateId);
+            .HasForeignKey(qp => qp.TestTemplateId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Property(tp => tp.NameRestriction).IsRequired(false);
-        builder.Property(tp => tp.TestDifficultyRestriction).IsRequired(false);
-        builder.Property(tp => tp.DurationRestriction).IsRequired(false);
-        builder.Property(tp => tp.SubjectRestriction).IsRequired(false);
-        
-        builder.Property(t => t.TestDifficultyRestriction)
-            .HasConversion(
-                td => td.ToString(),
-                s => (TestDifficulty)Enum.Parse(typeof(TestDifficulty), s)
-            );
+        builder.Property(tp => tp.DefaultTestDifficulty).IsRequired(false);
+        builder.Property(tp => tp.DefaultSubject).IsRequired(false);
+        builder.Property(tp => tp.DefaultDuration).IsRequired(false);
     }
 }

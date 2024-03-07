@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TestingApi.Models;
+using TestingApi.Models.TestTemplate;
 
 namespace TestingApi.Data.EntityConfigurations;
 
@@ -16,8 +17,8 @@ public class QuestionPoolTemplateEntityConfiguration : BaseEntityConfiguration<Q
             .HasForeignKey(q => q.QuestionsPoolTemplateId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Property(qp => qp.NameRestriction).IsRequired(false);
         builder.Property(qp => qp.NumOfQuestionsToBeGeneratedRestriction).IsRequired(false);
         builder.Property(qp => qp.GenerationStrategyRestriction).IsRequired(false);
+        builder.Property(qp => qp.DefaultName).IsRequired(false);
     }
 }

@@ -57,40 +57,6 @@ namespace TestingApi.Migrations
                     b.ToTable("Answers");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.AnswerTemplate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedTimestamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool?>("IsCorrectRestriction")
-                        .HasColumnType("bit");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedTimestamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("QuestionTemplateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int?>("TextRestriction")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuestionTemplateId");
-
-                    b.ToTable("AnswerTemplates");
-                });
-
             modelBuilder.Entity("TestingApi.Models.Question", b =>
                 {
                     b.Property<Guid>("Id")
@@ -124,40 +90,6 @@ namespace TestingApi.Migrations
                     b.HasIndex("QuestionsPoolId");
 
                     b.ToTable("Questions");
-                });
-
-            modelBuilder.Entity("TestingApi.Models.QuestionTemplate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedTimestamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("MaxScoreRestriction")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedTimestamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<Guid>("QuestionsPoolTemplateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("TextRestriction")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuestionsPoolTemplateId");
-
-                    b.ToTable("QuestionTemplates");
                 });
 
             modelBuilder.Entity("TestingApi.Models.QuestionsPool", b =>
@@ -199,43 +131,6 @@ namespace TestingApi.Migrations
                         .IsUnique();
 
                     b.ToTable("QuestionsPools");
-                });
-
-            modelBuilder.Entity("TestingApi.Models.QuestionsPoolTemplate", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("CreatedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("CreatedTimestamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("GenerationStrategyRestriction")
-                        .HasColumnType("int");
-
-                    b.Property<Guid?>("ModifiedBy")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime?>("ModifiedTimestamp")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("NameRestriction")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("NumOfQuestionsToBeGeneratedRestriction")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("TestTemplateId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TestTemplateId");
-
-                    b.ToTable("QuestionsPoolTemplates");
                 });
 
             modelBuilder.Entity("TestingApi.Models.Test", b =>
@@ -281,7 +176,7 @@ namespace TestingApi.Migrations
                     b.ToTable("Tests");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.TestTemplate", b =>
+            modelBuilder.Entity("TestingApi.Models.TestTemplate.AnswerTemplate", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -293,7 +188,38 @@ namespace TestingApi.Migrations
                     b.Property<DateTime>("CreatedTimestamp")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("DurationRestriction")
+                    b.Property<bool>("IsCorrectRestriction")
+                        .HasColumnType("bit");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedTimestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("QuestionTemplateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionTemplateId");
+
+                    b.ToTable("AnswerTemplates");
+                });
+
+            modelBuilder.Entity("TestingApi.Models.TestTemplate.QuestionTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedTimestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("MaxScoreRestriction")
                         .HasColumnType("int");
 
                     b.Property<Guid?>("ModifiedBy")
@@ -302,14 +228,79 @@ namespace TestingApi.Migrations
                     b.Property<DateTime?>("ModifiedTimestamp")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("NameRestriction")
+                    b.Property<Guid>("QuestionsPoolTemplateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionsPoolTemplateId");
+
+                    b.ToTable("QuestionTemplates");
+                });
+
+            modelBuilder.Entity("TestingApi.Models.TestTemplate.QuestionsPoolTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedTimestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DefaultName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("SubjectRestriction")
+                    b.Property<int?>("GenerationStrategyRestriction")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedTimestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("NumOfQuestionsToBeGeneratedRestriction")
+                        .HasColumnType("int");
+
+                    b.Property<Guid>("TestTemplateId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TestTemplateId");
+
+                    b.ToTable("QuestionsPoolTemplates");
+                });
+
+            modelBuilder.Entity("TestingApi.Models.TestTemplate.TestTemplate", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedTimestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("DefaultDuration")
+                        .HasColumnType("int");
+
+                    b.Property<string>("DefaultSubject")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TestDifficultyRestriction")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int?>("DefaultTestDifficulty")
+                        .HasColumnType("int");
+
+                    b.Property<Guid?>("ModifiedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("ModifiedTimestamp")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -425,17 +416,6 @@ namespace TestingApi.Migrations
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.AnswerTemplate", b =>
-                {
-                    b.HasOne("TestingApi.Models.QuestionTemplate", "QuestionTemplate")
-                        .WithMany("AnswerTemplates")
-                        .HasForeignKey("QuestionTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("QuestionTemplate");
-                });
-
             modelBuilder.Entity("TestingApi.Models.Question", b =>
                 {
                     b.HasOne("TestingApi.Models.QuestionsPool", "QuestionsPool")
@@ -445,17 +425,6 @@ namespace TestingApi.Migrations
                         .IsRequired();
 
                     b.Navigation("QuestionsPool");
-                });
-
-            modelBuilder.Entity("TestingApi.Models.QuestionTemplate", b =>
-                {
-                    b.HasOne("TestingApi.Models.QuestionsPoolTemplate", "QuestionsPoolTemplate")
-                        .WithMany("QuestionsTemplates")
-                        .HasForeignKey("QuestionsPoolTemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("QuestionsPoolTemplate");
                 });
 
             modelBuilder.Entity("TestingApi.Models.QuestionsPool", b =>
@@ -469,9 +438,31 @@ namespace TestingApi.Migrations
                     b.Navigation("Test");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.QuestionsPoolTemplate", b =>
+            modelBuilder.Entity("TestingApi.Models.TestTemplate.AnswerTemplate", b =>
                 {
-                    b.HasOne("TestingApi.Models.TestTemplate", "TestTemplate")
+                    b.HasOne("TestingApi.Models.TestTemplate.QuestionTemplate", "QuestionTemplate")
+                        .WithMany("AnswerTemplates")
+                        .HasForeignKey("QuestionTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("QuestionTemplate");
+                });
+
+            modelBuilder.Entity("TestingApi.Models.TestTemplate.QuestionTemplate", b =>
+                {
+                    b.HasOne("TestingApi.Models.TestTemplate.QuestionsPoolTemplate", "QuestionsPoolTemplate")
+                        .WithMany("QuestionsTemplates")
+                        .HasForeignKey("QuestionsPoolTemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("QuestionsPoolTemplate");
+                });
+
+            modelBuilder.Entity("TestingApi.Models.TestTemplate.QuestionsPoolTemplate", b =>
+                {
+                    b.HasOne("TestingApi.Models.TestTemplate.TestTemplate", "TestTemplate")
                         .WithMany("QuestionsPoolTemplates")
                         .HasForeignKey("TestTemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -533,19 +524,9 @@ namespace TestingApi.Migrations
                     b.Navigation("UserAnswers");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.QuestionTemplate", b =>
-                {
-                    b.Navigation("AnswerTemplates");
-                });
-
             modelBuilder.Entity("TestingApi.Models.QuestionsPool", b =>
                 {
                     b.Navigation("Questions");
-                });
-
-            modelBuilder.Entity("TestingApi.Models.QuestionsPoolTemplate", b =>
-                {
-                    b.Navigation("QuestionsTemplates");
                 });
 
             modelBuilder.Entity("TestingApi.Models.Test", b =>
@@ -555,7 +536,17 @@ namespace TestingApi.Migrations
                     b.Navigation("UserTests");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.TestTemplate", b =>
+            modelBuilder.Entity("TestingApi.Models.TestTemplate.QuestionTemplate", b =>
+                {
+                    b.Navigation("AnswerTemplates");
+                });
+
+            modelBuilder.Entity("TestingApi.Models.TestTemplate.QuestionsPoolTemplate", b =>
+                {
+                    b.Navigation("QuestionsTemplates");
+                });
+
+            modelBuilder.Entity("TestingApi.Models.TestTemplate.TestTemplate", b =>
                 {
                     b.Navigation("QuestionsPoolTemplates");
                 });

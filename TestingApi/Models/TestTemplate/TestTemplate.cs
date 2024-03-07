@@ -1,15 +1,12 @@
-﻿namespace TestingApi.Models;
-
+﻿namespace TestingApi.Models.TestTemplate;
 
 public class TestTemplate : BaseEntity
 {
-    public string? NameRestriction { get; set; } = null!;
+    public TestDifficulty? DefaultTestDifficulty { get; set; }
 
-    public TestDifficulty? TestDifficultyRestriction { get; set; }
+    public string? DefaultSubject { get; set; }
 
-    public string? SubjectRestriction { get; set; } = null!;
-
-    public int? DurationRestriction { get; set; }
+    public int? DefaultDuration { get; set; }
 
     public ICollection<QuestionsPoolTemplate> QuestionsPoolTemplates { get; set; } = null!;
 }

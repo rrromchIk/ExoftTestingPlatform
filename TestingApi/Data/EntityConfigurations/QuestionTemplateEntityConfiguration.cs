@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TestingApi.Models;
+using TestingApi.Models.TestTemplate;
 
 namespace TestingApi.Data.EntityConfigurations;
 
@@ -16,7 +17,6 @@ public class QuestionTemplateEntityConfiguration : BaseEntityConfiguration<Quest
             .HasForeignKey(a => a.QuestionTemplateId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Property(qt => qt.TextRestriction).IsRequired(false);
         builder.Property(qt => qt.MaxScoreRestriction).IsRequired(false);
     }
 }
