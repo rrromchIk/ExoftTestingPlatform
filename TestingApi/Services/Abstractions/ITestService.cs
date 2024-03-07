@@ -1,4 +1,5 @@
-﻿using TestingApi.Dto.TestDto;
+﻿using TestingApi.Dto;
+using TestingApi.Dto.TestDto;
 using TestingApi.Helpers;
 
 namespace TestingApi.Services.Abstractions;
@@ -11,6 +12,6 @@ public interface ITestService
     Task<TestWithQuestionsPoolResponseDto> CreateTestAsync(TestWithQuestionsPoolsDto testWithQuestionsPoolsDto, CancellationToken cancellationToken = default);
     Task UpdateTestAsync(Guid id, TestDto testDto, CancellationToken cancellationToken = default);
     Task DeleteTestAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<PagedList<TestResponseDto>> GetAllTestsAsync(TestFiltersDto testFiltersDto,
+    Task<PagedList<TestResponseDto>> GetAllTestsAsync(FiltersDto filtersDto,
         CancellationToken cancellationToken = default);
 }

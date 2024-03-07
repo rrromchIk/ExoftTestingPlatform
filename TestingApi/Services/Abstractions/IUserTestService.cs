@@ -1,4 +1,4 @@
-﻿using TestingApi.Dto.TestDto;
+﻿using TestingApi.Dto;
 using TestingApi.Dto.UserTestDto;
 using TestingApi.Helpers;
 
@@ -8,9 +8,9 @@ public interface IUserTestService
 {
     Task<UserTestResponseDto?> GetUserTestAsync(Guid userId, Guid testId, CancellationToken cancellationToken = default);
 
-    Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(TestFiltersDto testFiltersDto, Guid userId,
+    Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(FiltersDto filtersDto, Guid userId,
         CancellationToken cancellationToken = default);
-    Task<PagedList<StartedTestResponseDto>> GetAllStartedTestsForUserAsync(TestFiltersDto testFiltersDto,
+    Task<PagedList<StartedTestResponseDto>> GetAllStartedTestsForUserAsync(FiltersDto filtersDto,
         Guid userId, CancellationToken cancellationToken = default);
 
     Task<ICollection<TestPassingQuestionsPoolResponseDto>> GetQuestionsForUserTest(Guid userId, Guid testId,

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using TestingApi.Dto.TestDto;
+using TestingApi.Dto;
 using TestingApi.Dto.UserTestDto;
 using TestingApi.Helpers;
 using TestingApi.Services.Abstractions;
@@ -43,14 +43,14 @@ public class UserTestsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestToPassResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllTestsForUser(
-        [FromQuery] TestFiltersDto testFiltersDto,
+        [FromQuery] FiltersDto filtersDto,
         [FromRoute] Guid userId,
         CancellationToken cancellationToken) {
         if (!await _userService.UserExistsAsync(userId, cancellationToken))
             return NotFound();
 
         var response = await _userTestService
-            .GetAllTestsForUserAsync(testFiltersDto, userId, cancellationToken);
+            .GetAllTestsForUserAsync(filtersDto, userId, cancellationToken);
 
         if (response.Items.IsNullOrEmpty())
             return NotFound();
@@ -81,14 +81,14 @@ public class UserTestsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<StartedTestResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllStartedTestsForUserAsync(
-        [FromQuery] TestFiltersDto testFiltersDto,
+        [FromQuery] FiltersDto filtersDto,
         [FromRoute] Guid userId,
         CancellationToken cancellationToken) {
         if (!await _userService.UserExistsAsync(userId, cancellationToken))
             return NotFound();
 
         var response = await _userTestService
-            .GetAllStartedTestsForUserAsync(testFiltersDto, userId, cancellationToken);
+            .GetAllStartedTestsForUserAsync(filtersDto, userId, cancellationToken);
         
         if (response.Items.IsNullOrEmpty())
             return NotFound();

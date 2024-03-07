@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Data;
+using TestingApi.Dto;
 using TestingApi.Dto.TestDto;
 using TestingAPI.Exceptions;
 using TestingApi.Helpers;
@@ -118,28 +119,28 @@ public class TestService : ITestService
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<PagedList<TestResponseDto>> GetAllTestsAsync(TestFiltersDto testFiltersDto,
+    public async Task<PagedList<TestResponseDto>> GetAllTestsAsync(FiltersDto filtersDto,
         CancellationToken cancellationToken = default)
     {
         IQueryable<Test> testsQuery = _dataContext.Tests;
 
-        if (!string.IsNullOrWhiteSpace(testFiltersDto.SearchTerm))
+        if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
         {
             testsQuery = testsQuery.Where(
                 t =>
-                    t.Name.Contains(testFiltersDto.SearchTerm) ||
-                    t.Subject.Contains(testFiltersDto.SearchTerm)
+                    t.Name.Contains(filtersDto.SearchTerm) ||
+                    t.Subject.Contains(filtersDto.SearchTerm)
             );
         }
 
-        testsQuery = testFiltersDto.SortOrder?.ToLower() == "desc"
-            ? testsQuery.OrderByDescending(GetSortProperty(testFiltersDto.SortColumn))
-            : testsQuery.OrderBy(GetSortProperty(testFiltersDto.SortColumn));
+        testsQuery = filtersDto.SortOrder?.ToLower() == "desc"
+            ? testsQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn))
+            : testsQuery.OrderBy(GetSortProperty(filtersDto.SortColumn));
 
         var tests = await PagedList<Test>.CreateAsync(
             testsQuery,
-            testFiltersDto.Page,
-            testFiltersDto.PageSize,
+            filtersDto.Page,
+            filtersDto.PageSize,
             cancellationToken
         );
 

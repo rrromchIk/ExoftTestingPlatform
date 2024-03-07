@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using TestingApi.Dto;
 using TestingApi.Dto.TestDto;
 using TestingApi.Helpers;
 using TestingApi.Services.Abstractions;
@@ -23,19 +24,19 @@ public class TestsController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestResponseDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
-    public async Task<IActionResult> GetAllTests([FromQuery] TestFiltersDto testFiltersDto,
+    public async Task<IActionResult> GetAllTests([FromQuery] FiltersDto filtersDto,
         CancellationToken cancellationToken)
     {
         _logger.LogInformation(
             "{dt}. Getting all tests. Filters applied: {f}",
             DateTime.Now.ToString(),
-            JsonSerializer.Serialize(testFiltersDto)
+            JsonSerializer.Serialize(filtersDto)
         );
 
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var response = await _testService.GetAllTestsAsync(testFiltersDto, cancellationToken);
+        var response = await _testService.GetAllTestsAsync(filtersDto, cancellationToken);
 
         if (response.Items.IsNullOrEmpty())
             return NotFound();

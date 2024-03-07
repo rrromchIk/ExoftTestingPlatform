@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using TestingApi.Dto;
 using TestingApi.Dto.UserDto;
 using TestingApi.Helpers;
 using TestingApi.Services.Abstractions; 
@@ -25,14 +26,14 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<UserResponseDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> GetAllUsers(
-        [FromQuery] UserFiltersDto userFiltersDto,
+        [FromQuery] FiltersDto filtersDto,
         CancellationToken cancellationToken
     )
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         
-        var response = await _userService.GetAllUsersAsync(userFiltersDto, cancellationToken);
+        var response = await _userService.GetAllUsersAsync(filtersDto, cancellationToken);
 
         if (response.Items.IsNullOrEmpty())
             return NotFound();

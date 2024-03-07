@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TestingApi.Dto.TestDto;
-public class TestFiltersDto
+namespace TestingApi.Dto;
+
+public class FiltersDto
 {
     public string? SearchTerm { get; set; }
     public string? SortColumn { get; set; }

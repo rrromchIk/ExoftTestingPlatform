@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
+using TestingApi.Dto;
 using TestingApi.Dto.TestDto;
 using TestingApi.Dto.UserTestDto;
 using TestingApi.Helpers;
@@ -32,7 +33,7 @@ public class UserTestService : IUserTestService
         return _mapper.Map<UserTestResponseDto>(userTestFounded);
     }
 
-    public async Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(TestFiltersDto testFiltersDto,
+    public async Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(FiltersDto filtersDto,
         Guid userId, CancellationToken cancellationToken = default)
     {
         var testsQuery = _dataContext.Tests
@@ -54,28 +55,28 @@ public class UserTestService : IUserTestService
                 }
             );
 
-        if (!string.IsNullOrWhiteSpace(testFiltersDto.SearchTerm))
+        if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
         {
             testsQuery = testsQuery.Where(
                 t =>
-                    t.Name.Contains(testFiltersDto.SearchTerm) ||
-                    t.Subject.Contains(testFiltersDto.SearchTerm)
+                    t.Name.Contains(filtersDto.SearchTerm) ||
+                    t.Subject.Contains(filtersDto.SearchTerm)
             );
         }
 
-        testsQuery = testFiltersDto.SortOrder?.ToLower() == "desc"
-            ? testsQuery.OrderByDescending(GetSortPropertyForTestToPass(testFiltersDto.SortColumn))
-            : testsQuery.OrderBy(GetSortPropertyForTestToPass(testFiltersDto.SortColumn));
+        testsQuery = filtersDto.SortOrder?.ToLower() == "desc"
+            ? testsQuery.OrderByDescending(GetSortPropertyForTestToPass(filtersDto.SortColumn))
+            : testsQuery.OrderBy(GetSortPropertyForTestToPass(filtersDto.SortColumn));
 
         return await PagedList<TestToPassResponseDto>.CreateAsync(
             testsQuery,
-            testFiltersDto.Page,
-            testFiltersDto.PageSize,
+            filtersDto.Page,
+            filtersDto.PageSize,
             cancellationToken
         );
     }
 
-    public async Task<PagedList<StartedTestResponseDto>> GetAllStartedTestsForUserAsync(TestFiltersDto testFiltersDto,
+    public async Task<PagedList<StartedTestResponseDto>> GetAllStartedTestsForUserAsync(FiltersDto filtersDto,
         Guid userId, CancellationToken cancellationToken = default)
     {
         var testsQuery = _dataContext.UserTests
@@ -100,23 +101,23 @@ public class UserTestService : IUserTestService
                 }
             );
 
-        if (!string.IsNullOrWhiteSpace(testFiltersDto.SearchTerm))
+        if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
         {
             testsQuery = testsQuery.Where(
                 t =>
-                    t.Test.Name.Contains(testFiltersDto.SearchTerm) ||
-                    t.Test.Subject.Contains(testFiltersDto.SearchTerm)
+                    t.Test.Name.Contains(filtersDto.SearchTerm) ||
+                    t.Test.Subject.Contains(filtersDto.SearchTerm)
             );
         }
 
-        testsQuery = testFiltersDto.SortOrder?.ToLower() == "desc"
-            ? testsQuery.OrderByDescending(GetSortPropertyForStartedTest(testFiltersDto.SortColumn))
-            : testsQuery.OrderBy(GetSortPropertyForStartedTest(testFiltersDto.SortColumn));
+        testsQuery = filtersDto.SortOrder?.ToLower() == "desc"
+            ? testsQuery.OrderByDescending(GetSortPropertyForStartedTest(filtersDto.SortColumn))
+            : testsQuery.OrderBy(GetSortPropertyForStartedTest(filtersDto.SortColumn));
 
         return await PagedList<StartedTestResponseDto>.CreateAsync(
             testsQuery,
-            testFiltersDto.Page,
-            testFiltersDto.PageSize,
+            filtersDto.Page,
+            filtersDto.PageSize,
             cancellationToken
         );
     }
@@ -257,7 +258,7 @@ public class UserTestService : IUserTestService
         {
             "name" => t => t.Name,
             "subject" => t => t.Subject,
-            "difficulty" => t => t.Difficulty,
+            "difficulty" => t =>Enum.Parse(typeof(TestDifficulty), t.Difficulty, true),
             "duration" => t => t.Duration,
             "creationTime" => t => t.CreatedTimestamp,
             _ => t => t.Id

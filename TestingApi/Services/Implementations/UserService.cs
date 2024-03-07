@@ -2,6 +2,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
+using TestingApi.Dto;
 using TestingApi.Dto.UserDto;
 using TestingAPI.Exceptions;
 using TestingApi.Helpers;
@@ -23,29 +24,29 @@ public class UserService : IUserService
         _logger = logger;
     }
 
-    public async Task<PagedList<UserResponseDto>> GetAllUsersAsync(UserFiltersDto userFiltersDto,
+    public async Task<PagedList<UserResponseDto>> GetAllUsersAsync(FiltersDto filtersDto,
         CancellationToken cancellationToken = default)
     {
         IQueryable<User> usersQuery = _dataContext.Users;
 
-        if (!string.IsNullOrWhiteSpace(userFiltersDto.SearchTerm))
+        if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
         {
             usersQuery = usersQuery.Where(
                 u =>
-                    u.Name.Contains(userFiltersDto.SearchTerm) ||
-                    u.Surname.Contains(userFiltersDto.SearchTerm) ||
-                    u.Email.Contains(userFiltersDto.SearchTerm)
+                    u.Name.Contains(filtersDto.SearchTerm) ||
+                    u.Surname.Contains(filtersDto.SearchTerm) ||
+                    u.Email.Contains(filtersDto.SearchTerm)
             );
         }
 
-        usersQuery = userFiltersDto.SortOrder?.ToLower() == "desc"
-            ? usersQuery.OrderByDescending(GetSortProperty(userFiltersDto.SortColumn))
-            : usersQuery.OrderBy(GetSortProperty(userFiltersDto.SortColumn));
+        usersQuery = filtersDto.SortOrder?.ToLower() == "desc"
+            ? usersQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn))
+            : usersQuery.OrderBy(GetSortProperty(filtersDto.SortColumn));
 
         var tests = await PagedList<User>.CreateAsync(
             usersQuery,
-            userFiltersDto.Page,
-            userFiltersDto.PageSize,
+            filtersDto.Page,
+            filtersDto.PageSize,
             cancellationToken
         );
 

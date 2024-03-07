@@ -1,11 +1,12 @@
-﻿using TestingApi.Dto.UserDto;
+﻿using TestingApi.Dto;
+using TestingApi.Dto.UserDto;
 using TestingApi.Helpers;
 
 namespace TestingApi.Services.Abstractions;
 
 public interface IUserService
 {
-    Task<PagedList<UserResponseDto>> GetAllUsersAsync(UserFiltersDto userFiltersDto,
+    Task<PagedList<UserResponseDto>> GetAllUsersAsync(FiltersDto filtersDto,
         CancellationToken cancellationToken = default);
     Task<UserResponseDto?> GetUserByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<bool> UserExistsAsync(Guid id, CancellationToken cancellationToken = default);
