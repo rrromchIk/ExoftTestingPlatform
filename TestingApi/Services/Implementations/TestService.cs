@@ -147,6 +147,15 @@ public class TestService : ITestService
         return _mapper.Map<PagedList<TestResponseDto>>(tests);
     }
 
+    public async Task UpdateIsPublishedAsync(Guid id, bool isPublished, CancellationToken cancellationToken = default)
+    {
+        var testToPublish = await _dataContext.Tests.FirstAsync(t => t.Id == id, cancellationToken);
+
+        testToPublish.IsPublished = isPublished;
+        
+        await _dataContext.SaveChangesAsync(cancellationToken);
+    }
+
     private static Expression<Func<Test, object>> GetSortProperty(string? sortColumn)
     {
         return sortColumn?.ToLower() switch

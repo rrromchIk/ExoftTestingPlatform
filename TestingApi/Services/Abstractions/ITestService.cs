@@ -14,4 +14,6 @@ public interface ITestService
     Task DeleteTestAsync(Guid id, CancellationToken cancellationToken = default);
     Task<PagedList<TestResponseDto>> GetAllTestsAsync(FiltersDto filtersDto,
         CancellationToken cancellationToken = default);
+
+    Task UpdateIsPublishedAsync(Guid id, bool isPublished, CancellationToken cancellationToken = default);
 }

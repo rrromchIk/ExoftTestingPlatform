@@ -128,6 +128,21 @@ public class TestsController : ControllerBase
         return NoContent();
     }
 
+    [HttpPatch("{id:guid}")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> UpdatePublishedStatusForTest(
+        [FromRoute] Guid id,
+        [FromQuery] bool isPublished,
+        CancellationToken cancellationToken)
+    {
+        if (!await _testService.TestExistsAsync(id, cancellationToken))
+            return NotFound();
+        
+        await _testService.UpdateIsPublishedAsync(id, isPublished, cancellationToken);
+        return NoContent();
+    }
+    
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

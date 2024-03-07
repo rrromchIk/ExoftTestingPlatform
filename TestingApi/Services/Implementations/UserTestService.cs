@@ -37,6 +37,7 @@ public class UserTestService : IUserTestService
         Guid userId, CancellationToken cancellationToken = default)
     {
         IQueryable<Test> testsQuery = _dataContext.Tests
+            .Where(t => t.IsPublished)
             .Include(t => t.UserTests);
         
         if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
