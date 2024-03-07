@@ -10,6 +10,8 @@ public class UserEntityConfiguration : BaseEntityConfiguration<User>
     {
         base.Configure(builder);
 
+        builder.Property(u => u.ProfilePictureFilePath).IsRequired(false);
+
         builder
             .HasIndex(u => u.Email)
             .IsUnique();
