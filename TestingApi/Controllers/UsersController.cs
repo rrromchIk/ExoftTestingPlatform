@@ -101,8 +101,9 @@ public class UsersController : ControllerBase
         if (profilePicture.Length <= 0)
             return BadRequest();
         
-        await _fileService.RemoveFilesIfExistsAsync(name: id.ToString(), cancellationToken);
-        var filePath = await _fileService.StoreFileAsync(profilePicture, id.ToString(), cancellationToken);
+        await _fileService.RemoveFilesByNameIfExistsAsync(fileName: id.ToString(), cancellationToken);
+        var filePath = await _fileService.StoreFileAsync(profilePicture,
+            fileName: id.ToString(), cancellationToken);
 
         await _userService.UpdateUserAvatarAsync(id, filePath, cancellationToken);
         

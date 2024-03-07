@@ -13,12 +13,12 @@ public class FileService : IFileService
     {
         _configuration = configuration;
     }
-    public async Task RemoveFilesIfExistsAsync(string name, CancellationToken cancellationToken = default)
+    public async Task RemoveFilesByNameIfExistsAsync(string fileName, CancellationToken cancellationToken = default)
     {
         var folderName = _configuration["FileStorage:FolderPath"];
         var pathToRemoveFiles = Path.Combine(Directory.GetCurrentDirectory(), folderName);
 
-        var filesToDelete = Directory.GetFiles(pathToRemoveFiles, name + ".*");
+        var filesToDelete = Directory.GetFiles(pathToRemoveFiles, fileName + ".*");
         var deleteTasks = filesToDelete
             .Select(
                 fileToDelete => Task.Run(
