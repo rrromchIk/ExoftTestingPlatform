@@ -79,6 +79,7 @@ public class UserTestService : IUserTestService
         Guid userId, CancellationToken cancellationToken = default)
     {
         var testsQuery = _dataContext.UserTests
+            .Where(ut => ut.UserId == userId)
             .Include(ut => ut.Test)
             .Select(
                 ut => new StartedTestResponseDto
