@@ -36,8 +36,23 @@ public class UserTestService : IUserTestService
     public async Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(FiltersDto filtersDto,
         Guid userId, CancellationToken cancellationToken = default)
     {
-        var testsQuery = _dataContext.Tests
-            .Include(t => t.UserTests)
+        IQueryable<Test> testsQuery = _dataContext.Tests
+            .Include(t => t.UserTests);
+        
+        if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
+        {
+            testsQuery = testsQuery.Where(
+                t =>
+                    t.Name.Contains(filtersDto.SearchTerm) ||
+                    t.Subject.Contains(filtersDto.SearchTerm)
+            );
+        }
+
+        testsQuery = filtersDto.SortOrder?.ToLower() == "desc"
+            ? testsQuery.OrderByDescending(GetSortPropertyForTestToPass(filtersDto.SortColumn))
+            : testsQuery.OrderBy(GetSortPropertyForTestToPass(filtersDto.SortColumn));
+        
+        var testsToPassQuery = testsQuery
             .Select(
                 t => new TestToPassResponseDto
                 {
@@ -55,21 +70,8 @@ public class UserTestService : IUserTestService
                 }
             );
 
-        if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
-        {
-            testsQuery = testsQuery.Where(
-                t =>
-                    t.Name.Contains(filtersDto.SearchTerm) ||
-                    t.Subject.Contains(filtersDto.SearchTerm)
-            );
-        }
-
-        testsQuery = filtersDto.SortOrder?.ToLower() == "desc"
-            ? testsQuery.OrderByDescending(GetSortPropertyForTestToPass(filtersDto.SortColumn))
-            : testsQuery.OrderBy(GetSortPropertyForTestToPass(filtersDto.SortColumn));
-
         return await PagedList<TestToPassResponseDto>.CreateAsync(
-            testsQuery,
+            testsToPassQuery,
             filtersDto.Page,
             filtersDto.PageSize,
             cancellationToken
@@ -80,27 +82,9 @@ public class UserTestService : IUserTestService
         Guid userId, CancellationToken cancellationToken = default)
     {
         var testsQuery = _dataContext.UserTests
-            .Where(ut => ut.UserId == userId)
             .Include(ut => ut.Test)
-            .Select(
-                ut => new StartedTestResponseDto
-                {
-                    TotalScore = ut.TotalScore,
-                    UserScore = ut.UserScore,
-                    StartingTime = ut.StartingTime,
-                    EndingTime = ut.EndingTime,
-                    UserTestStatus = ut.UserTestStatus.ToString(),
-                    Test = new TestResponseDto()
-                    {
-                        Name = ut.Test.Name,
-                        Subject = ut.Test.Subject,
-                        Duration = ut.Test.Duration,
-                        IsPublished = ut.Test.IsPublished,
-                        Difficulty = ut.Test.Difficulty.ToString(),
-                    }
-                }
-            );
-
+            .Where(ut => ut.UserId == userId);
+        
         if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
         {
             testsQuery = testsQuery.Where(
@@ -114,8 +98,29 @@ public class UserTestService : IUserTestService
             ? testsQuery.OrderByDescending(GetSortPropertyForStartedTest(filtersDto.SortColumn))
             : testsQuery.OrderBy(GetSortPropertyForStartedTest(filtersDto.SortColumn));
 
+        var startedTestQuery = testsQuery
+            .Select(
+                ut => new StartedTestResponseDto
+                {
+                    TotalScore = ut.TotalScore,
+                    UserScore = ut.UserScore,
+                    StartingTime = ut.StartingTime,
+                    EndingTime = ut.EndingTime,
+                    UserTestStatus = ut.UserTestStatus.ToString(),
+                    Test = new TestResponseDto()
+                    {
+                        Id = ut.Test.Id,
+                        Name = ut.Test.Name,
+                        Subject = ut.Test.Subject,
+                        Duration = ut.Test.Duration,
+                        IsPublished = ut.Test.IsPublished,
+                        Difficulty = ut.Test.Difficulty.ToString(),
+                    }
+                }
+            );
+
         return await PagedList<StartedTestResponseDto>.CreateAsync(
-            testsQuery,
+            startedTestQuery,
             filtersDto.Page,
             filtersDto.PageSize,
             cancellationToken
@@ -141,7 +146,7 @@ public class UserTestService : IUserTestService
                                 QuestionId = q.Id,
                                 IsAnswered = _dataContext.UserAnswers
                                     .Any(
-                                        ua => ua.UserId == userId && 
+                                        ua => ua.UserId == userId &&
                                               ua.QuestionId == q.Id
                                     )
                             }
@@ -252,30 +257,30 @@ public class UserTestService : IUserTestService
         return userScore;
     }
 
-    private static Expression<Func<TestToPassResponseDto, object>> GetSortPropertyForTestToPass(string? sortColumn)
+    private static Expression<Func<Test, object>> GetSortPropertyForTestToPass(string? sortColumn)
     {
         return sortColumn?.ToLower() switch
         {
             "name" => t => t.Name,
             "subject" => t => t.Subject,
-            "difficulty" => t =>Enum.Parse(typeof(TestDifficulty), t.Difficulty, true),
+            "difficulty" => t => t.Difficulty,
             "duration" => t => t.Duration,
             "creationTime" => t => t.CreatedTimestamp,
             _ => t => t.Id
         };
     }
 
-    private static Expression<Func<StartedTestResponseDto, object>> GetSortPropertyForStartedTest(string? sortColumn)
+    private static Expression<Func<UserTest, object>> GetSortPropertyForStartedTest(string? sortColumn)
     {
         return sortColumn?.ToLower() switch
         {
-            "name" => t => t.Test.Name,
-            "subject" => t => t.Test.Subject,
-            "difficulty" => t => t.Test.Difficulty,
-            "duration" => t => t.Test.Duration,
-            "startingTime" => t => t.StartingTime,
-            "endingTime" => t => t.EndingTime,
-            _ => t => t.Test.Name
+            "name" => ut => ut.Test.Name,
+            "subject" => ut => ut.Test.Subject,
+            "difficulty" => ut => ut.Test.Difficulty,
+            "duration" => ut => ut.Test.Duration,
+            "startingTime" => ut => ut.StartingTime,
+            "endingTime" => ut => ut.EndingTime,
+            _ => ut => ut.Test.Name
         };
     }
 }
