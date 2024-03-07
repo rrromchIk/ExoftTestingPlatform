@@ -33,8 +33,7 @@ public class UserTestService : IUserTestService
     }
 
     public async Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(TestFiltersDto testFiltersDto,
-        Guid userId,
-        CancellationToken cancellationToken = default)
+        Guid userId, CancellationToken cancellationToken = default)
     {
         var testsQuery = _dataContext.Tests
             .Include(t => t.UserTests)
@@ -234,15 +233,16 @@ public class UserTestService : IUserTestService
                     UserWrongAnswersCount = userAnswersGroup.Count(userAnswers => userAnswers.UserAnsweredWrong)
                 }
             );
-        
+
         var userScore = await userAnswersDetailsQuery
             .Where(res => (res.UserCorrectAnswersCount - res.UserWrongAnswersCount) > 0)
             .SumAsync(
-                res => 
-                    (res.UserCorrectAnswersCount - res.UserWrongAnswersCount) * res.MaxScore / res.TotalCorrectAnswersCount,
+                res =>
+                    (res.UserCorrectAnswersCount - res.UserWrongAnswersCount) * res.MaxScore /
+                    res.TotalCorrectAnswersCount,
                 cancellationToken
             );
-        
+
         return userScore;
     }
 
