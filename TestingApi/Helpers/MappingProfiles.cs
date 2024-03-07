@@ -34,6 +34,13 @@ public class MappingProfiles : Profile
                 opt => opt
                     .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.Difficulty, true))
             );
+        
+        CreateMap<TestDto, Test>()
+            .ForMember(
+                dest => dest.Difficulty,
+                opt => opt
+                    .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.Difficulty, true))
+            );
 
         CreateMap<PagedList<Test>, PagedList<TestResponseDto>>()
             .ConvertUsing(
