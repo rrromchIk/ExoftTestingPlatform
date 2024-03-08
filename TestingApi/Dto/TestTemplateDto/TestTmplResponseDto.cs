@@ -2,7 +2,7 @@
 
 namespace TestingApi.Dto.TestTemplateDto;
 
-public class TestTemplateResponseDto : BaseResponseDto
+public class TestTmplResponseDto : BaseResponseDto
 {
     public string TemplateName { get; set; } = null!;
     public string? DefaultTestDifficulty { get; set; }

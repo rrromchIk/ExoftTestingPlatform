@@ -8,37 +8,37 @@ using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Services.Implementations;
 
-public class QuestionsPoolTemplateService : IQuestionsPoolTemplateService
+public class QuestionsPoolTmplService : IQuestionsPoolTmplService
 {
     private readonly DataContext _dataContext;
     private readonly IMapper _mapper;
-    private readonly ILogger<QuestionsPoolTemplateService> _logger;
+    private readonly ILogger<QuestionsPoolTmplService> _logger;
 
-    public QuestionsPoolTemplateService(DataContext dataContext, ILogger<QuestionsPoolTemplateService> logger, IMapper mapper)
+    public QuestionsPoolTmplService(DataContext dataContext, ILogger<QuestionsPoolTmplService> logger, IMapper mapper)
     {
         _dataContext = dataContext;
         _mapper = mapper;
         _logger = logger;
     }
     
-    public async Task<QuestionsPoolTemplateResponseDto?> GetQuestionPoolTemplateByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<QuestionsPoolTmplResponseDto?> GetQuestionPoolTmplByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var questionsPoolTemplate = await _dataContext.QuestionsPoolTemplates
             .FirstOrDefaultAsync(qp => qp.Id == id, cancellationToken);
 
-        return _mapper.Map<QuestionsPoolTemplateResponseDto>(questionsPoolTemplate);
+        return _mapper.Map<QuestionsPoolTmplResponseDto>(questionsPoolTemplate);
     }
 
-    public async Task<bool> QuestionsPoolTemplateExistsAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<bool> QuestionsPoolTmplExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dataContext.QuestionsPoolTemplates
             .AnyAsync(qp => qp.Id == id, cancellationToken);
     }
 
-    public async Task<QuestionsPoolTemplateResponseDto> CreateQuestionsPoolTemplateAsync(Guid testTemplateId,
-        QuestionsPoolTemplateDto questionsPoolTemplateDto, CancellationToken cancellationToken = default)
+    public async Task<QuestionsPoolTmplResponseDto> CreateQuestionsPoolTmplAsync(Guid testTemplateId,
+        QuestionsPoolTmplDto questionsPoolTmplDto, CancellationToken cancellationToken = default)
     {
-        var questionsPoolTemplateToAdd = _mapper.Map<QuestionsPoolTemplate>(questionsPoolTemplateDto);
+        var questionsPoolTemplateToAdd = _mapper.Map<QuestionsPoolTemplate>(questionsPoolTmplDto);
         questionsPoolTemplateToAdd.TestTemplateId = testTemplateId;
 
         var collision = await _dataContext.QuestionsPoolTemplates
@@ -60,15 +60,15 @@ public class QuestionsPoolTemplateService : IQuestionsPoolTemplateService
 
         await _dataContext.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<QuestionsPoolTemplateResponseDto>(createdQuestionsPoolTemplate.Entity);
+        return _mapper.Map<QuestionsPoolTmplResponseDto>(createdQuestionsPoolTemplate.Entity);
     }
 
-    public async Task UpdateQuestionsPoolTemplateAsync(Guid id, QuestionsPoolTemplateDto questionsPoolTemplateDto,
+    public async Task UpdateQuestionsPoolTmplAsync(Guid id, QuestionsPoolTmplDto questionsPoolTmplDto,
         CancellationToken cancellationToken = default)
     {
         var questionsPoolTemplateFounded = await _dataContext.QuestionsPoolTemplates
             .FirstAsync(qp => qp.Id == id, cancellationToken);
-        var updatedQuestionsPoolTemplate = _mapper.Map<QuestionsPoolTemplate>(questionsPoolTemplateDto);
+        var updatedQuestionsPoolTemplate = _mapper.Map<QuestionsPoolTemplate>(questionsPoolTmplDto);
         
         var collision = await _dataContext.QuestionsPoolTemplates
             .Where(qp => qp.DefaultName != null)
@@ -94,7 +94,7 @@ public class QuestionsPoolTemplateService : IQuestionsPoolTemplateService
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteQuestionsPoolTemplateAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteQuestionsPoolTmplAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var questionsPoolTemplateToDelete = await _dataContext.QuestionsPoolTemplates
             .FirstAsync(qp => qp.Id == id, cancellationToken);

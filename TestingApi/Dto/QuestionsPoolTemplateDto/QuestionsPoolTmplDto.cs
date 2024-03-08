@@ -2,7 +2,7 @@
 
 namespace TestingApi.Dto.QuestionsPoolTemplateDto;
 
-public class QuestionsPoolTemplateDto
+public class QuestionsPoolTmplDto
 {
     public string? DefaultName { get; set; }
     

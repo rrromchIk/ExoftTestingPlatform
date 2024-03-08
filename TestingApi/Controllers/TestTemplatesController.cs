@@ -13,17 +13,17 @@ namespace TestingApi.Controllers;
 [Route("api/tests/templates")]
 public class TestTemplatesController : ControllerBase
 {
-    private readonly ITestTemplateService _testTemplateService;
+    private readonly ITestTmplService _testTmplService;
     private readonly ILogger<TestTemplatesController> _logger;
 
-    public TestTemplatesController(ILogger<TestTemplatesController> logger, ITestTemplateService testTemplateService)
+    public TestTemplatesController(ILogger<TestTemplatesController> logger, ITestTmplService testTmplService)
     {
-        _testTemplateService = testTemplateService;
+        _testTmplService = testTmplService;
         _logger = logger;
     }
     
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestTemplateResponseDto>))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestTmplResponseDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> GetAllTestTemplates([FromQuery] FiltersDto filtersDto,
         CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ public class TestTemplatesController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var response = await _testTemplateService.GetAllTestsTemplatesAsync(filtersDto, cancellationToken);
+        var response = await _testTmplService.GetAllTestsTmplsAsync(filtersDto, cancellationToken);
 
         if (response.Items.IsNullOrEmpty())
             return NotFound();
@@ -40,11 +40,11 @@ public class TestTemplatesController : ControllerBase
     }
     
     [HttpGet("{id:guid}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestTemplateResponseDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestTmplResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTestTemplateById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var response = await _testTemplateService.GetTestTemplateByIdAsync(id, cancellationToken);
+        var response = await _testTmplService.GetTestTmplByIdAsync(id, cancellationToken);
 
         if (response == null) 
             return NotFound();
@@ -53,11 +53,11 @@ public class TestTemplatesController : ControllerBase
     }
     
     [HttpGet("{id:guid}/questions-pools/templates")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestTemplateWithQpTemplatesResponseDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestTmplWithQpTmplsResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTestTemplateWithQpTemplatesById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var response = await _testTemplateService.GetTestTemplateWithQuestionsPoolsTemplatesByIdAsync(id, cancellationToken);
+        var response = await _testTmplService.GetTestTmplWithQuestionsPoolsTmplByIdAsync(id, cancellationToken);
 
         if (response == null) 
             return NotFound();
@@ -67,17 +67,17 @@ public class TestTemplatesController : ControllerBase
     
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TestTemplateWithQpTemplatesResponseDto))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TestTmplWithQpTmplsResponseDto))]
     public async Task<IActionResult> CreateTestTemplate(
-        [FromBody] TestTemplateWithQpTemplateDto testTemplateWithQpTemplateDto,
+        [FromBody] TestTmplWithQuestionsPoolTmplDto testTmplWithQuestionsPoolTmplDto,
         CancellationToken cancellationToken)
     {
         
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
         
-        var response = await _testTemplateService.CreateTestTemplateAsync(
-            testTemplateWithQpTemplateDto, cancellationToken);
+        var response = await _testTmplService.CreateTestTmplAsync(
+            testTmplWithQuestionsPoolTmplDto, cancellationToken);
 
         return CreatedAtAction(nameof(GetTestTemplateWithQpTemplatesById), new { id = response.Id }, response);
     }
@@ -88,16 +88,16 @@ public class TestTemplatesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> UpdateTest(
         [FromRoute] Guid id,
-        [FromBody] TestTemplateDto testTemplateDto,
+        [FromBody] TestTmplDto testTmplDto,
         CancellationToken cancellationToken)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        if (!await _testTemplateService.TestTemplateExistsAsync(id, cancellationToken))
+        if (!await _testTmplService.TestTmplExistsAsync(id, cancellationToken))
             return NotFound();
 
-        await _testTemplateService.UpdateTestTemplateAsync(id, testTemplateDto, cancellationToken);
+        await _testTmplService.UpdateTestTmplAsync(id, testTmplDto, cancellationToken);
         return NoContent();
     }
 
@@ -107,10 +107,10 @@ public class TestTemplatesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteTestTemplate([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        if (!await _testTemplateService.TestTemplateExistsAsync(id, cancellationToken))
+        if (!await _testTmplService.TestTmplExistsAsync(id, cancellationToken))
             return NotFound(); 
 
-        await _testTemplateService.DeleteTestTemplateAsync(id, cancellationToken);
+        await _testTmplService.DeleteTestTmplAsync(id, cancellationToken);
         return NoContent();
     }
 }

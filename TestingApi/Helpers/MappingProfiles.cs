@@ -112,51 +112,51 @@ public class MappingProfiles : Profile
             );
         
         
-        CreateMap<TestTemplate, TestTemplateResponseDto>()
+        CreateMap<TestTemplate, TestTmplResponseDto>()
             .ForMember(
                 dest => dest.DefaultTestDifficulty,
                 opt => opt
                     .MapFrom(src => src.DefaultTestDifficulty.ToString())
             );
         
-        CreateMap<TestTemplate, TestTemplateWithQpTemplatesResponseDto>()
+        CreateMap<TestTemplate, TestTmplWithQpTmplsResponseDto>()
             .ForMember(
                 dest => dest.DefaultTestDifficulty,
                 opt => opt
                     .MapFrom(src => src.DefaultTestDifficulty.ToString())
             );
 
-        CreateMap<TestTemplateWithQpTemplateDto, TestTemplate>()
+        CreateMap<TestTmplWithQuestionsPoolTmplDto, TestTemplate>()
             .ForMember(
                 dest => dest.DefaultTestDifficulty,
                 opt => opt
                     .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.DefaultTestDifficulty, true))
             );
         
-        CreateMap<TestTemplateDto, TestTemplate>()
+        CreateMap<TestTmplDto, TestTemplate>()
             .ForMember(
                 dest => dest.DefaultTestDifficulty,
                 opt => opt
                     .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.DefaultTestDifficulty, true))
             );
 
-        CreateMap<PagedList<TestTemplate>, PagedList<TestTemplateResponseDto>>()
+        CreateMap<PagedList<TestTemplate>, PagedList<TestTmplResponseDto>>()
             .ConvertUsing(
                 (src, dest, context) =>
                 {
-                    var mappedItems = context.Mapper.Map<List<TestTemplateResponseDto>>(src.Items);
-                    return new PagedList<TestTemplateResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
+                    var mappedItems = context.Mapper.Map<List<TestTmplResponseDto>>(src.Items);
+                    return new PagedList<TestTmplResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
                 }
             );
         
-        CreateMap<QuestionsPoolTemplate, QuestionsPoolTemplateResponseDto>()
+        CreateMap<QuestionsPoolTemplate, QuestionsPoolTmplResponseDto>()
             .ForMember(
                 dest => dest.GenerationStrategyRestriction,
                 opt => opt
                     .MapFrom(src => src.GenerationStrategyRestriction.ToString())
             );
 
-        CreateMap<QuestionsPoolTemplateDto, QuestionsPoolTemplate>()
+        CreateMap<QuestionsPoolTmplDto, QuestionsPoolTemplate>()
             .ForMember(
                 dest => dest.GenerationStrategyRestriction,
                 opt => opt

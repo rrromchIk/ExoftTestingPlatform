@@ -12,45 +12,45 @@ using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Services.Implementations;
 
-public class TestTemplateService : ITestTemplateService
+public class TestTmplService : ITestTmplService
 {
     private readonly DataContext _dataContext;
     private readonly IMapper _mapper;
-    private readonly ILogger<TestTemplateService> _logger;
+    private readonly ILogger<TestTmplService> _logger;
 
-    public TestTemplateService(DataContext dataContext, ILogger<TestTemplateService> logger, IMapper mapper)
+    public TestTmplService(DataContext dataContext, ILogger<TestTmplService> logger, IMapper mapper)
     {
         _dataContext = dataContext;
         _mapper = mapper;
         _logger = logger;
     }
     
-    public async Task<TestTemplateResponseDto?> GetTestTemplateByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<TestTmplResponseDto?> GetTestTmplByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var testTemplate = await _dataContext.TestTemplates
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
 
-        return _mapper.Map<TestTemplateResponseDto>(testTemplate);
+        return _mapper.Map<TestTmplResponseDto>(testTemplate);
     }
 
-    public async Task<TestTemplateWithQpTemplatesResponseDto?> GetTestTemplateWithQuestionsPoolsTemplatesByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<TestTmplWithQpTmplsResponseDto?> GetTestTmplWithQuestionsPoolsTmplByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var testTemplate = await _dataContext.TestTemplates
             .AsNoTracking()
             .Include(t => t.QuestionsPoolTemplates)
             .FirstOrDefaultAsync(t => t.Id == id, cancellationToken);
 
-        return _mapper.Map<TestTemplateWithQpTemplatesResponseDto>(testTemplate);
+        return _mapper.Map<TestTmplWithQpTmplsResponseDto>(testTemplate);
     }
 
-    public async Task<bool> TestTemplateExistsAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<bool> TestTmplExistsAsync(Guid id, CancellationToken cancellationToken = default)
     {
         return await _dataContext.TestTemplates
             .AnyAsync(t => t.Id == id, cancellationToken);
     }
 
-    public async Task<TestTemplateWithQpTemplatesResponseDto> CreateTestTemplateAsync(TestTemplateWithQpTemplateDto testWithQuestionsPoolsDto,
+    public async Task<TestTmplWithQpTmplsResponseDto> CreateTestTmplAsync(TestTmplWithQuestionsPoolTmplDto testWithQuestionsPoolsDto,
         CancellationToken cancellationToken = default) 
     {
         var testTemplateToAdd = _mapper.Map<TestTemplate>(testWithQuestionsPoolsDto);
@@ -83,13 +83,13 @@ public class TestTemplateService : ITestTemplateService
 
         await _dataContext.SaveChangesAsync(cancellationToken);
 
-        return _mapper.Map<TestTemplateWithQpTemplatesResponseDto>(createdTestTemplate.Entity);
+        return _mapper.Map<TestTmplWithQpTmplsResponseDto>(createdTestTemplate.Entity);
     }
 
-    public async Task UpdateTestTemplateAsync(Guid id, TestTemplateDto testTemplateDto, CancellationToken cancellationToken = default)
+    public async Task UpdateTestTmplAsync(Guid id, TestTmplDto testTmplDto, CancellationToken cancellationToken = default)
     {
         var testTemplateFounded = await _dataContext.TestTemplates.FirstAsync(e => e.Id == id, cancellationToken);
-        var updatedTestTemplate = _mapper.Map<TestTemplate>(testTemplateDto);
+        var updatedTestTemplate = _mapper.Map<TestTemplate>(testTmplDto);
         
         var collision = await _dataContext.TestTemplates
             .AnyAsync(
@@ -110,7 +110,7 @@ public class TestTemplateService : ITestTemplateService
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task DeleteTestTemplateAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteTestTmplAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var testTemplateToDelete = await _dataContext.TestTemplates
             .FirstAsync(e => e.Id == id, cancellationToken);
@@ -119,7 +119,7 @@ public class TestTemplateService : ITestTemplateService
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<PagedList<TestTemplateResponseDto>> GetAllTestsTemplatesAsync(FiltersDto filtersDto, CancellationToken cancellationToken = default)
+    public async Task<PagedList<TestTmplResponseDto>> GetAllTestsTmplsAsync(FiltersDto filtersDto, CancellationToken cancellationToken = default)
     {
         IQueryable<TestTemplate> testTemplatesQuery = _dataContext.TestTemplates;
 
@@ -142,7 +142,7 @@ public class TestTemplateService : ITestTemplateService
             cancellationToken
         );
 
-        return _mapper.Map<PagedList<TestTemplateResponseDto>>(tests);    
+        return _mapper.Map<PagedList<TestTmplResponseDto>>(tests);    
     }
     
     private static Expression<Func<TestTemplate, object>> GetSortProperty(string? sortColumn)

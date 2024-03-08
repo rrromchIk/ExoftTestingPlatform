@@ -3,7 +3,7 @@ using TestingApi.Models;
 
 namespace TestingApi.Dto.TestTemplateDto;
 
-public class TestTemplateWithQpTemplatesResponseDto : BaseResponseDto
+public class TestTmplWithQpTmplsResponseDto : BaseResponseDto
 {
     public string TemplateName { get; set; } = null!;
     
@@ -13,6 +13,6 @@ public class TestTemplateWithQpTemplatesResponseDto : BaseResponseDto
 
     public int? DefaultDuration { get; set; }
     
-    public ICollection<QuestionsPoolTemplateResponseDto> QuestionsPoolTemplates { get; set; } = null!;
+    public ICollection<QuestionsPoolTmplResponseDto> QuestionsPoolTemplates { get; set; } = null!;
 
 }

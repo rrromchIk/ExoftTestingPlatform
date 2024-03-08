@@ -1,6 +1,6 @@
 ﻿namespace TestingApi.Dto.QuestionsPoolTemplateDto;
 
-public class QuestionsPoolTemplateResponseDto : BaseResponseDto
+public class QuestionsPoolTmplResponseDto : BaseResponseDto
 {
     public Guid TestTemplateId { get; set; }
     public string? DefaultName { get; set; }
