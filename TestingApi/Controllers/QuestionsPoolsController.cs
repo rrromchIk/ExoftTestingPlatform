@@ -6,7 +6,7 @@ using TestingApi.Services.Abstractions;
 namespace TestingApi.Controllers;
 
 [ApiController]
-[Route("api/tests/questions-pools")]
+[Route("api/tests/questions-pools/{id:guid}")]
 public class QuestionsPoolsController : ControllerBase
 {
     private readonly IQuestionsPoolService _questionsPoolService;
@@ -21,7 +21,7 @@ public class QuestionsPoolsController : ControllerBase
         _testService = testService;
     }
 
-    [HttpGet("{id:guid}")]
+    [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(QuestionsPoolResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetQuestionsPoolById([FromRoute] Guid id, CancellationToken cancellationToken)
@@ -43,6 +43,7 @@ public class QuestionsPoolsController : ControllerBase
     [HttpPost("/api/tests/{testId:guid}/questions-pools")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionsPoolResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> CreateQuestionsPool(
         [FromRoute] Guid testId,
         [FromBody] QuestionsPoolDto questionsPoolDto,
@@ -58,9 +59,7 @@ public class QuestionsPoolsController : ControllerBase
             return BadRequest(ModelState);
         
         if (!await _testService.TestExistsAsync(testId, cancellationToken))
-        {
             return NotFound();
-        }
         
         var response = await _questionsPoolService.CreateQuestionsPoolAsync(testId, questionsPoolDto,
             cancellationToken);
@@ -68,7 +67,7 @@ public class QuestionsPoolsController : ControllerBase
         return CreatedAtAction(nameof(GetQuestionsPoolById), new { id = response.Id }, response);
     }
     
-    [HttpPut("{id:guid}")]
+    [HttpPut]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -94,7 +93,7 @@ public class QuestionsPoolsController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("{id:guid}")]
+    [HttpDelete]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteQuestionsPool([FromRoute] Guid id, CancellationToken cancellationToken)
