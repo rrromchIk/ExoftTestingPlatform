@@ -17,6 +17,7 @@ public class QuestionTemplateEntityConfiguration : BaseEntityConfiguration<Quest
             .HasForeignKey(a => a.QuestionTemplateId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.Property(qt => qt.DefaultText).IsRequired(false);
         builder.Property(qt => qt.MaxScoreRestriction).IsRequired(false);
     }
 }

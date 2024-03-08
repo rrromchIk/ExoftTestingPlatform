@@ -188,6 +188,9 @@ namespace TestingApi.Migrations
                     b.Property<DateTime>("CreatedTimestamp")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("DefaultText")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("IsCorrectRestriction")
                         .HasColumnType("bit");
 
@@ -218,6 +221,9 @@ namespace TestingApi.Migrations
 
                     b.Property<DateTime>("CreatedTimestamp")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("DefaultText")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("MaxScoreRestriction")
                         .HasColumnType("int");

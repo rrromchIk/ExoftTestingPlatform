@@ -34,6 +34,7 @@ public class DataContext : DbContext
         modelBuilder.ApplyConfiguration(new TestTemplateEntityConfiguration());
         modelBuilder.ApplyConfiguration(new QuestionPoolTemplateEntityConfiguration());
         modelBuilder.ApplyConfiguration(new QuestionTemplateEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new AnswerTemplateEntityConfiguration());
         base.OnModelCreating(modelBuilder);
     }
 }
