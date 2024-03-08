@@ -2,11 +2,14 @@
 using TestingApi.Dto.AnswerDto;
 using TestingApi.Dto.QuestionDto;
 using TestingApi.Dto.QuestionsPoolDto;
+using TestingApi.Dto.QuestionsPoolTemplateDto;
 using TestingApi.Dto.TestDto;
+using TestingApi.Dto.TestTemplateDto;
 using TestingApi.Dto.UserAnswerDto;
 using TestingApi.Dto.UserDto;
 using TestingApi.Dto.UserTestDto;
 using TestingApi.Models;
+using TestingApi.Models.TestTemplate;
 
 namespace TestingApi.Helpers;
 
@@ -115,6 +118,60 @@ public class MappingProfiles : Profile
                 dest => dest.UserTestStatus,
                 opt => opt
                     .MapFrom(src => src.UserTestStatus.ToString())
+            );
+        
+        
+        CreateMap<TestTemplate, TestTemplateResponseDto>()
+            .ForMember(
+                dest => dest.DefaultTestDifficulty,
+                opt => opt
+                    .MapFrom(src => src.DefaultTestDifficulty.ToString())
+            );
+        
+        CreateMap<TestTemplate, TestTemplateWithQpTemplatesResponseDto>()
+            .ForMember(
+                dest => dest.DefaultTestDifficulty,
+                opt => opt
+                    .MapFrom(src => src.DefaultTestDifficulty.ToString())
+            );
+
+        CreateMap<TestTemplateWithQpTemplateDto, TestTemplate>()
+            .ForMember(
+                dest => dest.DefaultTestDifficulty,
+                opt => opt
+                    .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.DefaultTestDifficulty, true))
+            );
+        
+        CreateMap<TestTemplateDto, TestTemplate>()
+            .ForMember(
+                dest => dest.DefaultTestDifficulty,
+                opt => opt
+                    .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.DefaultTestDifficulty, true))
+            );
+
+        CreateMap<PagedList<TestTemplate>, PagedList<TestTemplateResponseDto>>()
+            .ConvertUsing(
+                (src, dest, context) =>
+                {
+                    var mappedItems = context.Mapper.Map<List<TestTemplateResponseDto>>(src.Items);
+                    return new PagedList<TestTemplateResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
+                }
+            );
+        
+        CreateMap<QuestionsPoolTemplate, QuestionsPoolTemplateResponseDto>()
+            .ForMember(
+                dest => dest.GenerationStrategyRestriction,
+                opt => opt
+                    .MapFrom(src => src.GenerationStrategyRestriction.ToString())
+            );
+
+        CreateMap<QuestionsPoolTemplateDto, QuestionsPoolTemplate>()
+            .ForMember(
+                dest => dest.GenerationStrategyRestriction,
+                opt => opt
+                    .MapFrom(src => 
+                        Enum.Parse(typeof(GenerationStrategy), src.GenerationStrategyRestriction, true)
+                    )
             );
     }
 }
