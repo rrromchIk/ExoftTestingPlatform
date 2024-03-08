@@ -302,7 +302,14 @@ namespace TestingApi.Migrations
                     b.Property<DateTime?>("ModifiedTimestamp")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("TemplateName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TemplateName")
+                        .IsUnique();
 
                     b.ToTable("TestTemplates");
                 });

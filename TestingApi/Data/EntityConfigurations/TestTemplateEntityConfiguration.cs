@@ -17,6 +17,7 @@ public class TestTemplateEntityConfiguration : BaseEntityConfiguration<TestTempl
             .HasForeignKey(qp => qp.TestTemplateId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        builder.HasIndex(tp => tp.TemplateName).IsUnique();
         builder.Property(tp => tp.DefaultTestDifficulty).IsRequired(false);
         builder.Property(tp => tp.DefaultSubject).IsRequired(false);
         builder.Property(tp => tp.DefaultDuration).IsRequired(false);

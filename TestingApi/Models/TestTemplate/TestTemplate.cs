@@ -2,6 +2,7 @@
 
 public class TestTemplate : BaseEntity
 {
+    public string TemplateName { get; set; } = null!;
     public TestDifficulty? DefaultTestDifficulty { get; set; }
 
     public string? DefaultSubject { get; set; }
