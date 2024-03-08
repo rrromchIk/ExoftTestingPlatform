@@ -19,13 +19,27 @@ public class MappingProfiles : Profile
 {
     public MappingProfiles()
     {
+        ConfigureMappingForTestEntity();
+        ConfigureMappingForQuestionPoolEntity();
+        ConfigureMappingForQuestionEntity();
+        ConfigureMappingForAnswerEntity();
+        ConfigureMappingForUserEntity();
+        ConfigureMappingForManyToManyEntities();
+        ConfigureMappingForTestTemplateEntity();
+        ConfigureMappingForQuestionPoolTemplateEntity();
+        ConfigureMappingForQuestionTemplateEntity();
+        ConfigureMappingForAnswerTemplateEntity();
+    }
+
+    private void ConfigureMappingForTestEntity()
+    {
         CreateMap<Test, TestResponseDto>()
             .ForMember(
                 dest => dest.Difficulty,
                 opt => opt
                     .MapFrom(src => src.Difficulty.ToString())
             );
-        
+
         CreateMap<Test, TestWithQuestionsPoolResponseDto>()
             .ForMember(
                 dest => dest.Difficulty,
@@ -39,7 +53,7 @@ public class MappingProfiles : Profile
                 opt => opt
                     .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.Difficulty, true))
             );
-        
+
         CreateMap<TestDto, Test>()
             .ForMember(
                 dest => dest.Difficulty,
@@ -55,7 +69,10 @@ public class MappingProfiles : Profile
                     return new PagedList<TestResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
                 }
             );
-        
+    }
+
+    private void ConfigureMappingForQuestionPoolEntity()
+    {
         CreateMap<QuestionsPool, QuestionsPoolResponseDto>()
             .ForMember(
                 dest => dest.GenerationStrategy,
@@ -67,19 +84,28 @@ public class MappingProfiles : Profile
             .ForMember(
                 dest => dest.GenerationStrategy,
                 opt => opt
-                    .MapFrom(src => 
-                        Enum.Parse(typeof(GenerationStrategy), src.GenerationStrategy, true)
-                )
+                    .MapFrom(
+                        src =>
+                            Enum.Parse(typeof(GenerationStrategy), src.GenerationStrategy, true)
+                    )
             );
-        
+    }
+
+    private void ConfigureMappingForQuestionEntity()
+    {
         CreateMap<QuestionWithAnswersDto, Question>();
         CreateMap<QuestionDto, Question>();
         CreateMap<Question, QuestionResponseDto>();
-        
+    }
+
+    private void ConfigureMappingForAnswerEntity()
+    {
         CreateMap<AnswerDto, Answer>();
         CreateMap<Answer, AnswerResponseDto>();
+    }
 
-        
+    private void ConfigureMappingForUserEntity()
+    {
         CreateMap<UserDto, User>()
             .ForMember(
                 dest => dest.UserRole,
@@ -93,7 +119,7 @@ public class MappingProfiles : Profile
                 opt => opt
                     .MapFrom(src => src.UserRole.ToString())
             );
-        
+
         CreateMap<PagedList<User>, PagedList<UserResponseDto>>()
             .ConvertUsing(
                 (src, dest, context) =>
@@ -102,25 +128,30 @@ public class MappingProfiles : Profile
                     return new PagedList<UserResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
                 }
             );
+    }
 
+    private void ConfigureMappingForManyToManyEntities()
+    {
         CreateMap<UserAnswerDto, UserAnswer>();
         CreateMap<UserAnswer, UserAnswerResponseDto>();
-        
+
         CreateMap<UserTest, UserTestResponseDto>()
             .ForMember(
                 dest => dest.UserTestStatus,
                 opt => opt
                     .MapFrom(src => src.UserTestStatus.ToString())
             );
-        
-        
+    }
+
+    private void ConfigureMappingForTestTemplateEntity()
+    {
         CreateMap<TestTemplate, TestTmplResponseDto>()
             .ForMember(
                 dest => dest.DefaultTestDifficulty,
                 opt => opt
                     .MapFrom(src => src.DefaultTestDifficulty.ToString())
             );
-        
+
         CreateMap<TestTemplate, TestTmplWithQpTmplsResponseDto>()
             .ForMember(
                 dest => dest.DefaultTestDifficulty,
@@ -134,7 +165,7 @@ public class MappingProfiles : Profile
                 opt => opt
                     .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.DefaultTestDifficulty, true))
             );
-        
+
         CreateMap<TestTmplDto, TestTemplate>()
             .ForMember(
                 dest => dest.DefaultTestDifficulty,
@@ -150,7 +181,10 @@ public class MappingProfiles : Profile
                     return new PagedList<TestTmplResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
                 }
             );
-        
+    }
+
+    private void ConfigureMappingForQuestionPoolTemplateEntity()
+    {
         CreateMap<QuestionsPoolTemplate, QuestionsPoolTmplResponseDto>()
             .ForMember(
                 dest => dest.GenerationStrategyRestriction,
@@ -162,15 +196,22 @@ public class MappingProfiles : Profile
             .ForMember(
                 dest => dest.GenerationStrategyRestriction,
                 opt => opt
-                    .MapFrom(src => 
-                        Enum.Parse(typeof(GenerationStrategy), src.GenerationStrategyRestriction, true)
+                    .MapFrom(
+                        src =>
+                            Enum.Parse(typeof(GenerationStrategy), src.GenerationStrategyRestriction, true)
                     )
             );
-        
+    }
+
+    private void ConfigureMappingForQuestionTemplateEntity()
+    {
         CreateMap<QuestionTmplWithAnswerTmplDto, QuestionTemplate>();
         CreateMap<QuestionTmplDto, QuestionTemplate>();
         CreateMap<QuestionTemplate, QuestionTmplResponseDto>();
-        
+    }
+
+    private void ConfigureMappingForAnswerTemplateEntity()
+    {
         CreateMap<AnswerTmplDto, AnswerTemplate>();
         CreateMap<AnswerTemplate, AnswerTmplResponseDto>();
     }
