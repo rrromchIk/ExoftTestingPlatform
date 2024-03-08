@@ -70,15 +70,6 @@ public class MappingProfiles : Profile
                 )
             );
         
-        CreateMap<PagedList<QuestionsPool>, PagedList<QuestionsPoolResponseDto>>()
-            .ConvertUsing(
-                (src, dest, context) =>
-                {
-                    var mappedItems = context.Mapper.Map<List<QuestionsPoolResponseDto>>(src.Items);
-                    return new PagedList<QuestionsPoolResponseDto>(mappedItems, src.Page, src.PageSize, src.TotalCount);
-                }
-            );
-
         CreateMap<QuestionWithAnswersDto, Question>();
         CreateMap<QuestionDto, Question>();
         CreateMap<Question, QuestionResponseDto>();
