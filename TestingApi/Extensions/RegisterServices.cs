@@ -20,5 +20,7 @@ public static class RegisterServices
         serviceCollection.AddScoped<IFileService, FileService>();
         serviceCollection.AddScoped<ITestTmplService, TestTmplService>();
         serviceCollection.AddScoped<IQuestionsPoolTmplService, QuestionsPoolTmplService>();
+        serviceCollection.AddScoped<IQuestionTmplService, QuestionTmplService>();
+        serviceCollection.AddScoped<IAnswerTmplService, AnswerTmplService>();
     }
 }

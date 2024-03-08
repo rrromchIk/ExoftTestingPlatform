@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using TestingApi.Dto.AnswerDto;
+using TestingApi.Dto.AnswerTemplateDto;
 using TestingApi.Dto.QuestionDto;
 using TestingApi.Dto.QuestionsPoolDto;
 using TestingApi.Dto.QuestionsPoolTemplateDto;
+using TestingApi.Dto.QuestionTemplateDto;
 using TestingApi.Dto.TestDto;
 using TestingApi.Dto.TestTemplateDto;
 using TestingApi.Dto.UserAnswerDto;
@@ -164,5 +166,12 @@ public class MappingProfiles : Profile
                         Enum.Parse(typeof(GenerationStrategy), src.GenerationStrategyRestriction, true)
                     )
             );
+        
+        CreateMap<QuestionTmplWithAnswerTmplDto, QuestionTemplate>();
+        CreateMap<QuestionTmplDto, QuestionTemplate>();
+        CreateMap<QuestionTemplate, QuestionTmplResponseDto>();
+        
+        CreateMap<AnswerTmplDto, AnswerTemplate>();
+        CreateMap<AnswerTemplate, AnswerTmplResponseDto>();
     }
 }
