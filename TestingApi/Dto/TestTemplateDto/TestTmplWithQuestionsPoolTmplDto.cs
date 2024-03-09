@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TestingApi.Models;
 using TestingApi.Dto.QuestionsPoolTemplateDto;
+using TestingApi.Helpers.ValidationAttributes;
 
 
 namespace TestingApi.Dto.TestTemplateDto;
@@ -9,10 +10,7 @@ public class TestTmplWithQuestionsPoolTmplDto
 {
     public string TemplateName { get; set; } = null!;
     
-    [RegularExpression(
-        @"^(?i)(easy|medium|hard)$",
-        ErrorMessage = "Difficulty must be: easy, medium or hard (case-insensitive)"
-    )]
+    [EnumValue(typeof(GenerationStrategy))]
     public string? DefaultTestDifficulty { get; set; }
 
     public string? DefaultSubject { get; set; }

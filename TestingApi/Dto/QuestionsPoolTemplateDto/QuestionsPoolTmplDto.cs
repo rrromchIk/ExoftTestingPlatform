@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TestingApi.Helpers.ValidationAttributes;
+using TestingApi.Models;
 
 namespace TestingApi.Dto.QuestionsPoolTemplateDto;
 
@@ -9,9 +11,6 @@ public class QuestionsPoolTmplDto
     [Range(1, int.MaxValue, ErrorMessage = "NumOfQuestionsToBeGenerated must be greater than 0")]
     public int? NumOfQuestionsToBeGeneratedRestriction { get; set; }
     
-    [RegularExpression(
-        @"^(?i)(sequentially|randomly)$",
-        ErrorMessage = "GenerationStrategy must be: sequentially or randomly (case-insensitive)"
-    )]
+    [EnumValue(typeof(GenerationStrategy))]
     public string? GenerationStrategyRestriction { get; set; }
 }

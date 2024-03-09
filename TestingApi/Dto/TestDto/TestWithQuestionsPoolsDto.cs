@@ -1,4 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using TestingApi.Helpers.ValidationAttributes;
+using TestingApi.Models;
+
 namespace TestingApi.Dto.TestDto;
 
 public class TestWithQuestionsPoolsDto
@@ -17,10 +20,7 @@ public class TestWithQuestionsPoolsDto
     public int? Duration { get; set; }
 
     [Required(ErrorMessage = "Difficulty is required")]
-    [RegularExpression(
-        @"^(?i)(easy|medium|hard)$",
-        ErrorMessage = "Difficulty must be: easy, medium or hard (case-insensitive)"
-    )]
+    [EnumValue(typeof(TestDifficulty))]
     public string Difficulty { get; set; } = null!;
     
     public ICollection<QuestionsPoolDto.QuestionsPoolDto> QuestionsPools { get; set; } = null!;
