@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TestingApi.Dto.QuestionsPoolTemplateDto;
+using TestingApi.Helpers.ValidationAttributes;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Controllers;
@@ -34,6 +35,7 @@ public class QuestionsPoolTemplatesController : ControllerBase
     }
     
     [HttpPost("/api/tests/templates/{testTemplateId:guid}/questions-pools/templates")]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionsPoolTmplResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -42,9 +44,6 @@ public class QuestionsPoolTemplatesController : ControllerBase
         [FromBody] QuestionsPoolTmplDto questionsPoolTmplDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
         if (!await _testTmplService.TestTmplExistsAsync(testTemplateId, cancellationToken))
             return NotFound();
         
@@ -56,6 +55,7 @@ public class QuestionsPoolTemplatesController : ControllerBase
     }
     
     [HttpPut]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -64,9 +64,6 @@ public class QuestionsPoolTemplatesController : ControllerBase
         [FromBody] QuestionsPoolTmplDto questionsPoolTmplDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (!await _questionsPoolTmplService.QuestionsPoolTmplExistsAsync(id, cancellationToken))
             return NotFound();
 

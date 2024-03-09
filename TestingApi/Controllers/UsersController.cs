@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto;
 using TestingApi.Dto.UserDto;
 using TestingApi.Helpers;
+using TestingApi.Helpers.ValidationAttributes;
 using TestingApi.Services.Abstractions; 
 
 namespace TestingApi.Controllers;
@@ -23,6 +24,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpGet]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<UserResponseDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> GetAllUsers(
@@ -30,9 +32,6 @@ public class UsersController : ControllerBase
         CancellationToken cancellationToken
     )
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
         var response = await _userService.GetAllUsersAsync(filtersDto, cancellationToken);
 
         if (response.Items.IsNullOrEmpty())
@@ -55,21 +54,20 @@ public class UsersController : ControllerBase
     }
     
     [HttpPost]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserResponseDto))]
     public async Task<IActionResult> CreateUser([FromBody] UserDto userDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
         var response = await _userService.CreateUserAsync(userDto, cancellationToken);
-
+        
         return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, response);
     }
     
     
     [HttpPut("{id:guid}")]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -78,9 +76,6 @@ public class UsersController : ControllerBase
         [FromBody] UserDto userDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (!await _userService.UserExistsAsync(id, cancellationToken))
             return NotFound();
 

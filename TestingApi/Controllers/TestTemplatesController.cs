@@ -1,10 +1,9 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto;
-using TestingApi.Dto.TestDto;
 using TestingApi.Dto.TestTemplateDto;
 using TestingApi.Helpers;
+using TestingApi.Helpers.ValidationAttributes;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Controllers;
@@ -23,14 +22,12 @@ public class TestTemplatesController : ControllerBase
     }
     
     [HttpGet]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestTmplResponseDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> GetAllTestTemplates([FromQuery] FiltersDto filtersDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         var response = await _testTmplService.GetAllTestsTmplsAsync(filtersDto, cancellationToken);
 
         if (response.Items.IsNullOrEmpty())
@@ -66,16 +63,13 @@ public class TestTemplatesController : ControllerBase
     }
     
     [HttpPost]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TestTmplWithQpTmplsResponseDto))]
     public async Task<IActionResult> CreateTestTemplate(
         [FromBody] TestTmplWithQuestionsPoolTmplDto testTmplWithQuestionsPoolTmplDto,
         CancellationToken cancellationToken)
     {
-        
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-        
         var response = await _testTmplService.CreateTestTmplAsync(
             testTmplWithQuestionsPoolTmplDto, cancellationToken);
 
@@ -83,6 +77,7 @@ public class TestTemplatesController : ControllerBase
     }
     
     [HttpPut("{id:guid}")]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -91,9 +86,6 @@ public class TestTemplatesController : ControllerBase
         [FromBody] TestTmplDto testTmplDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (!await _testTmplService.TestTmplExistsAsync(id, cancellationToken))
             return NotFound();
 

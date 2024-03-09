@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto.UserAnswerDto;
+using TestingApi.Helpers.ValidationAttributes;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Controllers;
@@ -41,21 +42,18 @@ public class UserAnswersController : ControllerBase
     }
 
     [HttpPost("answers")]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserAnswerResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> CreateUserAnswer([FromBody] UserAnswerDto userAnswerDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (!(await _userService.UserExistsAsync(userAnswerDto.UserId ?? Guid.Empty, cancellationToken) &&
               await _questionService.QuestionExistsAsync(userAnswerDto.QuestionId ?? Guid.Empty, cancellationToken) &&
               await _answerService.AnswerExistsAsync(userAnswerDto.AnswerId ?? Guid.Empty, cancellationToken)))
             return NotFound();
-
-
+        
         var response = await _userAnswerService.CreateUserAnswerAsync(userAnswerDto, cancellationToken);
 
         return CreatedAtAction(

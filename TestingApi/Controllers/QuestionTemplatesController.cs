@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto.QuestionTemplateDto;
+using TestingApi.Helpers.ValidationAttributes;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Controllers;
@@ -52,6 +53,7 @@ public class QuestionTemplatesController : ControllerBase
     }
     
     [HttpPost("{questionsPoolTmplId:guid}/questions/templates")]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionTmplResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -60,13 +62,8 @@ public class QuestionTemplatesController : ControllerBase
         [FromBody] QuestionTmplWithAnswerTmplDto questionTmplWithAnswerTmplDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (!await _questionsPoolTmplService.QuestionsPoolTmplExistsAsync(questionsPoolTmplId, cancellationToken))
-        {
             return NotFound();
-        }
         
         var response = await _questionTmplService.CreateQuestionTmplAsync(
             questionsPoolTmplId, questionTmplWithAnswerTmplDto, cancellationToken);
@@ -75,6 +72,7 @@ public class QuestionTemplatesController : ControllerBase
     }
     
     [HttpPut("questions/templates/{id:guid}")]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -83,9 +81,6 @@ public class QuestionTemplatesController : ControllerBase
         [FromBody] QuestionTmplDto questionTmplDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (!await _questionTmplService.QuestionTmplExistsAsync(id, cancellationToken))
             return NotFound();
 

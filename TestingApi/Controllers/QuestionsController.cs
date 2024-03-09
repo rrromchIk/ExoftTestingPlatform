@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto.QuestionDto;
+using TestingApi.Helpers.ValidationAttributes;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Controllers;
@@ -44,12 +45,6 @@ public class QuestionsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetQuestionById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        _logger.LogInformation(
-            "{dt}. Getting test with id: {id}",
-            DateTime.Now.ToString(),
-            id
-        );
-        
         var response = await _questionService.GetQuestionByIdAsync(id, cancellationToken);
 
         if (response == null) 
@@ -59,6 +54,7 @@ public class QuestionsController : ControllerBase
     }
     
     [HttpPost("{questionsPoolId:guid}/questions")]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -67,13 +63,8 @@ public class QuestionsController : ControllerBase
         [FromBody] QuestionWithAnswersDto questionWithAnswersDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (!await _questionsPoolService.QuestionsPoolExistsAsync(questionsPoolId, cancellationToken))
-        {
             return NotFound();
-        }
         
         var response = await _questionService.CreateQuestionAsync(questionsPoolId, questionWithAnswersDto, cancellationToken);
 
@@ -81,6 +72,7 @@ public class QuestionsController : ControllerBase
     }
     
     [HttpPut("questions/{id:guid}")]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -89,9 +81,6 @@ public class QuestionsController : ControllerBase
         [FromBody] QuestionDto questionDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (!await _questionService.QuestionExistsAsync(id, cancellationToken))
             return NotFound();
 

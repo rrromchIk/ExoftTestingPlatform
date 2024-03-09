@@ -2,7 +2,7 @@
 
 namespace TestingApi.Helpers.ValidationAttributes;
 
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = false)]
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter)]
 public class EnumValueAttribute : ValidationAttribute
 {
     private readonly Type _enumType;

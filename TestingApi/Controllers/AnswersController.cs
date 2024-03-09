@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TestingApi.Dto.AnswerDto;
+using TestingApi.Helpers.ValidationAttributes;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Controllers;
@@ -34,6 +35,7 @@ public class AnswersController : ControllerBase
     
     
     [HttpPost("{questionId:guid}/answers")]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(AnswerResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -42,13 +44,8 @@ public class AnswersController : ControllerBase
         [FromBody] AnswerDto answerDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-            
         if (!await _questionService.QuestionExistsAsync(questionId, cancellationToken))
-        {
             return NotFound();
-        }
         
         var response = await _answerService.CreateAnswerAsync(questionId, answerDto, cancellationToken);
         return CreatedAtAction(nameof(GetAnswerById), new { id = response.Id }, response);
@@ -56,6 +53,7 @@ public class AnswersController : ControllerBase
     
     
     [HttpPut("answers/{id:guid}")]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -64,9 +62,6 @@ public class AnswersController : ControllerBase
         [FromBody] AnswerDto answerDto,
         CancellationToken cancellationToken)
     {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
-
         if (!await _answerService.AnswerExistsAsync(id, cancellationToken))
             return NotFound();
 
