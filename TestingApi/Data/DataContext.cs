@@ -2,6 +2,7 @@
 using TestingApi.Data.EntityConfigurations;
 using TestingApi.Models;
 using TestingApi.Models.TestTemplate;
+using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Data;
 
@@ -19,8 +20,10 @@ public class DataContext : DbContext
     public DbSet<QuestionTemplate> QuestionTemplates { get; set; } = null!;
     public DbSet<AnswerTemplate> AnswerTemplates { get; set; } = null!;
 
-    public DataContext(DbContextOptions<DataContext> options) : base(options)
+    private readonly ICurrentUserService _currentUserService;
+    public DataContext(DbContextOptions<DataContext> options, ICurrentUserService currentUserService) : base(options)
     {
+        _currentUserService = currentUserService;
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -36,5 +39,37 @@ public class DataContext : DbContext
         modelBuilder.ApplyConfiguration(new QuestionTemplateEntityConfiguration());
         modelBuilder.ApplyConfiguration(new AnswerTemplateEntityConfiguration());
         base.OnModelCreating(modelBuilder);
+    }
+    
+    public new Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        OnBeforeSaving();
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void OnBeforeSaving()
+    {
+        var entries = ChangeTracker.Entries();
+
+        foreach (var entry in entries)
+        {
+            if (entry.Entity is BaseEntity baseEntity)
+            {
+                switch (entry.State)
+                {
+                    case EntityState.Modified:
+                        baseEntity.ModifiedTimestamp = DateTime.Now;
+                        baseEntity.ModifiedBy = Guid.Parse(_currentUserService.UserId);
+                        break;
+
+                    case EntityState.Added:
+                        baseEntity.CreatedTimestamp = DateTime.Now;
+                        baseEntity.CreatedBy = Guid.Parse(_currentUserService.UserId);
+                        if (baseEntity.Id == default)
+                            baseEntity.Id = Guid.NewGuid();
+                        break;
+                }
+            }
+        }
     }
 }
