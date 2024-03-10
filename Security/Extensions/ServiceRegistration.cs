@@ -25,6 +25,7 @@ public static class ServiceRegistration
         services.AddScoped<GlobalExceptionHandlingMiddleware>();
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.Configure<AuthSettings>(configuration.GetSection("AuthSettings"));
+        services.Configure<SuperAdminSeedData>(configuration.GetSection("SuperAdminSeedData"));
         services.AddScoped<ITokenGenerator, TokenGenerator>();
         services.AddScoped<IAuthService, AuthService>();
     }

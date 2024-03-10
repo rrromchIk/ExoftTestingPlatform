@@ -52,22 +52,22 @@ namespace Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("1e9e6c55-9071-4a83-8e79-f0d9abcbb3ee"),
-                            ConcurrencyStamp = "5ba0b0ab-41ae-43ec-9393-0d1e4a8713da",
+                            Id = new Guid("883c74ad-69fe-4916-b16f-82534c7b8377"),
+                            ConcurrencyStamp = "3cce5bf2-9bd6-487f-bb17-0cc8b6345bcb",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = new Guid("a77c3769-2191-42d4-90c3-065f7582fd63"),
-                            ConcurrencyStamp = "6f27606d-abc6-45dd-97b6-9228917e551e",
+                            Id = new Guid("14544cd2-746b-4492-bfe0-2dbdad78f2d3"),
+                            ConcurrencyStamp = "62ac21aa-282b-48a3-b5ff-b60919d58831",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("6fbb2f18-3b28-486d-80f9-3441cb2980c5"),
-                            ConcurrencyStamp = "84a91d7d-f7ae-4a6f-99d8-55a1642382d2",
+                            Id = new Guid("54202c0d-daf0-44a3-98b0-70180722261a"),
+                            ConcurrencyStamp = "54202c0d-daf0-44a3-98b0-70180722261a",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         });
@@ -155,6 +155,13 @@ namespace Security.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = new Guid("0a5bfb58-d88a-4c47-9253-3e65a6a96fa6"),
+                            RoleId = new Guid("54202c0d-daf0-44a3-98b0-70180722261a")
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
@@ -251,6 +258,24 @@ namespace Security.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("0a5bfb58-d88a-4c47-9253-3e65a6a96fa6"),
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "a5f34392-b061-4e4b-aa91-cc422a5761ec",
+                            Email = "nikitinroma2605@gmail.com",
+                            EmailConfirmed = true,
+                            FirstName = "Roman",
+                            LastName = "Nikitin",
+                            LockoutEnabled = false,
+                            NormalizedUserName = "NIKITINROMA2605@GMAIL.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFxL5HjwTT3xK2RcOxUIgEYRPqMqgkJCiseRlyOWuLcfJe1nbwBMquhHr0lZWo4lhA==",
+                            PhoneNumberConfirmed = false,
+                            TwoFactorEnabled = false,
+                            UserName = "nikitinroma2605@gmail.com"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
