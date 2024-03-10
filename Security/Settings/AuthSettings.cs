@@ -11,5 +11,5 @@ public class AuthSettings
     public int AccessTokenExpirationMinutes { get; set; }
     public int RefreshTokenExpirationMinutes { get; set; }
     public SecurityKey SymmetricSecurityKey { get =>
-        new SymmetricSecurityKey(Encoding.ASCII.GetBytes("AuthSettings:SecretKey")); }
+        new SymmetricSecurityKey(Encoding.ASCII.GetBytes(SecretKey)); }
 }
