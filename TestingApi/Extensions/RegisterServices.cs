@@ -25,6 +25,8 @@ public static class RegisterServices
         serviceCollection.AddScoped<IQuestionsPoolTmplService, QuestionsPoolTmplService>();
         serviceCollection.AddScoped<IQuestionTmplService, QuestionTmplService>();
         serviceCollection.AddScoped<IAnswerTmplService, AnswerTmplService>();
+        serviceCollection.AddHttpContextAccessor();
+        serviceCollection.AddScoped<ICurrentUserService, CurrentUserService>();
     }
     
     public static void ConfigureAuth(this IServiceCollection services, IConfiguration configuration)
