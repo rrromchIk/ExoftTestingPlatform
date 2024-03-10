@@ -5,7 +5,6 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using Security.Dto;
 using Security.Models;
 using Security.Service.Abstractions;
 using Security.Settings;
@@ -26,16 +25,26 @@ public class TokenGenerator : ITokenGenerator
         _authSettings = authSettings.Value;
     }
     
-    public string GenerateAccessToken(ApplicationUser user)
+    public async Task<string> GenerateAccessToken(ApplicationUser user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        _logger.LogInformation(_authSettings.SecretKey);
+       
         var key = Encoding.ASCII.GetBytes(_authSettings.SecretKey);
         
-        var identity = new ClaimsIdentity(new[] {
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
-        });
+        var roles = await _userManager.GetRolesAsync(user);
+        
+        var claimsIdentity = new ClaimsIdentity(
+            new[]
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim("firstName", user.FirstName),
+                new Claim("lastName", user.LastName),
+            }
+        );
+        
+        var roleClaims = roles.Select(x => new Claim(ClaimTypes.Role, x));
+        claimsIdentity.AddClaims(roleClaims);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -45,8 +54,8 @@ public class TokenGenerator : ITokenGenerator
                 new SymmetricSecurityKey(key),
                 SecurityAlgorithms.HmacSha256Signature
             ),
-            Subject = identity,
-            Expires = DateTime.Now.AddMinutes(_authSettings.Lifetime)
+            Subject = claimsIdentity,
+            Expires = DateTime.Now.AddMinutes(_authSettings.AccessTokenExpirationMinutes)
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -59,10 +68,5 @@ public class TokenGenerator : ITokenGenerator
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
-    }
-
-    public Task<TokenResponseDto> RefreshAccessToken(string accessToken, string refreshToken)
-    {
-        throw new NotImplementedException();
     }
 }

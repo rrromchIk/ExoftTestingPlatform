@@ -26,6 +26,6 @@ public static class ServiceRegistration
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         services.Configure<AuthSettings>(configuration.GetSection("AuthSettings"));
         services.AddScoped<ITokenGenerator, TokenGenerator>();
-        services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IAuthService, AuthService>();
     }
 }
