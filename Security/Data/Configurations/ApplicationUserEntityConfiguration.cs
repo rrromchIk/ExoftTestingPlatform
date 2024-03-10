@@ -21,11 +21,13 @@ public class ApplicationUserEntityConfiguration : IEntityTypeConfiguration<Appli
         var appUser = new ApplicationUser {
             Id = Guid.Parse(_superAdminSeedData.SuperAdminId),
             Email = _superAdminSeedData.Email,
+            NormalizedEmail = _superAdminSeedData.Email.ToUpper(),
             EmailConfirmed = true,
             FirstName = _superAdminSeedData.FirstName,
             LastName = _superAdminSeedData.LastName,
             UserName = _superAdminSeedData.Email,
-            NormalizedUserName = _superAdminSeedData.Email.ToUpper()
+            NormalizedUserName = _superAdminSeedData.Email.ToUpper(),
+            SecurityStamp = Guid.NewGuid().ToString("D")
         };
 
         var ph = new PasswordHasher<ApplicationUser>();

@@ -52,15 +52,15 @@ namespace Security.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("883c74ad-69fe-4916-b16f-82534c7b8377"),
-                            ConcurrencyStamp = "3cce5bf2-9bd6-487f-bb17-0cc8b6345bcb",
+                            Id = new Guid("52d74348-dde1-4353-bd58-706db15236a7"),
+                            ConcurrencyStamp = "329daada-29b3-4f27-99c6-3e03bc85d58e",
                             Name = "User",
                             NormalizedName = "USER"
                         },
                         new
                         {
-                            Id = new Guid("14544cd2-746b-4492-bfe0-2dbdad78f2d3"),
-                            ConcurrencyStamp = "62ac21aa-282b-48a3-b5ff-b60919d58831",
+                            Id = new Guid("58a771f2-82d5-4b0f-be01-089757c42fb8"),
+                            ConcurrencyStamp = "6d22a17a-76f9-4a33-9e63-88ed1e2ce5e2",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
@@ -264,15 +264,17 @@ namespace Security.Migrations
                         {
                             Id = new Guid("0a5bfb58-d88a-4c47-9253-3e65a6a96fa6"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a5f34392-b061-4e4b-aa91-cc422a5761ec",
+                            ConcurrencyStamp = "9c9e4cdf-06ea-4b63-8575-3d0f65439542",
                             Email = "nikitinroma2605@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Roman",
                             LastName = "Nikitin",
                             LockoutEnabled = false,
+                            NormalizedEmail = "NIKITINROMA2605@GMAIL.COM",
                             NormalizedUserName = "NIKITINROMA2605@GMAIL.COM",
-                            PasswordHash = "AQAAAAEAACcQAAAAEFxL5HjwTT3xK2RcOxUIgEYRPqMqgkJCiseRlyOWuLcfJe1nbwBMquhHr0lZWo4lhA==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEKG+AbhX+FclnqGZzRQjpf4Fgho5cJ/CEi3EtBYGHT1hmv92MQJYNyJagGNFl0rb3A==",
                             PhoneNumberConfirmed = false,
+                            SecurityStamp = "6f6bb449-b685-4565-ae90-6bfe3cc7dbe0",
                             TwoFactorEnabled = false,
                             UserName = "nikitinroma2605@gmail.com"
                         });

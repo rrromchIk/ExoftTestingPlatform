@@ -33,15 +33,15 @@ namespace Security.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { new Guid("14544cd2-746b-4492-bfe0-2dbdad78f2d3"), "62ac21aa-282b-48a3-b5ff-b60919d58831", "Admin", "ADMIN" },
+                    { new Guid("52d74348-dde1-4353-bd58-706db15236a7"), "329daada-29b3-4f27-99c6-3e03bc85d58e", "User", "USER" },
                     { new Guid("54202c0d-daf0-44a3-98b0-70180722261a"), "54202c0d-daf0-44a3-98b0-70180722261a", "SuperAdmin", "SUPERADMIN" },
-                    { new Guid("883c74ad-69fe-4916-b16f-82534c7b8377"), "3cce5bf2-9bd6-487f-bb17-0cc8b6345bcb", "User", "USER" }
+                    { new Guid("58a771f2-82d5-4b0f-be01-089757c42fb8"), "6d22a17a-76f9-4a33-9e63-88ed1e2ce5e2", "Admin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { new Guid("0a5bfb58-d88a-4c47-9253-3e65a6a96fa6"), 0, "a5f34392-b061-4e4b-aa91-cc422a5761ec", "nikitinroma2605@gmail.com", true, "Roman", "Nikitin", false, null, null, "NIKITINROMA2605@GMAIL.COM", "AQAAAAEAACcQAAAAEFxL5HjwTT3xK2RcOxUIgEYRPqMqgkJCiseRlyOWuLcfJe1nbwBMquhHr0lZWo4lhA==", null, false, null, null, false, "nikitinroma2605@gmail.com" });
+                values: new object[] { new Guid("0a5bfb58-d88a-4c47-9253-3e65a6a96fa6"), 0, "9c9e4cdf-06ea-4b63-8575-3d0f65439542", "nikitinroma2605@gmail.com", true, "Roman", "Nikitin", false, null, "NIKITINROMA2605@GMAIL.COM", "NIKITINROMA2605@GMAIL.COM", "AQAAAAEAACcQAAAAEKG+AbhX+FclnqGZzRQjpf4Fgho5cJ/CEi3EtBYGHT1hmv92MQJYNyJagGNFl0rb3A==", null, false, null, "6f6bb449-b685-4565-ae90-6bfe3cc7dbe0", false, "nikitinroma2605@gmail.com" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
@@ -55,12 +55,12 @@ namespace Security.Migrations
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: new Guid("14544cd2-746b-4492-bfe0-2dbdad78f2d3"));
+                keyValue: new Guid("52d74348-dde1-4353-bd58-706db15236a7"));
 
             migrationBuilder.DeleteData(
                 table: "AspNetRoles",
                 keyColumn: "Id",
-                keyValue: new Guid("883c74ad-69fe-4916-b16f-82534c7b8377"));
+                keyValue: new Guid("58a771f2-82d5-4b0f-be01-089757c42fb8"));
 
             migrationBuilder.DeleteData(
                 table: "AspNetUserRoles",
