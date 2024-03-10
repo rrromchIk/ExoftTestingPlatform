@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TestingApi.Dto.QuestionsPoolDto;
 using TestingApi.Helpers.ValidationAttributes;
 using TestingApi.Services.Abstractions;
@@ -7,6 +8,7 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("api/tests/questions-pools/{id:guid}")]
+[Authorize(Roles = "SuperAdmin, Admin, User")]
 public class QuestionsPoolsController : ControllerBase
 {
     private readonly IQuestionsPoolService _questionsPoolService;

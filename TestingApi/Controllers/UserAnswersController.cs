@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto.UserAnswerDto;
 using TestingApi.Helpers.ValidationAttributes;
@@ -8,6 +9,7 @@ namespace TestingApi.Controllers;
 
 [Route("api/users/")]
 [ApiController]
+[Authorize(Roles = "SuperAdmin, Admin, User")]
 public class UserAnswersController : ControllerBase
 {
     private readonly IUserAnswerService _userAnswerService;

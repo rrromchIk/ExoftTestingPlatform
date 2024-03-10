@@ -12,6 +12,7 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("api/tests")]
+[Authorize(Roles = "SuperAdmin, Admin, User")]
 public class TestsController : ControllerBase
 {
     private readonly ITestService _testService;
@@ -23,6 +24,7 @@ public class TestsController : ControllerBase
         _logger = logger;
     }
 
+    [Authorize(Roles = "SuperAdmin, Admin")]
     [HttpGet]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestResponseDto>))]
@@ -38,6 +40,7 @@ public class TestsController : ControllerBase
         return Ok(response);
     }
 
+    
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

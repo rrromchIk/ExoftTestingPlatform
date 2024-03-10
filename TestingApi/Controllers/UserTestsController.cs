@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto;
 using TestingApi.Dto.UserTestDto;
@@ -9,6 +10,7 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("/api/users/{userId:guid}/tests")]
+[Authorize(Roles = "SuperAdmin, Admin, Users")]
 public class UserTestsController : ControllerBase
 {
     private readonly IUserTestService _userTestService;

@@ -10,10 +10,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging
     .ClearProviders()
     .SetMinimumLevel(LogLevel.Trace)
-    .AddSimpleConsole(options => { options.IncludeScopes = true; })
+    .AddSimpleConsole(
+        options =>
+        {
+            options.IncludeScopes = true;
+            options.TimestampFormat = "yyyy-MM-dd HH:mm:ss.fff ";
+        })
     .AddDebug();
 
 builder.Services.RegisterCustomServices();
+builder.Services.ConfigureAuth(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DataContext>(options =>
 {
@@ -53,6 +59,8 @@ app.UseStaticFiles(new StaticFileOptions()
         ),
     RequestPath = new PathString(app.Configuration["FileStorage:RequestPath"])
 });
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

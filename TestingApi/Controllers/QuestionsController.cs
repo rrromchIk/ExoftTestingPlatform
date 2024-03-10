@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto.QuestionDto;
@@ -9,6 +10,7 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("api/tests/questions-pools/")]
+[Authorize(Roles = "SuperAdmin, Admin, User")]
 public class QuestionsController : ControllerBase
 {
     private readonly IQuestionsPoolService _questionsPoolService;

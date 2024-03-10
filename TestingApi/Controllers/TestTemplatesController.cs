@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto;
 using TestingApi.Dto.TestTemplateDto;
@@ -10,6 +11,7 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("api/tests/templates")]
+[Authorize(Roles = "SuperAdmin, Admin, User")]
 public class TestTemplatesController : ControllerBase
 {
     private readonly ITestTmplService _testTmplService;

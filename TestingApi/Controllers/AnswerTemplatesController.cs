@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TestingApi.Dto.AnswerTemplateDto;
 using TestingApi.Helpers.ValidationAttributes;
 using TestingApi.Services.Abstractions;
@@ -7,6 +8,7 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("/api/tests/questions-pools/questions/")]
+[Authorize(Roles = "SuperAdmin, Admin, User")]
 public class AnswerTemplatesController : ControllerBase
 {
     private readonly IAnswerTmplService _answerTmplService;
