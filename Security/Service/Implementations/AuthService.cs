@@ -19,14 +19,16 @@ public class AuthService : IAuthService
     private readonly IMapper _mapper;
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ITokenGenerator _tokenGenerator;
+    private readonly IEmailService _emailService;
 
     public AuthService(IMapper mapper, UserManager<ApplicationUser> userManager,
-        ILogger<AuthService> logger, ITokenGenerator tokenGenerator, IOptions<AuthSettings> authSettings)
+        ILogger<AuthService> logger, ITokenGenerator tokenGenerator, IOptions<AuthSettings> authSettings, IEmailService emailService)
     {
         _mapper = mapper;
         _userManager = userManager;
         _logger = logger;
         _tokenGenerator = tokenGenerator;
+        _emailService = emailService;
         _authSettings = authSettings.Value;
     }
 
@@ -46,6 +48,9 @@ public class AuthService : IAuthService
             throw new AuthException(result.Errors.First().Description, StatusCodes.Status409Conflict);
         }
 
+        var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        await _emailService.SendEmail(user.Email, user.Id.ToString(), emailConfirmationToken);
+        
         return _mapper.Map<UserResponseDto>(userSignUpDto);
     }
 
@@ -101,8 +106,15 @@ public class AuthService : IAuthService
             RefreshToken = user.RefreshToken
         };
     }
-        
-        
+
+    public async Task<bool> VerifyEmail(Guid userId, string confirmationToken)
+    {
+        confirmationToken = confirmationToken.Replace(' ', '+');
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var result = await _userManager.ConfirmEmailAsync(user, confirmationToken);
+        return result.Succeeded;
+    }
+    
     private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
     {
         var tokenValidationParameters = new TokenValidationParameters

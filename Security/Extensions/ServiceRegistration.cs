@@ -28,5 +28,7 @@ public static class ServiceRegistration
         services.Configure<SuperAdminSeedData>(configuration.GetSection("SuperAdminSeedData"));
         services.AddScoped<ITokenGenerator, TokenGenerator>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IEmailService, EmailService>();
+        services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
     }
 }
