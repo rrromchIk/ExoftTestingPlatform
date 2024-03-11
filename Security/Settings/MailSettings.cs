@@ -2,8 +2,8 @@
 
 public class MailSettings
 {
-    public string SenderMail { get; set; }
-    public string AuthPassword { get; set; }
-    public string SmtpHost { get; set; }
+    public string SenderMail { get; set; } = null!;
+    public string AuthPassword { get; set; } = null!;
+    public string SmtpHost { get; set; } = null!;
     public int SmtpPort { get; set; }
 }
