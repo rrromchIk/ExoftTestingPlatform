@@ -48,13 +48,13 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
     
-    [ValidateModel]
     [HttpGet("email/verification")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> EmailVerification([FromQuery] Guid userId, [FromQuery] string token)
     {
         var result = await _authService.VerifyEmail(userId, token);
-        return Ok();
+        return result ? Ok() : BadRequest();
     }
 }

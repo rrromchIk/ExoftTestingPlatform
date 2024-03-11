@@ -56,7 +56,7 @@ public static class MailContentConstants
       <td>
         <p class=""email-text"">If you didn't sign up for this service, please ignore this email.</p>
         <p class=""email-text"" style=""margin-bottom: 5px;"">Best regards,</p>
-        <p class=""email-text"" style=""margin: 0;"">Little Kittens Pizzeria</p>
+        <p class=""email-text"" style=""margin: 0;"">Testing platfrom</p>
       </td>
     </tr>
   </table>

@@ -12,31 +12,24 @@ public class EmailService : IEmailService
 {
     private readonly ILogger<EmailService> _logger;
     private readonly MailSettings _mailSettings;
-    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public EmailService(ILogger<EmailService> logger, IOptions<MailSettings> mailSettings, IHttpContextAccessor httpContextAccessor)
+    public EmailService(ILogger<EmailService> logger, IOptions<MailSettings> mailSettings)
     {
         _logger = logger;
-        _httpContextAccessor = httpContextAccessor;
         _mailSettings = mailSettings.Value;
     }
 
-    public async Task<bool> SendEmail(string receiverEmail, string userId, string token)
+    public async Task<bool> SendEmail(string receiverEmail, string subject, string text)
     {
-        var scheme = _httpContextAccessor.HttpContext.Request.Scheme;
-        var host = _httpContextAccessor.HttpContext.Request.Host.Value;
-        var verificationUrl = $"{scheme}://{host}/api/auth/email/verification"
-                              + $"?userId={userId}&token={token}";
-
         try
         {
             var email = new MimeMessage();
             email.From.Add(MailboxAddress.Parse(_mailSettings.SenderMail));
             email.To.Add(MailboxAddress.Parse(receiverEmail));
-            email.Subject = MailContentConstants.Subject;
+            email.Subject = subject;
             email.Body = email.Body = new TextPart(TextFormat.Html)
             {
-                Text = MailContentConstants.GetBody(verificationUrl)
+                Text = text
             };
 
             using var smtp = new SmtpClient();

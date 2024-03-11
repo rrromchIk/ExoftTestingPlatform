@@ -20,15 +20,17 @@ public class AuthService : IAuthService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ITokenGenerator _tokenGenerator;
     private readonly IEmailService _emailService;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
     public AuthService(IMapper mapper, UserManager<ApplicationUser> userManager,
-        ILogger<AuthService> logger, ITokenGenerator tokenGenerator, IOptions<AuthSettings> authSettings, IEmailService emailService)
+        ILogger<AuthService> logger, ITokenGenerator tokenGenerator, IOptions<AuthSettings> authSettings, IEmailService emailService, IHttpContextAccessor httpContextAccessor)
     {
         _mapper = mapper;
         _userManager = userManager;
         _logger = logger;
         _tokenGenerator = tokenGenerator;
         _emailService = emailService;
+        _httpContextAccessor = httpContextAccessor;
         _authSettings = authSettings.Value;
     }
 
@@ -47,9 +49,10 @@ public class AuthService : IAuthService
         {
             throw new AuthException(result.Errors.First().Description, StatusCodes.Status409Conflict);
         }
-
-        var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        await _emailService.SendEmail(user.Email, user.Id.ToString(), emailConfirmationToken);
+        
+        var sendingResult = await SendVerificationEmail(user);
+        if (!sendingResult)
+            throw new AuthException("Failed to send an email", StatusCodes.Status500InternalServerError);
         
         return _mapper.Map<UserResponseDto>(userSignUpDto);
     }
@@ -111,6 +114,9 @@ public class AuthService : IAuthService
     {
         confirmationToken = confirmationToken.Replace(' ', '+');
         var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user == null)
+            throw new AuthException("User with such id not found", StatusCodes.Status404NotFound);
+        
         var result = await _userManager.ConfirmEmailAsync(user, confirmationToken);
         return result.Succeeded;
     }
@@ -130,5 +136,22 @@ public class AuthService : IAuthService
         var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out _);
 
         return principal;
+    }
+
+    private async Task<bool> SendVerificationEmail(ApplicationUser user)
+    {
+        var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        
+        var scheme = _httpContextAccessor.HttpContext.Request.Scheme;
+        var host = _httpContextAccessor.HttpContext.Request.Host.Value;
+        var verificationUrl = $"{scheme}://{host}/api/auth/email/verification"
+                              + $"?userId={user.Id}&token={emailConfirmationToken}";
+        
+        var subject = MailContentConstants.Subject;
+        var text = MailContentConstants.GetBody(verificationUrl);
+        
+        return await _emailService.SendEmail(user.Email,
+            subject,
+            text);
     }
 }
