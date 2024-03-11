@@ -6,13 +6,12 @@ namespace TestingApi.Dto.TestDto;
 
 public class TestWithQuestionsPoolsDto
 {
-    [Required(ErrorMessage = "Name is required")]
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
     [MaxLength(25, ErrorMessage = "Name cannot exceed 25 characters")]
-    [MinLength(2, ErrorMessage = "Name must be at least 2 characters")]
     public string Name { get; set; } = null!;
 
-    [Required(ErrorMessage = "Subject is required")]
-    [MinLength(2, ErrorMessage = "Subject must be at least 2 characters")]
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Subject is required")]
+    [MaxLength(25, ErrorMessage = "Name cannot exceed 25 characters")]
     public string Subject { get; set; } = null!;
 
     [Required(ErrorMessage = "Duration is required")]

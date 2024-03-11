@@ -4,9 +4,8 @@ namespace TestingApi.Dto.QuestionDto;
 
 public class QuestionWithAnswersDto
 {
-    [Required(ErrorMessage = "Name is required")]
-    [MaxLength(100, ErrorMessage = "Text cannot exceed 100 characters")]
-    [MinLength(2, ErrorMessage = "Name must be at least 2 characters")]
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
+    [MaxLength(100, ErrorMessage = "Text can't exceed 100 characters")]
     public string Text { get; set; } = null!;
     
     [Required(ErrorMessage = "MaxScore is required")]

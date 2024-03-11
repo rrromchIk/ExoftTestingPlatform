@@ -6,9 +6,8 @@ namespace TestingApi.Dto.QuestionsPoolDto;
 
 public class QuestionsPoolDto
 {
-    [Required(ErrorMessage = "Name is required")]
-    [MaxLength(25, ErrorMessage = "Name cannot exceed 25 characters")]
-    [MinLength(2, ErrorMessage = "Name must be at least 2 characters")]
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
+    [MaxLength(25, ErrorMessage = "Name can't exceed 25 characters")]
     public string Name { get; set; } = null!;
     
     [Required(ErrorMessage = "NumOfQuestionsToBeGenerated is required")]

@@ -8,6 +8,8 @@ namespace TestingApi.Dto.TestTemplateDto;
 
 public class TestTmplWithQuestionsPoolTmplDto
 {
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Template name is required")]
+    [MaxLength(25, ErrorMessage = "Name can't exceed 25 characters")]
     public string TemplateName { get; set; } = null!;
     
     [EnumValue(typeof(GenerationStrategy))]
