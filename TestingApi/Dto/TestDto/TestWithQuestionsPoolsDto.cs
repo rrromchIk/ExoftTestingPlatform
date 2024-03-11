@@ -22,7 +22,7 @@ public class TestWithQuestionsPoolsDto
     [EnumValue(typeof(TestDifficulty))]
     public string Difficulty { get; set; } = null!;
     
-    public ICollection<QuestionsPoolDto.QuestionsPoolDto> QuestionsPools { get; set; } = null!;
+    public ICollection<QuestionsPoolDto.QuestionsPoolDto>? QuestionsPools { get; set; } = null!;
 }
 
 

@@ -12,5 +12,5 @@ public class QuestionWithAnswersDto
     [Range(1, int.MaxValue, ErrorMessage = "MaxScore must be greater than 0")]
     public int? MaxScore { get; set; }
 
-    public ICollection<AnswerDto.AnswerDto> Answers { get; set; } = null!;
+    public ICollection<AnswerDto.AnswerDto>? Answers { get; set; } = null!;
 }
