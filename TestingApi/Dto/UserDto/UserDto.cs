@@ -8,11 +8,11 @@ public class UserDto
 {
     [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
     [MaxLength(25, ErrorMessage = "Name can't exceed 25 characters")]
-    public string Name { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
     
     [Required(AllowEmptyStrings = false, ErrorMessage = "Surname is required")]
     [MaxLength(25, ErrorMessage = "Name cannot exceed 25 characters")]
-    public string Surname { get; set; } = null!;
+    public string LastName { get; set; } = null!;
     
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email")]

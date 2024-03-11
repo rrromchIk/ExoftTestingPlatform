@@ -2,8 +2,8 @@
 
 public class User : BaseEntity
 {
-    public string Name { get; set; } = null!;
-    public string Surname { get; set; } = null!;
+    public string FirstName { get; set; } = null!;
+    public string LastName { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string ProfilePictureFilePath { get; set; } = null!;
     public UserRole UserRole { get; set; }

@@ -33,8 +33,8 @@ public class UserService : IUserService
         {
             usersQuery = usersQuery.Where(
                 u =>
-                    u.Name.Contains(filtersDto.SearchTerm) ||
-                    u.Surname.Contains(filtersDto.SearchTerm) ||
+                    u.FirstName.Contains(filtersDto.SearchTerm) ||
+                    u.LastName.Contains(filtersDto.SearchTerm) ||
                     u.Email.Contains(filtersDto.SearchTerm)
             );
         }
@@ -57,8 +57,8 @@ public class UserService : IUserService
     {
         return sortColumn?.ToLower() switch
         {
-            "name" => u => u.Name,
-            "surname" => u => u.Surname,
+            "name" => u => u.FirstName,
+            "surname" => u => u.LastName,
             "email" => u => u.Email,
             "creationTime" => u => u.CreatedTimestamp,
             _ => u => u.Id
@@ -104,8 +104,8 @@ public class UserService : IUserService
         var userFounded = await _dataContext.Users.FirstAsync(u => u.Id == id, cancellationToken);
         var updatedUser = _mapper.Map<User>(userDto);
         
-        userFounded.Name = updatedUser.Name;
-        userFounded.Surname = updatedUser.Surname;
+        userFounded.FirstName = updatedUser.FirstName;
+        userFounded.LastName = updatedUser.LastName;
         userFounded.UserRole = updatedUser.UserRole;
 
         await _dataContext.SaveChangesAsync(cancellationToken);
