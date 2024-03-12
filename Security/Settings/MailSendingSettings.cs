@@ -1,6 +1,6 @@
 ﻿namespace Security.Settings;
 
-public class MailSettings
+public class MailSendingSettings
 {
     public string SenderMail { get; set; } = null!;
     public string AuthPassword { get; set; } = null!;

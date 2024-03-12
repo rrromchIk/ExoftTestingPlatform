@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Security.Data;
 using Security.Middlewares;
 using Security.Models;
@@ -29,6 +32,38 @@ public static class ServiceRegistration
         services.AddScoped<ITokenGenerator, TokenGenerator>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IEmailService, EmailService>();
-        services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
+        services.Configure<MailSendingSettings>(configuration.GetSection("MailSendingSettings"));
+        services.AddScoped<ICurrentUserService, CurrentUserService>();
+        services.Configure<MailTemplatesConstants>(configuration.GetSection("MailTemplatesSettings"));
+    }
+    
+    
+    public static void ConfigureAuth(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddAuthentication(cfg =>
+            {
+                cfg.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                cfg.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                cfg.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = configuration["AuthSettings:Issuer"],
+                
+                    ValidateAudience = true,
+                    ValidAudience = configuration["AuthSettings:Audience"],
+            
+                    ValidateLifetime = true,
+                
+                    ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.Zero,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["AuthSettings:SecretKey"])),
+                };
+            });
     }
 }

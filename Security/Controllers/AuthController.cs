@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Security.Dto;
 using Security.Helpers.ValidationAttributes;
 using Security.Service.Abstractions;
@@ -16,6 +17,7 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
+    [AllowAnonymous]
     [HttpPost("register")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
@@ -27,6 +29,7 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenDto))]
@@ -37,7 +40,8 @@ public class AuthController : ControllerBase
         var response = await _authService.LoginAsync(userLoginDto);
         return Ok(response);
     }
-    
+
+    [AllowAnonymous]
     [HttpPost("refresh")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenDto))]
@@ -47,14 +51,66 @@ public class AuthController : ControllerBase
         var response = await _authService.RefreshAccessTokenAsync(tokenDto);
         return Ok(response);
     }
-    
+
+    [AllowAnonymous]
     [HttpGet("email/verification")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> EmailVerification([FromQuery] Guid userId, [FromQuery] string token)
     {
-        var result = await _authService.VerifyEmail(userId, token);
-        return result ? Ok() : BadRequest();
+        await _authService.VerifyEmail(userId, token);
+        return Ok();
+    }
+
+    [AllowAnonymous]
+    [ValidateModel]
+    [HttpPost("forgot-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto forgotPasswordDto)
+    {
+        await _authService.ForgotPassword(forgotPasswordDto);
+        return Ok();
+    }
+
+    [AllowAnonymous]
+    [HttpGet("reset-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ResetPassword([FromQuery] string userId, [FromQuery] string token)
+    {
+        var response = new ResetPasswordDto
+        {
+            UserId = userId,
+            Token = token
+        };
+        return Ok(response);
+    }
+
+    [AllowAnonymous]
+    [HttpPost("reset-password")]
+    [ValidateModel]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ResetPassword(ResetPasswordDto resetPasswordDto)
+    {
+        await _authService.ResetPassword(resetPasswordDto);
+        return Ok();
+    }
+
+    [Authorize(Roles = "SuperAdmin, Admin, User")]
+    [HttpPost("change-password")]
+    [ValidateModel]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
+    {
+        await _authService.ChangePassword(changePasswordDto);
+        return Ok();
     }
 }

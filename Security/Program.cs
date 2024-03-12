@@ -16,6 +16,7 @@ builder.Logging
 
 builder.Services.AddControllers();
 builder.Services.RegisterServices(builder.Configuration);
+builder.Services.ConfigureAuth(builder.Configuration);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -40,6 +41,7 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.UseCors("AllowAny");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

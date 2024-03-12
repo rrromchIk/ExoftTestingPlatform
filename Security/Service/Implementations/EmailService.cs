@@ -11,12 +11,12 @@ namespace Security.Service.Implementations;
 public class EmailService : IEmailService
 {
     private readonly ILogger<EmailService> _logger;
-    private readonly MailSettings _mailSettings;
+    private readonly MailSendingSettings _mailSendingSettings;
 
-    public EmailService(ILogger<EmailService> logger, IOptions<MailSettings> mailSettings)
+    public EmailService(ILogger<EmailService> logger, IOptions<MailSendingSettings> mailSettings)
     {
         _logger = logger;
-        _mailSettings = mailSettings.Value;
+        _mailSendingSettings = mailSettings.Value;
     }
 
     public async Task<bool> SendEmail(string receiverEmail, string subject, string text)
@@ -24,7 +24,7 @@ public class EmailService : IEmailService
         try
         {
             var email = new MimeMessage();
-            email.From.Add(MailboxAddress.Parse(_mailSettings.SenderMail));
+            email.From.Add(MailboxAddress.Parse(_mailSendingSettings.SenderMail));
             email.To.Add(MailboxAddress.Parse(receiverEmail));
             email.Subject = subject;
             email.Body = email.Body = new TextPart(TextFormat.Html)
@@ -33,8 +33,12 @@ public class EmailService : IEmailService
             };
 
             using var smtp = new SmtpClient();
-            await smtp.ConnectAsync(_mailSettings.SmtpHost, _mailSettings.SmtpPort, SecureSocketOptions.StartTls);
-            await smtp.AuthenticateAsync(_mailSettings.SenderMail, _mailSettings.AuthPassword);
+            await smtp.ConnectAsync(
+                _mailSendingSettings.SmtpHost,
+                _mailSendingSettings.SmtpPort,
+                SecureSocketOptions.StartTls
+            );
+            await smtp.AuthenticateAsync(_mailSendingSettings.SenderMail, _mailSendingSettings.AuthPassword);
 
             await smtp.SendAsync(email);
             await smtp.DisconnectAsync(true);
