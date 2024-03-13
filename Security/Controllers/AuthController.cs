@@ -6,6 +6,7 @@ using Security.Service.Abstractions;
 
 namespace Security.Controllers;
 
+[AllowAnonymous]
 [ApiController]
 [Route("api/auth/")]
 public class AuthController : ControllerBase
@@ -17,7 +18,6 @@ public class AuthController : ControllerBase
         _authService = authService;
     }
 
-    [AllowAnonymous]
     [HttpPost("register")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
@@ -41,7 +41,6 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
     
-    [AllowAnonymous]
     [HttpPost("login")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenDto))]
@@ -53,7 +52,6 @@ public class AuthController : ControllerBase
         return Ok(response);
     }
 
-    [AllowAnonymous]
     [HttpPost("refresh")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenDto))]
