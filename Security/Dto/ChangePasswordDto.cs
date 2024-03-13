@@ -7,7 +7,7 @@ public class ChangePasswordDto
     [Required(AllowEmptyStrings = false, ErrorMessage = "Current password is required")]
     public string CurrentPassword { get; set; } = null!;
 
-    [Required(AllowEmptyStrings = false)]
+    [Required(AllowEmptyStrings = false, ErrorMessage = "NewPassword is required")]
     [RegularExpression(
         @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$",
         ErrorMessage = "NewPassword must be at least 8 characters long and include at least one uppercase letter," +

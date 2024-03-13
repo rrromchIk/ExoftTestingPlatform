@@ -8,6 +8,6 @@ public class UserLoginDto
     [EmailAddress(ErrorMessage = "Invalid Email Address")]
     public string Email { get; set; } = null!;
 
-    [Required(AllowEmptyStrings = false)]
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Password is required")]
     public string Password { get; set; } = null!;
 }
