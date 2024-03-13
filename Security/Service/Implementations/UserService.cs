@@ -48,7 +48,7 @@ public class UserService : IUserService
         if (userToUpdate == null)
             throw new AuthException("Usr with such id not found", StatusCodes.Status404NotFound);
 
-        if(!await checkUpdateViolation(userToUpdate))
+        if(!await CheckUpdateViolation(userToUpdate))
             throw new AuthException("Forbidden to update the user", StatusCodes.Status403Forbidden);
         
         userToUpdate.FirstName = userToUpdate.FirstName;
@@ -58,27 +58,20 @@ public class UserService : IUserService
             throw new AuthException(result.Errors.First().Description, StatusCodes.Status500InternalServerError);
     }
 
-    private async Task<bool> checkUpdateViolation(ApplicationUser userToUpdate)
+    private async Task<bool> CheckUpdateViolation(ApplicationUser userToUpdate)
     {
         var userToUpdateRoles = await _userManager.GetRolesAsync(userToUpdate);
         
-        if (_currentUserService.UserRole == "User")
+        switch (_currentUserService.UserRole)
         {
-            if (!userToUpdateRoles.Contains("User") ||
-                _currentUserService.UserId != userToUpdate.Id.ToString())
+            case "User" when !userToUpdateRoles.Contains("User") ||
+                             _currentUserService.UserId != userToUpdate.Id.ToString():
+            case "Admin" when userToUpdateRoles.Contains("SuperAdmin"):
+            case "Admin" when userToUpdateRoles.Contains("Admin") &&
+                              _currentUserService.UserId != userToUpdate.Id.ToString():
                 return false;
+            default:
+                return true;
         }
-        
-        if (_currentUserService.UserRole == "Admin")
-        {
-            if (userToUpdateRoles.Contains("SuperAdmin"))
-                return false;
-
-            if (userToUpdateRoles.Contains("Admin") &&
-                _currentUserService.UserId != userToUpdate.Id.ToString())
-                return false;
-        }
-        
-        return true;
     }
 }
