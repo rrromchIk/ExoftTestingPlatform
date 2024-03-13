@@ -19,7 +19,7 @@ public class EmailConfirmationController : ControllerBase
     [Authorize(Roles = "SuperAdmin, Admin, User")]
     [HttpGet("request")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ConfirmEmailRequest()
     {
         await _authService.ConfirmEmailRequest();
@@ -29,7 +29,6 @@ public class EmailConfirmationController : ControllerBase
     [AllowAnonymous]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ConfirmEmail([FromQuery] Guid userId, [FromQuery] string token)
     {

@@ -31,8 +31,6 @@ public class PasswordsController : ControllerBase
 
     [HttpGet("reset")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> ResetPassword([FromQuery] string userId, [FromQuery] string token)
     {
         var response = new ResetPasswordDto
@@ -60,6 +58,7 @@ public class PasswordsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ChangePassword(ChangePasswordDto changePasswordDto)
     {
         await _authService.ChangePassword(changePasswordDto);

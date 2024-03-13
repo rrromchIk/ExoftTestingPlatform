@@ -58,6 +58,7 @@ public class AuthController : ControllerBase
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> RefreshToken([FromBody] TokenDto tokenDto)
     {
         var response = await _authService.RefreshAccessTokenAsync(tokenDto);
