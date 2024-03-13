@@ -7,7 +7,7 @@ using Security.Service.Abstractions;
 namespace Security.Controllers;
 
 [ApiController]
-[Route("api/auth/users/userId:guid")]
+[Route("api/auth/users/{userId:guid}")]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
