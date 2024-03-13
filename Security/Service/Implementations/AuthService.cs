@@ -42,7 +42,7 @@ public class AuthService : IAuthService
         _authSettings = authSettings.Value;
     }
 
-    public async Task<UserResponseDto> RegisterAsync(UserSignUpDto userSignUpDto)
+    public async Task<UserResponseDto> RegisterAsync(UserSignUpDto userSignUpDto, string role = "User")
     {
         var user = _mapper.Map<ApplicationUser>(userSignUpDto);
         user.UserName = user.Email;
@@ -51,7 +51,7 @@ public class AuthService : IAuthService
 
         if (result.Succeeded)
         {
-            await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRoleAsync(user, role);
         }
         else
         {
@@ -118,7 +118,18 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task VerifyEmail(Guid userId, string confirmationToken)
+    public async Task ConfirmEmailRequest()
+    {
+        var user = await _userManager.FindByEmailAsync(_currentUserService.Email);
+        if (!user.EmailConfirmed)
+        {
+            var sendingResult = await SendEmailVerificationMail(user);
+            if (!sendingResult)
+                throw new AuthException("Failed to send an email", StatusCodes.Status500InternalServerError);
+        }
+    }
+
+    public async Task ConfirmEmail(Guid userId, string confirmationToken)
     {
         confirmationToken = confirmationToken.Replace(' ', '+');
         var user = await _userManager.FindByIdAsync(userId.ToString());
@@ -202,7 +213,7 @@ public class AuthService : IAuthService
         var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var subject = _mailTemplatesConstants.VerifyEmailMailSubject;
         var mailTemplatePath = _mailTemplatesConstants.VerifyEmailMailTemplatePath;
-        var endpoint = "email/verification";
+        var endpoint = "email/confirm";
 
         return await SendEmailWithToken(user, emailConfirmationToken, subject, mailTemplatePath, endpoint);
     }
