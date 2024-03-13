@@ -35,6 +35,7 @@ public static class ServiceRegistration
         services.Configure<MailSendingSettings>(configuration.GetSection("MailSendingSettings"));
         services.AddScoped<ICurrentUserService, CurrentUserService>();
         services.Configure<MailTemplatesConstants>(configuration.GetSection("MailTemplatesSettings"));
+        services.AddScoped<IUserService, UserService>();
     }
     
     
