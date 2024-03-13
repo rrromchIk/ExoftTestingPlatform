@@ -10,14 +10,11 @@ public class UserService : IUserService
 {
     private readonly ICurrentUserService _currentUserService;
     private readonly UserManager<ApplicationUser> _userManager;
-    private readonly RoleManager<IdentityRole> _roleManager;
 
-    public UserService(ICurrentUserService currentUserService, UserManager<ApplicationUser> userManager,
-        RoleManager<IdentityRole> roleManager)
+    public UserService(ICurrentUserService currentUserService, UserManager<ApplicationUser> userManager)
     {
         _currentUserService = currentUserService;
         _userManager = userManager;
-        _roleManager = roleManager;
     }
 
     public async Task DeleteUser(Guid userId)
