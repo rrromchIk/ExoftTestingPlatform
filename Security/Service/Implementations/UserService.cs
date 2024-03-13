@@ -48,8 +48,8 @@ public class UserService : IUserService
         if(!await CheckUpdateViolation(userToUpdate))
             throw new AuthException("Forbidden to update the user", StatusCodes.Status403Forbidden);
         
-        userToUpdate.FirstName = userToUpdate.FirstName;
-        userToUpdate.LastName = userToUpdate.LastName;
+        userToUpdate.FirstName = userUpdateDto.FirstName;
+        userToUpdate.LastName = userUpdateDto.LastName;
         var result = await _userManager.UpdateAsync(userToUpdate);
         if (!result.Succeeded)
             throw new AuthException(result.Errors.First().Description, StatusCodes.Status500InternalServerError);
