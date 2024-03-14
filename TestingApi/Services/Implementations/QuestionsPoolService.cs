@@ -42,21 +42,7 @@ public class QuestionsPoolService : IQuestionsPoolService
     {
         var questionsPoolToAdd = _mapper.Map<QuestionsPool>(questionsPoolDto);
         questionsPoolToAdd.TestId = testId;
-
-        var collision = await _dataContext.QuestionsPools
-            .AnyAsync(
-                qp =>
-                    qp.Name == questionsPoolToAdd.Name &&
-                    qp.TestId == questionsPoolToAdd.TestId,
-                cancellationToken
-            );
-
-        if (collision)
-            throw new ApiException(
-                "Questions pool name has to be unique for the each test",
-                StatusCodes.Status409Conflict
-            );
-
+        
         var createdQuestionsPool = await _dataContext.AddAsync(questionsPoolToAdd, cancellationToken);
 
         await _dataContext.SaveChangesAsync(cancellationToken);
@@ -71,21 +57,6 @@ public class QuestionsPoolService : IQuestionsPoolService
             .FirstAsync(qp => qp.Id == id, cancellationToken);
         var updatedQuestionsPool = _mapper.Map<QuestionsPool>(questionsPoolDto);
         
-        var collision = await _dataContext.QuestionsPools
-            .AnyAsync(
-                qp =>
-                    qp.Name == updatedQuestionsPool.Name &&
-                    qp.TestId == updatedQuestionsPool.TestId &&
-                    qp.Id != questionsPoolFounded.Id,
-                cancellationToken
-            );
-
-        if (collision)
-            throw new ApiException(
-                "Questions pool name has to be unique for the each test",
-                StatusCodes.Status409Conflict
-            );
-
         questionsPoolFounded.Name = updatedQuestionsPool.Name;
         questionsPoolFounded.NumOfQuestionsToBeGenerated = updatedQuestionsPool.NumOfQuestionsToBeGenerated;
         questionsPoolFounded.GenerationStrategy = updatedQuestionsPool.GenerationStrategy;

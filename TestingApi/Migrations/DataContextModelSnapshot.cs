@@ -115,7 +115,7 @@ namespace TestingApi.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("NumOfQuestionsToBeGenerated")
                         .HasColumnType("int");
@@ -126,9 +126,6 @@ namespace TestingApi.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("TestId");
-
-                    b.HasIndex("Name", "TestId")
-                        .IsUnique();
 
                     b.ToTable("QuestionsPools");
                 });

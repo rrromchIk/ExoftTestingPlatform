@@ -38,7 +38,6 @@ public class QuestionsPoolsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionsPoolResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateQuestionsPool(
         [FromRoute] Guid testId,
         [FromBody] QuestionsPoolDto questionsPoolDto,
@@ -61,7 +60,6 @@ public class QuestionsPoolsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> UpdateQuestionsPool(
         [FromRoute] Guid id,
         [FromBody] QuestionsPoolDto questionsPoolDto,

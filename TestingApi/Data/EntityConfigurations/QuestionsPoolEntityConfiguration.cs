@@ -15,9 +15,5 @@ public class QuestionsPoolEntityConfiguration : BaseEntityConfiguration<Question
             .WithOne(q => q.QuestionsPool)
             .HasForeignKey(q => q.QuestionsPoolId)
             .OnDelete(DeleteBehavior.Cascade);
-        
-        builder
-            .HasIndex(t => new {t.Name, t.TestId})
-            .IsUnique();
     }
 }

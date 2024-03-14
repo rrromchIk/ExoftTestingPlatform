@@ -58,14 +58,6 @@ public class TestService : ITestService
 
         if (!testWithQuestionsPoolsDto.QuestionsPools.IsNullOrEmpty())
         {
-            var amountOfUniqueQuestionsPoolNames = testWithQuestionsPoolsDto.QuestionsPools
-                .Select(qp => qp.Name)
-                .ToHashSet()
-                .Count;
-            
-            if(amountOfUniqueQuestionsPoolNames != testToAdd.QuestionsPools.Count) 
-                throw new ApiException("Questions pool names have to be unique", StatusCodes.Status409Conflict);
-            
             testToAdd.QuestionsPools =
                 _mapper.Map<ICollection<QuestionsPool>>(testWithQuestionsPoolsDto.QuestionsPools);
         }
