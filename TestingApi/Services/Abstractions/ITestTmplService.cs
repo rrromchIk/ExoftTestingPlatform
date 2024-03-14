@@ -24,4 +24,8 @@ public interface ITestTmplService
 
     Task<PagedList<TestTmplResponseDto>> GetAllTestsTmplsAsync(FiltersDto filtersDto,
         CancellationToken cancellationToken = default);
+
+    public Task<PagedList<TestTmplResponseDto>> GetTestsTmplsByAuthorIdAsync(
+        Guid authorId, FiltersDto filtersDto, CancellationToken cancellationToken = default
+    );
 }

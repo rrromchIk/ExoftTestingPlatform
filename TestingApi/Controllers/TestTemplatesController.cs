@@ -35,6 +35,24 @@ public class TestTemplatesController : ControllerBase
         return response.Items.IsNullOrEmpty() ? NotFound() : Ok(response);
     }
 
+    [HttpGet("author/{authorId:guid}")]
+    [ValidateModel]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestTmplResponseDto>))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetTestTemplatesByAuthorId(
+        [FromRoute] Guid authorId,
+        [FromQuery] FiltersDto filtersDto,
+        CancellationToken cancellationToken)
+    {
+        var response = await _testTmplService.GetTestsTmplsByAuthorIdAsync(
+            authorId,
+            filtersDto,
+            cancellationToken
+        );
+        return response.Items.IsNullOrEmpty() ? NotFound() : Ok(response);
+    }
+
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestTmplResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

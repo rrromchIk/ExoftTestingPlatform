@@ -24,7 +24,7 @@ public class TestTmplService : ITestTmplService
         _mapper = mapper;
         _logger = logger;
     }
-    
+
     public async Task<TestTmplResponseDto?> GetTestTmplByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var testTemplate = await _dataContext.TestTemplates
@@ -34,7 +34,8 @@ public class TestTmplService : ITestTmplService
         return _mapper.Map<TestTmplResponseDto>(testTemplate);
     }
 
-    public async Task<TestTmplWithQpTmplsResponseDto?> GetTestTmplWithQuestionsPoolsTmplByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<TestTmplWithQpTmplsResponseDto?> GetTestTmplWithQuestionsPoolsTmplByIdAsync(Guid id,
+        CancellationToken cancellationToken = default)
     {
         var testTemplate = await _dataContext.TestTemplates
             .AsNoTracking()
@@ -50,8 +51,9 @@ public class TestTmplService : ITestTmplService
             .AnyAsync(t => t.Id == id, cancellationToken);
     }
 
-    public async Task<TestTmplWithQpTmplsResponseDto> CreateTestTmplAsync(TestTmplWithQuestionsPoolTmplDto testWithQuestionsPoolsDto,
-        CancellationToken cancellationToken = default) 
+    public async Task<TestTmplWithQpTmplsResponseDto> CreateTestTmplAsync(
+        TestTmplWithQuestionsPoolTmplDto testWithQuestionsPoolsDto,
+        CancellationToken cancellationToken = default)
     {
         var testTemplateToAdd = _mapper.Map<TestTemplate>(testWithQuestionsPoolsDto);
 
@@ -62,10 +64,13 @@ public class TestTmplService : ITestTmplService
                 .Select(qp => qp.DefaultName)
                 .ToHashSet()
                 .Count;
-            
-            if(amountOfUniqueQuestionsPoolNames != testTemplateToAdd.QuestionsPoolTemplates.Count) 
-                throw new ApiException("Questions pool template names have to be unique", StatusCodes.Status409Conflict);
-            
+
+            if (amountOfUniqueQuestionsPoolNames != testTemplateToAdd.QuestionsPoolTemplates.Count)
+                throw new ApiException(
+                    "Questions pool template names have to be unique",
+                    StatusCodes.Status409Conflict
+                );
+
             testTemplateToAdd.QuestionsPoolTemplates =
                 _mapper.Map<ICollection<QuestionsPoolTemplate>>(testWithQuestionsPoolsDto.QuestionsPoolTemplates);
         }
@@ -86,14 +91,15 @@ public class TestTmplService : ITestTmplService
         return _mapper.Map<TestTmplWithQpTmplsResponseDto>(createdTestTemplate.Entity);
     }
 
-    public async Task UpdateTestTmplAsync(Guid id, TestTmplDto testTmplDto, CancellationToken cancellationToken = default)
+    public async Task UpdateTestTmplAsync(Guid id, TestTmplDto testTmplDto,
+        CancellationToken cancellationToken = default)
     {
         var testTemplateFounded = await _dataContext.TestTemplates.FirstAsync(e => e.Id == id, cancellationToken);
         var updatedTestTemplate = _mapper.Map<TestTemplate>(testTmplDto);
-        
+
         var collision = await _dataContext.TestTemplates
             .AnyAsync(
-                t => 
+                t =>
                     t.TemplateName == updatedTestTemplate.TemplateName &&
                     t.Id != testTemplateFounded.Id,
                 cancellationToken
@@ -119,10 +125,40 @@ public class TestTmplService : ITestTmplService
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<PagedList<TestTmplResponseDto>> GetAllTestsTmplsAsync(FiltersDto filtersDto, CancellationToken cancellationToken = default)
+    public async Task<PagedList<TestTmplResponseDto>> GetAllTestsTmplsAsync(FiltersDto filtersDto,
+        CancellationToken cancellationToken = default)
+    {
+        var tests = await PagedList<TestTemplate>.CreateAsync(
+            GetTestTemplatesQueryWithFiltersApplied(filtersDto),
+            filtersDto.Page,
+            filtersDto.PageSize,
+            cancellationToken
+        );
+
+        return _mapper.Map<PagedList<TestTmplResponseDto>>(tests);
+    }
+
+    public async Task<PagedList<TestTmplResponseDto>> GetTestsTmplsByAuthorIdAsync(
+        Guid authorId, FiltersDto filtersDto, CancellationToken cancellationToken = default)
+    {
+        IQueryable<TestTemplate> testTemplatesQuery = GetTestTemplatesQueryWithFiltersApplied(filtersDto);
+
+        testTemplatesQuery = testTemplatesQuery.Where(t => t.CreatedBy == authorId);
+
+        var tests = await PagedList<TestTemplate>.CreateAsync(
+            testTemplatesQuery,
+            filtersDto.Page,
+            filtersDto.PageSize,
+            cancellationToken
+        );
+
+        return _mapper.Map<PagedList<TestTmplResponseDto>>(tests);
+    }
+
+    private IQueryable<TestTemplate> GetTestTemplatesQueryWithFiltersApplied(FiltersDto filtersDto)
     {
         IQueryable<TestTemplate> testTemplatesQuery = _dataContext.TestTemplates;
-
+        
         if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
         {
             testTemplatesQuery = testTemplatesQuery.Where(
@@ -135,16 +171,9 @@ public class TestTmplService : ITestTmplService
             ? testTemplatesQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn))
             : testTemplatesQuery.OrderBy(GetSortProperty(filtersDto.SortColumn));
 
-        var tests = await PagedList<TestTemplate>.CreateAsync(
-            testTemplatesQuery,
-            filtersDto.Page,
-            filtersDto.PageSize,
-            cancellationToken
-        );
-
-        return _mapper.Map<PagedList<TestTmplResponseDto>>(tests);    
+        return testTemplatesQuery;
     }
-    
+
     private static Expression<Func<TestTemplate, object>> GetSortProperty(string? sortColumn)
     {
         return sortColumn?.ToLower() switch
