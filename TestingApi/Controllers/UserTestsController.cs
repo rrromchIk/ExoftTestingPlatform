@@ -92,7 +92,7 @@ public class UserTestsController : ControllerBase
     public async Task<IActionResult> CreateUserTest(
         [FromRoute] Guid userId,
         [FromRoute] Guid testId,
-        [FromBody] float totalScore,
+        [FromQuery] float totalScore,
         CancellationToken cancellationToken)
     {
         if (!(await _userService.UserExistsAsync(userId, cancellationToken) &&
