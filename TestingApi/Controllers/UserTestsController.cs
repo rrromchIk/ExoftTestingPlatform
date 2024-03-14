@@ -57,14 +57,11 @@ public class UserTestsController : ControllerBase
 
     [HttpGet("{testId:guid}/questions")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<TestPassingQuestionsPoolResponseDto>))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllQuestionsForUserTestAsync(
         [FromRoute] Guid userId,
         [FromRoute] Guid testId,
         CancellationToken cancellationToken)
     {
-        if (!await _userTestService.UserTestExistsAsync(userId, testId, cancellationToken))
-            return NotFound();
 
         var response = await _userTestService
             .GetQuestionsForUserTest(userId, testId, cancellationToken);
