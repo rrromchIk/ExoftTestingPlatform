@@ -12,7 +12,7 @@ public class TestTmplWithQuestionsPoolTmplDto
     [MaxLength(25, ErrorMessage = "Name can't exceed 25 characters")]
     public string TemplateName { get; set; } = null!;
     
-    [EnumValue(typeof(GenerationStrategy))]
+    [EnumValue(typeof(TestDifficulty))]
     public string? DefaultTestDifficulty { get; set; }
 
     public string? DefaultSubject { get; set; }
