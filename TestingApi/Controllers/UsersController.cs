@@ -67,7 +67,7 @@ public class UsersController : ControllerBase
         return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, response);
     }
 
-
+    [Authorize(Roles = "SuperAdmin, Admin, User")]
     [HttpPut("{id:guid}")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
