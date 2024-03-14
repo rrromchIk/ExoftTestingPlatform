@@ -86,19 +86,21 @@ public class UsersController : ControllerBase
     }
 
     [Authorize(Roles = "SuperAdmin, Admin, User")]
+    [ValidateModel]
     [HttpPatch("{id:guid}/avatar")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateUserAvatar(
         [FromRoute] Guid id,
-        [FromForm] IFormFile profilePicture,
+        [FromForm] [AllowedImageExtensions] IFormFile profilePicture,
         CancellationToken cancellationToken)
     {
         if (!await _userService.UserExistsAsync(id, cancellationToken))
             return NotFound();
 
         if (profilePicture.Length <= 0)
-            return BadRequest();
+            return BadRequest("No file uploaded.");
 
         await _fileService.RemoveFilesByNameIfExistsAsync(fileName: id.ToString(), cancellationToken);
         var filePath = await _fileService.StoreFileAsync(
