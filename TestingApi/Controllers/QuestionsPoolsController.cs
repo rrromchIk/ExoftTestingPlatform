@@ -15,7 +15,8 @@ public class QuestionsPoolsController : ControllerBase
     private readonly ITestService _testService;
     private readonly ILogger<QuestionsPoolsController> _logger;
 
-    public QuestionsPoolsController(IQuestionsPoolService questionsPoolService, ILogger<QuestionsPoolsController> logger,
+    public QuestionsPoolsController(IQuestionsPoolService questionsPoolService,
+        ILogger<QuestionsPoolsController> logger,
         ITestService testService)
     {
         _questionsPoolService = questionsPoolService;
@@ -29,18 +30,15 @@ public class QuestionsPoolsController : ControllerBase
     public async Task<IActionResult> GetQuestionsPoolById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var response = await _questionsPoolService.GetQuestionPoolByIdAsync(id, cancellationToken);
-
-        if (response == null)
-            return NotFound();
-
-        return Ok(response);
+        return response == null ? NotFound() : Ok(response);
     }
-    
+
     [HttpPost("/api/tests/{testId:guid}/questions-pools")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionsPoolResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateQuestionsPool(
         [FromRoute] Guid testId,
         [FromBody] QuestionsPoolDto questionsPoolDto,
@@ -48,18 +46,22 @@ public class QuestionsPoolsController : ControllerBase
     {
         if (!await _testService.TestExistsAsync(testId, cancellationToken))
             return NotFound();
-        
-        var response = await _questionsPoolService.CreateQuestionsPoolAsync(testId, questionsPoolDto,
-            cancellationToken);
+
+        var response = await _questionsPoolService.CreateQuestionsPoolAsync(
+            testId,
+            questionsPoolDto,
+            cancellationToken
+        );
 
         return CreatedAtAction(nameof(GetQuestionsPoolById), new { id = response.Id }, response);
     }
-    
+
     [HttpPut]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> UpdateQuestionsPool(
         [FromRoute] Guid id,
         [FromBody] QuestionsPoolDto questionsPoolDto,

@@ -22,48 +22,38 @@ public class TestTemplatesController : ControllerBase
         _testTmplService = testTmplService;
         _logger = logger;
     }
-    
+
     [HttpGet]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestTmplResponseDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllTestTemplates([FromQuery] FiltersDto filtersDto,
         CancellationToken cancellationToken)
     {
         var response = await _testTmplService.GetAllTestsTmplsAsync(filtersDto, cancellationToken);
-
-        if (response.Items.IsNullOrEmpty())
-            return NotFound();
-        
-        return Ok(response);
+        return response.Items.IsNullOrEmpty() ? NotFound() : Ok(response);
     }
-    
+
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestTmplResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTestTemplateById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var response = await _testTmplService.GetTestTmplByIdAsync(id, cancellationToken);
-
-        if (response == null) 
-            return NotFound();
-        
-        return Ok(response);
+        return response == null ? NotFound() : Ok(response);
     }
-    
+
     [HttpGet("{id:guid}/questions-pools/templates")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TestTmplWithQpTmplsResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetTestTemplateWithQpTemplatesById([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetTestTemplateWithQpTemplatesById([FromRoute] Guid id,
+        CancellationToken cancellationToken)
     {
         var response = await _testTmplService.GetTestTmplWithQuestionsPoolsTmplByIdAsync(id, cancellationToken);
-
-        if (response == null) 
-            return NotFound();
-        
-        return Ok(response);
+        return response == null ? NotFound() : Ok(response);
     }
-    
+
     [HttpPost]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -73,11 +63,13 @@ public class TestTemplatesController : ControllerBase
         CancellationToken cancellationToken)
     {
         var response = await _testTmplService.CreateTestTmplAsync(
-            testTmplWithQuestionsPoolTmplDto, cancellationToken);
+            testTmplWithQuestionsPoolTmplDto,
+            cancellationToken
+        );
 
         return CreatedAtAction(nameof(GetTestTemplateWithQpTemplatesById), new { id = response.Id }, response);
     }
-    
+
     [HttpPut("{id:guid}")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -95,14 +87,14 @@ public class TestTemplatesController : ControllerBase
         return NoContent();
     }
 
-    
+
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> DeleteTestTemplate([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         if (!await _testTmplService.TestTmplExistsAsync(id, cancellationToken))
-            return NotFound(); 
+            return NotFound();
 
         await _testTmplService.DeleteTestTmplAsync(id, cancellationToken);
         return NoContent();

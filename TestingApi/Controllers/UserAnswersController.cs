@@ -35,12 +35,12 @@ public class UserAnswersController : ControllerBase
         CancellationToken cancellationToken
     )
     {
-        var response = await _userAnswerService.GetUserAnswersAsync(userId, questionId, cancellationToken);
-
-        if (response.IsNullOrEmpty())
-            return NotFound();
-        
-        return Ok(response);
+        var response = await _userAnswerService.GetUserAnswersAsync(
+            userId,
+            questionId,
+            cancellationToken
+        );
+        return response.IsNullOrEmpty() ? NotFound() : Ok(response);
     }
 
     [HttpPost("answers")]
@@ -55,7 +55,7 @@ public class UserAnswersController : ControllerBase
               await _questionService.QuestionExistsAsync(userAnswerDto.QuestionId ?? Guid.Empty, cancellationToken) &&
               await _answerService.AnswerExistsAsync(userAnswerDto.AnswerId ?? Guid.Empty, cancellationToken)))
             return NotFound();
-        
+
         var response = await _userAnswerService.CreateUserAnswerAsync(userAnswerDto, cancellationToken);
 
         return CreatedAtAction(

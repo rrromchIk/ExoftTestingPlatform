@@ -35,10 +35,7 @@ public class QuestionTemplatesController : ControllerBase
         var response = await _questionTmplService
             .GetQuestionTmplsByQuestionsPoolTmplIdAsync(questionsPoolTmplId, cancellationToken);
 
-        if (response.IsNullOrEmpty()) 
-            return NotFound();
-        
-        return Ok(response);
+        return response.IsNullOrEmpty() ? NotFound() : Ok(response);
     }
     
     [HttpGet("questions/templates/{id:guid}")]
@@ -47,11 +44,7 @@ public class QuestionTemplatesController : ControllerBase
     public async Task<IActionResult> GetQuestionTemplateById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var response = await _questionTmplService.GetQuestionTmplByIdAsync(id, cancellationToken);
-
-        if (response == null) 
-            return NotFound();
-        
-        return Ok(response);
+        return response == null ? NotFound() : Ok(response);
     }
     
     [HttpPost("{questionsPoolTmplId:guid}/questions/templates")]

@@ -28,11 +28,7 @@ public class AnswerTemplatesController : ControllerBase
     public async Task<IActionResult> GetAnswerTemplateById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var response = await _answerTmplService.GetAnswerTmplById(id, cancellationToken);
-
-        if (response == null) 
-            return NotFound();
-        
-        return Ok(response);
+        return response == null ? NotFound() : Ok(response);
     }
     
     [HttpPost("{questionTemplateId:guid}/answers/templates")]
@@ -46,9 +42,7 @@ public class AnswerTemplatesController : ControllerBase
         CancellationToken cancellationToken)
     {
         if (!await _questionTmplService.QuestionTmplExistsAsync(questionTemplateId, cancellationToken))
-        {
             return NotFound();
-        }
         
         var response = await _answerTmplService.CreateAnswerTmplAsync(questionTemplateId, answerTmplDto, cancellationToken);
         return CreatedAtAction(nameof(GetAnswerTemplateById), new { id = response.Id }, response);

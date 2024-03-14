@@ -34,70 +34,60 @@ public class UserTestsController : ControllerBase
     )
     {
         var response = await _userTestService.GetUserTestAsync(userId, testId, cancellationToken);
-
-        if (response == null)
-            return NotFound();
-        
-        return Ok(response);
+        return response == null ? NotFound() : Ok(response);
     }
-    
+
     [HttpGet("")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestToPassResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllTestsForUser(
         [FromQuery] FiltersDto filtersDto,
         [FromRoute] Guid userId,
-        CancellationToken cancellationToken) {
+        CancellationToken cancellationToken)
+    {
         if (!await _userService.UserExistsAsync(userId, cancellationToken))
             return NotFound();
 
         var response = await _userTestService
             .GetAllTestsForUserAsync(filtersDto, userId, cancellationToken);
 
-        if (response.Items.IsNullOrEmpty())
-            return NotFound();
-        
-        return Ok(response);
+        return response.Items.IsNullOrEmpty() ? NotFound() : Ok(response);
     }
-    
+
     [HttpGet("{testId:guid}/questions")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<TestPassingQuestionsPoolResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllQuestionsForUserTestAsync(
         [FromRoute] Guid userId,
         [FromRoute] Guid testId,
-        CancellationToken cancellationToken) {
+        CancellationToken cancellationToken)
+    {
         if (!await _userTestService.UserTestExistsAsync(userId, testId, cancellationToken))
             return NotFound();
 
         var response = await _userTestService
             .GetQuestionsForUserTest(userId, testId, cancellationToken);
-        
-        if (response.IsNullOrEmpty())
-            return NotFound();
-        
-        return Ok(response);
+
+        return response.IsNullOrEmpty() ? NotFound() : Ok(response);
     }
-    
+
     [HttpGet("started")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<StartedTestResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllStartedTestsForUserAsync(
         [FromQuery] FiltersDto filtersDto,
         [FromRoute] Guid userId,
-        CancellationToken cancellationToken) {
+        CancellationToken cancellationToken)
+    {
         if (!await _userService.UserExistsAsync(userId, cancellationToken))
             return NotFound();
 
         var response = await _userTestService
             .GetAllStartedTestsForUserAsync(filtersDto, userId, cancellationToken);
-        
-        if (response.Items.IsNullOrEmpty())
-            return NotFound();
-        
-        return Ok(response);
+
+        return response.Items.IsNullOrEmpty() ? NotFound() : Ok(response);
     }
-    
+
     [HttpPost("{testId:guid}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -123,11 +113,13 @@ public class UserTestsController : ControllerBase
             response
         );
     }
-    
+
     [HttpPatch("{testId:guid}/complete/")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> CompleteUserTest([FromRoute] Guid userId, [FromRoute] Guid testId, CancellationToken cancellationToken) {
+    public async Task<IActionResult> CompleteUserTest([FromRoute] Guid userId, [FromRoute] Guid testId,
+        CancellationToken cancellationToken)
+    {
         if (!await _userTestService.UserTestExistsAsync(userId, testId, cancellationToken))
             return NotFound();
 
@@ -136,9 +128,9 @@ public class UserTestsController : ControllerBase
         var response = await _userTestService.GetUserTestAsync(userId, testId, cancellationToken);
         return Ok(response);
     }
-    
+
     [HttpDelete("{testId:guid}")]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteUserTest(
         [FromRoute] Guid userId,

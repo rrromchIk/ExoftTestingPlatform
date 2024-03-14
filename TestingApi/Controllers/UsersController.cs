@@ -5,7 +5,7 @@ using TestingApi.Dto;
 using TestingApi.Dto.UserDto;
 using TestingApi.Helpers;
 using TestingApi.Helpers.ValidationAttributes;
-using TestingApi.Services.Abstractions; 
+using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Controllers;
 
@@ -38,7 +38,7 @@ public class UsersController : ControllerBase
 
         if (response.Items.IsNullOrEmpty())
             return NotFound();
-        
+
         return Ok(response);
     }
 
@@ -49,12 +49,12 @@ public class UsersController : ControllerBase
     {
         var response = await _userService.GetUserByIdAsync(id, cancellationToken);
 
-        if (response == null) 
+        if (response == null)
             return NotFound();
-        
+
         return Ok(response);
     }
-    
+
     [HttpPost]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -63,11 +63,11 @@ public class UsersController : ControllerBase
         CancellationToken cancellationToken)
     {
         var response = await _userService.CreateUserAsync(userDto, cancellationToken);
-        
+
         return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, response);
     }
-    
-    
+
+
     [HttpPut("{id:guid}")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -85,6 +85,7 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "SuperAdmin, Admin, User")]
     [HttpPatch("{id:guid}/avatar")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -98,17 +99,20 @@ public class UsersController : ControllerBase
 
         if (profilePicture.Length <= 0)
             return BadRequest();
-        
+
         await _fileService.RemoveFilesByNameIfExistsAsync(fileName: id.ToString(), cancellationToken);
-        var filePath = await _fileService.StoreFileAsync(profilePicture,
-            fileName: id.ToString(), cancellationToken);
+        var filePath = await _fileService.StoreFileAsync(
+            profilePicture,
+            fileName: id.ToString(),
+            cancellationToken
+        );
 
         await _userService.UpdateUserAvatarAsync(id, filePath, cancellationToken);
-        
+
         return NoContent();
     }
-    
-    
+
+    [Authorize(Roles = "SuperAdmin, Admin, User")]
     [HttpGet("{id:guid}/avatar/download")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -119,7 +123,7 @@ public class UsersController : ControllerBase
 
         var user = await _userService.GetUserByIdAsync(id, cancellationToken);
         var filePath = user.ProfilePictureFilePath;
-        
+
         if (filePath.IsNullOrEmpty())
             return NotFound();
 

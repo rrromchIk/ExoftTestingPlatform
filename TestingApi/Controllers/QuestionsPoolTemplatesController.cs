@@ -22,20 +22,17 @@ public class QuestionsPoolTemplatesController : ControllerBase
         _testTmplService = testTmplService;
         _questionsPoolTmplService = questionsPoolTmplService;
     }
-    
+
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(QuestionsPoolTmplResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetQuestionsPoolTemplateById([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> GetQuestionsPoolTemplateById([FromRoute] Guid id,
+        CancellationToken cancellationToken)
     {
         var response = await _questionsPoolTmplService.GetQuestionPoolTmplByIdAsync(id, cancellationToken);
-
-        if (response == null)
-            return NotFound();
-
-        return Ok(response);
+        return response == null ? NotFound() : Ok(response);
     }
-    
+
     [HttpPost("/api/tests/templates/{testTemplateId:guid}/questions-pools/templates")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionsPoolTmplResponseDto))]
@@ -48,14 +45,16 @@ public class QuestionsPoolTemplatesController : ControllerBase
     {
         if (!await _testTmplService.TestTmplExistsAsync(testTemplateId, cancellationToken))
             return NotFound();
-        
-        var response = await _questionsPoolTmplService.CreateQuestionsPoolTmplAsync(testTemplateId,
+
+        var response = await _questionsPoolTmplService.CreateQuestionsPoolTmplAsync(
+            testTemplateId,
             questionsPoolTmplDto,
-            cancellationToken);
+            cancellationToken
+        );
 
         return CreatedAtAction(nameof(GetQuestionsPoolTemplateById), new { id = response.Id }, response);
     }
-    
+
     [HttpPut]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -71,12 +70,13 @@ public class QuestionsPoolTemplatesController : ControllerBase
 
         await _questionsPoolTmplService.UpdateQuestionsPoolTmplAsync(id, questionsPoolTmplDto, cancellationToken);
         return NoContent();
-    } 
+    }
 
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    public async Task<IActionResult> DeleteQuestionsPoolTemplate([FromRoute] Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteQuestionsPoolTemplate([FromRoute] Guid id,
+        CancellationToken cancellationToken)
     {
         if (!await _questionsPoolTmplService.QuestionsPoolTmplExistsAsync(id, cancellationToken))
             return NotFound();

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Security.Dto;
 using Security.Service.Abstractions;
 
 namespace Security.Controllers;
@@ -18,7 +17,7 @@ public class EmailConfirmationController : ControllerBase
     
     [Authorize(Roles = "SuperAdmin, Admin, User")]
     [HttpGet("request")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(TokenDto))]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<IActionResult> ConfirmEmailRequest()
     {

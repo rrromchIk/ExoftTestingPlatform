@@ -17,13 +17,14 @@ public class QuestionsController : ControllerBase
     private readonly IQuestionService _questionService;
     private readonly ILogger<QuestionsController> _logger;
 
-    public QuestionsController(IQuestionService questionService, ILogger<QuestionsController> logger, IQuestionsPoolService questionsPoolService)
+    public QuestionsController(IQuestionService questionService, ILogger<QuestionsController> logger,
+        IQuestionsPoolService questionsPoolService)
     {
         _questionService = questionService;
         _logger = logger;
         _questionsPoolService = questionsPoolService;
     }
-    
+
     [HttpGet("{questionsPoolId:guid}/questions")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<QuestionResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -32,29 +33,22 @@ public class QuestionsController : ControllerBase
     {
         if (!await _questionsPoolService.QuestionsPoolExistsAsync(questionsPoolId, cancellationToken))
             return NotFound();
-        
+
         var response = await _questionService
             .GetQuestionsByQuestionsPoolIdAsync(questionsPoolId, cancellationToken);
 
-        if (response.IsNullOrEmpty()) 
-            return NotFound();
-        
-        return Ok(response);
+        return response.IsNullOrEmpty() ? NotFound() : Ok(response);
     }
-    
+
     [HttpGet("questions/{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(QuestionResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetQuestionById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var response = await _questionService.GetQuestionByIdAsync(id, cancellationToken);
-
-        if (response == null) 
-            return NotFound();
-        
-        return Ok(response);
+        return response == null ? NotFound() : Ok(response);
     }
-    
+
     [HttpPost("{questionsPoolId:guid}/questions")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -67,12 +61,16 @@ public class QuestionsController : ControllerBase
     {
         if (!await _questionsPoolService.QuestionsPoolExistsAsync(questionsPoolId, cancellationToken))
             return NotFound();
-        
-        var response = await _questionService.CreateQuestionAsync(questionsPoolId, questionWithAnswersDto, cancellationToken);
+
+        var response = await _questionService.CreateQuestionAsync(
+            questionsPoolId,
+            questionWithAnswersDto,
+            cancellationToken
+        );
 
         return CreatedAtAction(nameof(GetQuestionById), new { id = response.Id }, response);
     }
-    
+
     [HttpPut("questions/{id:guid}")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
