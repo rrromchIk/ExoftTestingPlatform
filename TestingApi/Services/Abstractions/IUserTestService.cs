@@ -1,4 +1,5 @@
 ﻿using TestingApi.Dto;
+using TestingApi.Dto.TestResultDto;
 using TestingApi.Dto.UserTestDto;
 using TestingApi.Helpers;
 
@@ -19,5 +20,8 @@ public interface IUserTestService
     Task<UserTestResponseDto> CreateUserTestAsync(Guid userId, Guid testId,
         float totalScore, CancellationToken cancellationToken = default);
     Task CompleteUserTestAsync(Guid userId, Guid testId, CancellationToken cancellationToken = default);
+
+    Task<TestResultResponseDto> GetUserTestResults(Guid userId, Guid testId,
+        CancellationToken cancellationToken = default);
     Task DeleteUserTestAsync(Guid userId, Guid testId, CancellationToken cancellationToken = default);
 }

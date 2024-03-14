@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Dto;
+using TestingApi.Dto.TestResultDto;
 using TestingApi.Dto.UserTestDto;
 using TestingApi.Helpers;
 using TestingApi.Services.Abstractions;
@@ -126,6 +127,19 @@ public class UserTestsController : ControllerBase
         await _userTestService.CompleteUserTestAsync(userId, testId, cancellationToken);
 
         var response = await _userTestService.GetUserTestAsync(userId, testId, cancellationToken);
+        return Ok(response);
+    }
+
+    [HttpGet("{testId:guid}/results")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<TestResultResponseDto>))]
+    public async Task<IActionResult> GetUserTestResult([FromRoute] Guid userId, [FromRoute] Guid testId,
+        CancellationToken cancellationToken)
+    {
+        if (!await _userTestService.UserTestExistsAsync(userId, testId, cancellationToken))
+            return NotFound();
+
+        var response = await _userTestService.GetUserTestResults(userId, testId, cancellationToken);
         return Ok(response);
     }
 
