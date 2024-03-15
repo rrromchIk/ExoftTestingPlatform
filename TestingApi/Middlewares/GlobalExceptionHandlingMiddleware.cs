@@ -21,6 +21,7 @@ public class GlobalExceptionHandlingMiddleware : IMiddleware
         }
         catch (Exception e)
         {
+            _logger.LogError("{msg}, {stc}", e.Message, e.StackTrace);
             var problemDetails = e switch
             {
                 ApiException  apiException => new ProblemDetails()
