@@ -106,13 +106,14 @@ public class MappingProfiles : Profile
 
     private void ConfigureMappingForUserEntity()
     {
-        CreateMap<UserDto, User>()
+        CreateMap<SecurityUserResponseDto, User>()
             .ForMember(
                 dest => dest.UserRole,
                 opt => opt
-                    .MapFrom(src => Enum.Parse(typeof(UserRole), src.UserRole, true))
+                    .MapFrom(src => 
+                        Enum.Parse(typeof(UserRole), src.Role, true))
             );
-
+        
         CreateMap<User, UserResponseDto>()
             .ForMember(
                 dest => dest.UserRole,

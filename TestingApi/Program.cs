@@ -18,8 +18,9 @@ builder.Logging
         })
     .AddDebug();
 
-builder.Services.RegisterCustomServices();
+builder.Services.RegisterCustomServices(builder.Configuration);
 builder.Services.ConfigureAuth(builder.Configuration);
+builder.Services.ConfigureHttpClient(builder.Configuration);
 builder.Services.AddControllers();
 builder.Services.AddDbContext<DataContext>(options =>
 {

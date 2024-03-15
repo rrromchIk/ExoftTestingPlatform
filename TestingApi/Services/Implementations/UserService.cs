@@ -1,6 +1,10 @@
 ﻿using System.Linq.Expressions;
+using System.Net;
+using System.Text;
+using System.Text.Json;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using TestingApi.Constants;
 using TestingApi.Data;
 using TestingApi.Dto;
 using TestingApi.Dto.UserDto;
@@ -8,6 +12,8 @@ using TestingAPI.Exceptions;
 using TestingApi.Helpers;
 using TestingApi.Models;
 using TestingApi.Services.Abstractions;
+using Microsoft.Extensions.Options;
+
 
 namespace TestingApi.Services.Implementations;
 
@@ -16,11 +22,17 @@ public class UserService : IUserService
     private readonly DataContext _dataContext;
     private readonly IMapper _mapper;
     private readonly ILogger<UserService> _logger;
+    private readonly HttpClient _httpClient;
+    private readonly SecurityHttpClientConstants _securityHttpClientConstants;
 
-    public UserService(DataContext dataContext, ILogger<UserService> logger, IMapper mapper)
+    public UserService(DataContext dataContext, ILogger<UserService> logger,
+        IMapper mapper, IHttpClientFactory httpClientFactory,
+        IOptions<SecurityHttpClientConstants> securityHttpClientConstants)
     {
         _dataContext = dataContext;
         _mapper = mapper;
+        _securityHttpClientConstants = securityHttpClientConstants.Value;
+        _httpClient = httpClientFactory.CreateClient(_securityHttpClientConstants.ClientName);
         _logger = logger;
     }
 
@@ -52,7 +64,7 @@ public class UserService : IUserService
 
         return _mapper.Map<PagedList<UserResponseDto>>(tests);
     }
-    
+
     private static Expression<Func<User, object>> GetSortProperty(string? sortColumn)
     {
         return sortColumn?.ToLower() switch
@@ -80,18 +92,48 @@ public class UserService : IUserService
             .AnyAsync(e => e.Id == id, cancellationToken);
     }
 
-    public async Task<UserResponseDto> CreateUserAsync(UserDto userDto, CancellationToken cancellationToken = default)
+    public async Task<UserResponseDto> RegisterUserAsync(UserSignUpDto userSignUpDto,
+        CancellationToken cancellationToken = default)
     {
-        var userToAdd = _mapper.Map<User>(userDto);
+        var jsonContent = JsonSerializer.Serialize(userSignUpDto);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-        var collision = await _dataContext.Users
-            .AnyAsync(
-                u => u.Email == userToAdd.Email,
-                cancellationToken
-            );
+        _logger.LogDebug(_securityHttpClientConstants.RegisterEndpoint);
+        var httpResponse = await _httpClient.PostAsync(
+            _httpClient.BaseAddress + _securityHttpClientConstants.RegisterEndpoint,
+            content,
+            cancellationToken
+        );
 
-        if (collision)
-            throw new ApiException("User email has to be unique", StatusCodes.Status409Conflict);
+        if (httpResponse.StatusCode != HttpStatusCode.OK)
+            throw new ApiException("Error while creating user", (int)httpResponse.StatusCode);
+
+        var responseBody = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
+        _logger.LogInformation("Response body: {r}", responseBody);
+
+        await using var stream = await httpResponse.Content.ReadAsStreamAsync(cancellationToken);
+
+
+        var securityUserResponseDto = await JsonSerializer.DeserializeAsync<SecurityUserResponseDto>(
+            stream,
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            },
+            cancellationToken
+        );
+        _logger.LogInformation("Security response: {r}", JsonSerializer.Serialize(securityUserResponseDto));
+
+        var userToAdd = _mapper.Map<User>(securityUserResponseDto);
+
+        // var collision = await _dataContext.Users
+        //     .AnyAsync(
+        //         u => u.Email == userToAdd.Email,
+        //         cancellationToken
+        //     );
+        //
+        // if (collision)
+        //     throw new ApiException("User email has to be unique", StatusCodes.Status409Conflict);
         var createdUser = await _dataContext.AddAsync(userToAdd, cancellationToken);
 
         await _dataContext.SaveChangesAsync(cancellationToken);
@@ -103,7 +145,7 @@ public class UserService : IUserService
     {
         var userFounded = await _dataContext.Users.FirstAsync(u => u.Id == id, cancellationToken);
         var updatedUser = _mapper.Map<User>(userDto);
-        
+
         userFounded.FirstName = updatedUser.FirstName;
         userFounded.LastName = updatedUser.LastName;
         userFounded.UserRole = updatedUser.UserRole;
@@ -111,7 +153,8 @@ public class UserService : IUserService
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task UpdateUserAvatarAsync(Guid id, string profilePictureFilePath, CancellationToken cancellationToken = default)
+    public async Task UpdateUserAvatarAsync(Guid id, string profilePictureFilePath,
+        CancellationToken cancellationToken = default)
     {
         var userToUpdate = await _dataContext.Users.FirstAsync(u => u.Id == id, cancellationToken);
 

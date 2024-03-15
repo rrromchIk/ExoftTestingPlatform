@@ -55,14 +55,15 @@ public class UsersController : ControllerBase
         return Ok(response);
     }
 
-    [HttpPost]
+    [AllowAnonymous]
+    [HttpPost("register")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserResponseDto))]
-    public async Task<IActionResult> CreateUser([FromBody] UserDto userDto,
+    public async Task<IActionResult> RegisterUser([FromBody] UserSignUpDto userSignUpDto,
         CancellationToken cancellationToken)
     {
-        var response = await _userService.CreateUserAsync(userDto, cancellationToken);
+        var response = await _userService.RegisterUserAsync(userSignUpDto, cancellationToken);
 
         return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, response);
     }
