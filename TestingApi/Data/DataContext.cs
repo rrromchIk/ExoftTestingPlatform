@@ -64,7 +64,8 @@ public class DataContext : DbContext
 
                     case EntityState.Added:
                         baseEntity.CreatedTimestamp = DateTime.Now;
-                        baseEntity.CreatedBy = Guid.Parse(_currentUserService.UserId);
+                        if (_currentUserService.UserId != null)
+                            baseEntity.CreatedBy = Guid.Parse(_currentUserService.UserId);
                         if (baseEntity.Id == default)
                             baseEntity.Id = Guid.NewGuid();
                         break;
