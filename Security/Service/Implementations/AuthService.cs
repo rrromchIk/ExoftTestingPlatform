@@ -62,7 +62,16 @@ public class AuthService : IAuthService
         if (!sendingResult)
             throw new AuthException("Failed to send an email", StatusCodes.Status500InternalServerError);
 
-        return _mapper.Map<UserResponseDto>(userSignUpDto);
+        var createdUser = await _userManager.FindByEmailAsync(user.Email);
+        return new UserResponseDto
+        {
+            Id = createdUser.Id,
+            FirstName = createdUser.FirstName,
+            LastName = createdUser.LastName,
+            Email = createdUser.Email,
+            EmailConfirmed = createdUser.EmailConfirmed,
+            Role = (await _userManager.GetRolesAsync(createdUser)).First()
+        };
     }
 
     public async Task<TokenDto> LoginAsync(UserLoginDto userLoginDto)
