@@ -12,7 +12,7 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("api/tests")]
-[Authorize(Roles = "SuperAdmin, Admin, User")]
+[Authorize(Roles = "SuperAdmin, Admin")]
 public class TestsController : ControllerBase
 {
     private readonly ITestService _testService;
@@ -23,8 +23,7 @@ public class TestsController : ControllerBase
         _testService = testService;
         _logger = logger;
     }
-
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    
     [HttpGet]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestResponseDto>))]

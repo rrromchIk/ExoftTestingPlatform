@@ -9,7 +9,7 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("api/tests/questions-pools/")]
-[Authorize(Roles = "SuperAdmin, Admin, User")]
+[Authorize(Roles = "SuperAdmin, Admin")]
 public class QuestionTemplatesController : ControllerBase
 {
     private readonly IQuestionsPoolTmplService _questionsPoolTmplService;

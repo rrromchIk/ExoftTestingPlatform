@@ -8,7 +8,7 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("api/tests/questions-pools/{id:guid}")]
-[Authorize(Roles = "SuperAdmin, Admin, User")]
+[Authorize(Roles = "SuperAdmin, Admin")]
 public class QuestionsPoolsController : ControllerBase
 {
     private readonly IQuestionsPoolService _questionsPoolService;
@@ -33,7 +33,7 @@ public class QuestionsPoolsController : ControllerBase
         return response == null ? NotFound() : Ok(response);
     }
 
-    [Authorize(Roles = "SuperAdmin, Admin, User")]
+    [Authorize(Roles = "SuperAdmin, Admin")]
     [HttpPost("/api/tests/{testId:guid}/questions-pools")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionsPoolResponseDto))]

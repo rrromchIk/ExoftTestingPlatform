@@ -11,7 +11,7 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("api/tests/templates")]
-[Authorize(Roles = "SuperAdmin, Admin, User")]
+[Authorize(Roles = "SuperAdmin, Admin")]
 public class TestTemplatesController : ControllerBase
 {
     private readonly ITestTmplService _testTmplService;
