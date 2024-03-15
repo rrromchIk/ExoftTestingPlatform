@@ -1,6 +1,8 @@
-﻿using System.Text;
+﻿using System.Net.Http.Headers;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using TestingApi.Constants;
 using TestingApi.Middlewares;
 using TestingApi.Services.Abstractions;
 using TestingApi.Services.Implementations;
@@ -9,7 +11,7 @@ namespace TestingApi.Extensions;
 
 public static class RegisterServices
 {
-    public static void RegisterCustomServices(this IServiceCollection serviceCollection)
+    public static void RegisterCustomServices(this IServiceCollection serviceCollection, IConfiguration configuration)
     {
         serviceCollection.AddScoped<GlobalExceptionHandlingMiddleware>();
         serviceCollection.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -27,6 +29,7 @@ public static class RegisterServices
         serviceCollection.AddScoped<IAnswerTmplService, AnswerTmplService>();
         serviceCollection.AddHttpContextAccessor();
         serviceCollection.AddScoped<ICurrentUserService, CurrentUserService>();
+        serviceCollection.Configure<SecurityHttpClientConstants>(configuration.GetSection("SecurityHttpClient"));
     }
     
     public static void ConfigureAuth(this IServiceCollection services, IConfiguration configuration)
@@ -57,5 +60,17 @@ public static class RegisterServices
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(configuration["Auth:SecretKey"])),
                 };
             });
+    }
+
+    public static void ConfigureHttpClient(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddHttpClient(configuration["SecurityHttpClient:ClientName"], client =>
+        {
+            client.BaseAddress = new Uri(configuration["SecurityHttpClient:BaseAddress"]);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/problem+json"));
+            client.DefaultRequestHeaders.AcceptCharset.Add(new StringWithQualityHeaderValue("utf-8"));
+        });
     }
 }
