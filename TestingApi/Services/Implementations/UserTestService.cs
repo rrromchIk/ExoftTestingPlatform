@@ -206,48 +206,36 @@ public class UserTestService : IUserTestService
     private async ValueTask<float> CalculateUserScore(Guid userId, Guid testId,
         CancellationToken cancellationToken = default)
     {
-        var userQuestionsResults = GetUserQuestionResultQuery(userId, testId);
+        var userQuestionsResultsQuery = GetUserQuestionResultQuery(userId, testId);
 
-        return await userQuestionsResults
-            .SumAsync(
-                q => q.UserScore,
-                cancellationToken
-            );
+        return (await userQuestionsResultsQuery.ToListAsync(cancellationToken))
+            .Sum(q => q.UserScore);
     }
 
 
     public async Task<TestResultResponseDto> GetUserTestResults(Guid userId, Guid testId,
         CancellationToken cancellationToken = default)
     {
-        var userQuestionsResults = GetUserQuestionResultQuery(userId, testId);
-
-        var res = await userQuestionsResults.ToListAsync(cancellationToken);
+        var userQuestionsResultsQuery = GetUserQuestionResultQuery(userId, testId);
         
-        var userScore = await userQuestionsResults
-            .SumAsync(
-                q => q.UserScore,
-                cancellationToken
-            );
+        var questionsResult = await userQuestionsResultsQuery.ToListAsync(cancellationToken);
+        
+        var userScore = questionsResult.Sum(q => q.UserScore);
 
-        var testScoreAndStatus = await _dataContext.UserTests
+        var userTest = await _dataContext.UserTests
             .Where(t => t.UserId == userId && t.TestId == testId)
-            .Select(
-                t => new
-                {
-                    t.TotalScore,
-                    t.UserTestStatus
-                }
-            )
             .FirstAsync(cancellationToken);
 
         return new TestResultResponseDto
         {
             UserId = userId,
             TestId = testId,
-            TotalScore = testScoreAndStatus.TotalScore,
-            UserTestStatus = testScoreAndStatus.UserTestStatus.ToString(),
-            UserScore = 55555,
-            QuestionsResults = await userQuestionsResults.ToListAsync(cancellationToken)
+            TotalScore = userTest.TotalScore,
+            StartingTime = userTest.StartingTime,
+            EndingTime = userTest.EndingTime,
+            UserTestStatus = userTest.UserTestStatus.ToString(),
+            UserScore = userScore,
+            QuestionsResults = questionsResult
         };
     }
 
@@ -263,11 +251,10 @@ public class UserTestService : IUserTestService
                     .Select(
                         a => new
                         {
-                            //QuestionId = a.Question.Id,
-                            a.Question,
+                            QuestionId = a.Question.Id,
                             AnswerId = a.Id,
-                            //MaxScore = a.Question.MaxScore,
-                            //QuestionText = a.Question.Text,
+                            MaxScore = a.Question.MaxScore,
+                            QuestionText = a.Question.Text,
                             AnswerText = a.Text,
                             IsAnswerCorrect = a.IsCorrect,
                             UserAnsweredCorrect = a.IsCorrect && ua.AnswerId == a.Id,
@@ -275,22 +262,22 @@ public class UserTestService : IUserTestService
                         }
                     )
             )
-            .GroupBy(userAnswers => new { userAnswers.Question.Id, userAnswers.AnswerId })
+            .GroupBy(userAnswers => new { userAnswers.QuestionId, userAnswers.AnswerId })
             .Select(
                 group => new
                 {
-                    QuestionId = group.Key.Id,
+                    QuestionId = group.Key.QuestionId,
                     AnswerId = group.Key.AnswerId,
-                    MaxScore = group.First().Question.MaxScore,
-                    QuestionText = group.First().Question.Text,
+                    MaxScore = group.First().MaxScore,
+                    QuestionText = group.First().QuestionText,
                     AnswerText = group.First().AnswerText,
                     IsAnswerCorrect = group.First().IsAnswerCorrect,
                     UserAnsweredCorrect = group.Any(userAnswers => userAnswers.UserAnsweredCorrect),
                     UserAnsweredWrong = group.Any(userAnswers => userAnswers.UserAnsweredWrong)
                 }
             );
-
-
+    
+    
         return userAnswersDetailsQuery
             .GroupBy(userAnswers => userAnswers.QuestionId)
             .Select(
@@ -299,30 +286,31 @@ public class UserTestService : IUserTestService
                     QuestionId = userQuestion.Key,
                     QuestionText = userQuestion.First().QuestionText,
                     MaxScore = userQuestion.First().MaxScore,
-                    TotalCorrectAnswersCount = userQuestion.Count(uq => uq.IsAnswerCorrect),
-                    UserCorrectAnswersCount = userQuestion.Count(uq => uq.UserAnsweredCorrect),
-                    UserWrongAnswersCount = userQuestion.Count(uq => uq.UserAnsweredWrong),
+                    TotalCorrectAnswersCount = userQuestion.Count(userQuestion => userQuestion.IsAnswerCorrect),
+                    UserCorrectAnswersCount = userQuestion.Count(userQuestion => userQuestion.UserAnsweredCorrect),
+                    UserWrongAnswersCount = userQuestion.Count(userQuestion => userQuestion.UserAnsweredWrong),
+                    
                     AnswersResults = userQuestion.Select(
                         userAnswers => new AnswerResultResponseDto
-                        {
-                            //Id = userAnswers.AnswerId,
-                            AnswerText = userAnswers.AnswerText,
-                            IsCorrect = userAnswers.IsAnswerCorrect,
-                            IsUserAnswerSelected = userAnswers.UserAnsweredCorrect || userAnswers.UserAnsweredWrong
-                        }
+                            {
+                                Id = userAnswers.AnswerId,
+                                AnswerText = userAnswers.AnswerText,
+                                IsCorrect = userAnswers.IsAnswerCorrect,
+                                IsUserAnswerSelected = userAnswers.UserAnsweredCorrect || userAnswers.UserAnsweredWrong
+                            }
                     ).ToList()
                 }
             )
             .Select(
                 q => new QuestionResultResponseDto
                 {
-                    //Id = q.QuestionId,
+                    Id = q.QuestionId,
                     QuestionText = q.QuestionText,
                     MaxScore = q.MaxScore,
                     UserScore = (q.UserCorrectAnswersCount - q.UserWrongAnswersCount) <= 0
                         ? 0
                         : (q.UserCorrectAnswersCount - q.UserWrongAnswersCount) *
-                          (q.MaxScore / q.TotalCorrectAnswersCount),
+                          ((q.TotalCorrectAnswersCount != 0) ? (q.MaxScore / q.TotalCorrectAnswersCount) : 0),
                     AnswersResults = q.AnswersResults
                 }
             );
