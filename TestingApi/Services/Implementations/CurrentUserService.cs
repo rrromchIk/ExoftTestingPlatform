@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 using TestingApi.Models;
 using TestingApi.Services.Abstractions;
 
@@ -12,6 +13,9 @@ public class CurrentUserService : ICurrentUserService
     {
         _httpContextAccessor = httpContextAccessor;
     }
+
+    public string? AccessTokenRaw => _httpContextAccessor.HttpContext?.Request.Headers["Authorization"]
+        .ToString().Substring("Bearer ".Length).Trim();
 
     public string? UserId =>
         _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
