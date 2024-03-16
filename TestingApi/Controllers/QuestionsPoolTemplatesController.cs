@@ -7,7 +7,7 @@ using TestingApi.Services.Abstractions;
 namespace TestingApi.Controllers;
 
 [ApiController]
-[Route("api/tests/templates/questions-pools/templates/{id:guid}")]
+[Route("api/tests/questions-pools/templates/{id:guid}")]
 [Authorize(Roles = "SuperAdmin, Admin")]
 public class QuestionsPoolTemplatesController : ControllerBase
 {
@@ -33,7 +33,7 @@ public class QuestionsPoolTemplatesController : ControllerBase
         return response == null ? NotFound() : Ok(response);
     }
 
-    [HttpPost("/api/tests/templates/{testTemplateId:guid}/questions-pools/templates")]
+    [HttpPost("/api/tests/{testTemplateId:guid}/questions-pools/templates")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionsPoolTmplResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
