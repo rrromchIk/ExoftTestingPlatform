@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using TestingApi.Constants;
 using TestingApi.Data.EntityConfigurations;
 using TestingApi.Models;
 using TestingApi.Models.TestTemplate;
@@ -21,11 +23,14 @@ public class DataContext : DbContext
     public DbSet<AnswerTemplate> AnswerTemplates { get; set; } = null!;
 
     private readonly ICurrentUserService _currentUserService;
-    public DataContext(DbContextOptions<DataContext> options, ICurrentUserService currentUserService) : base(options)
+    private readonly SuperAdminSeedData _superAdminSeedData;
+    public DataContext(DbContextOptions<DataContext> options, ICurrentUserService currentUserService,
+        IOptions<SuperAdminSeedData> superAdminSeedData) : base(options)
     {
         _currentUserService = currentUserService;
+        _superAdminSeedData = superAdminSeedData.Value;
     }
-
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new UserEntityConfiguration());
@@ -39,6 +44,7 @@ public class DataContext : DbContext
         modelBuilder.ApplyConfiguration(new QuestionTemplateEntityConfiguration());
         modelBuilder.ApplyConfiguration(new AnswerTemplateEntityConfiguration());
         modelBuilder.ApplyConfiguration(new AnswerEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new SuperAdminSeedingConfiguration(_superAdminSeedData));
         base.OnModelCreating(modelBuilder);
     }
     

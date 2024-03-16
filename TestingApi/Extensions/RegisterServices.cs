@@ -30,6 +30,8 @@ public static class RegisterServices
         serviceCollection.AddHttpContextAccessor();
         serviceCollection.AddScoped<ICurrentUserService, CurrentUserService>();
         serviceCollection.Configure<SecurityHttpClientConstants>(configuration.GetSection("SecurityHttpClient"));
+        serviceCollection.Configure<SuperAdminSeedData>(configuration.GetSection("SuperAdminSeedData"));
+
     }
     
     public static void ConfigureAuth(this IServiceCollection services, IConfiguration configuration)

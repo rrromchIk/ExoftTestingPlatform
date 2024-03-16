@@ -374,6 +374,19 @@ namespace TestingApi.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("0a5bfb58-d88a-4c47-9253-3e65a6a96fa6"),
+                            CreatedBy = new Guid("00000000-0000-0000-0000-000000000000"),
+                            CreatedTimestamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Email = "nikitinroma2605@gmail.com",
+                            EmailConfirmed = true,
+                            FirstName = "Roman",
+                            LastName = "Nikitin",
+                            UserRole = 2
+                        });
                 });
 
             modelBuilder.Entity("TestingApi.Models.UserAnswer", b =>
