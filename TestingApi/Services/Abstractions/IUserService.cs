@@ -12,7 +12,7 @@ public interface IUserService
     Task<bool> UserExistsAsync(Guid id, CancellationToken cancellationToken = default);
     Task<UserResponseDto> RegisterUserAsync(UserSignUpDto userSignUpDto, CancellationToken cancellationToken = default,
         bool isAdmin = false);
-    Task UpdateUserAsync(Guid id, UserDto userDto, CancellationToken cancellationToken = default);
+    Task UpdateUserAsync(Guid id, UserUpdateDto userUpdateDto, CancellationToken cancellationToken = default);
     Task UpdateUserAvatarAsync(Guid id, string profilePictureFilePath, CancellationToken cancellationToken = default);
     Task DeleteUserAsync(Guid id, CancellationToken cancellationToken = default);
 }

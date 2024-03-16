@@ -89,13 +89,13 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> UpdateUser(
         [FromRoute] Guid id,
-        [FromBody] UserDto userDto,
+        [FromBody] UserUpdateDto userUpdateDto,
         CancellationToken cancellationToken)
     {
         if (!await _userService.UserExistsAsync(id, cancellationToken))
             return NotFound();
 
-        await _userService.UpdateUserAsync(id, userDto, cancellationToken);
+        await _userService.UpdateUserAsync(id, userUpdateDto, cancellationToken);
         return NoContent();
     }
 

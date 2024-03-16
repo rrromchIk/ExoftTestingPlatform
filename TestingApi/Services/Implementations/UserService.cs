@@ -135,14 +135,28 @@ public class UserService : IUserService
         return _mapper.Map<UserResponseDto>(createdUser.Entity);
     }
 
-    public async Task UpdateUserAsync(Guid id, UserDto userDto, CancellationToken cancellationToken = default)
+    public async Task UpdateUserAsync(Guid id, UserUpdateDto userUpdateDto, CancellationToken cancellationToken = default)
     {
-        var userFounded = await _dataContext.Users.FirstAsync(u => u.Id == id, cancellationToken);
-        var updatedUser = _mapper.Map<User>(userDto);
+        _logger.LogInformation("Access token: {a}", _currentUserService.AccessTokenRaw);
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+            _currentUserService.AccessTokenRaw);
+        
+        var jsonContent = JsonSerializer.Serialize(userUpdateDto);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-        userFounded.FirstName = updatedUser.FirstName;
-        userFounded.LastName = updatedUser.LastName;
-        userFounded.UserRole = updatedUser.UserRole;
+        var url = _httpClient.BaseAddress + _securityHttpClientConstants.UpdateEndpoint + $"/{id}";
+        
+        var httpResponse = await _httpClient.PatchAsync(url, content, cancellationToken);
+        
+        if (httpResponse.StatusCode != HttpStatusCode.NoContent)
+        {
+            throw new ApiException("Error while updating user", (int)httpResponse.StatusCode);
+        }
+        
+        var userFounded = await _dataContext.Users.FirstAsync(u => u.Id == id, cancellationToken);
+        
+        userFounded.FirstName = userUpdateDto.FirstName;
+        userFounded.LastName = userUpdateDto.LastName;
 
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
@@ -163,7 +177,7 @@ public class UserService : IUserService
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
             _currentUserService.AccessTokenRaw);
         var httpResponse = await _httpClient.DeleteAsync(
-            _httpClient.BaseAddress + _securityHttpClientConstants.UpdateEndpoint + $"/{id}",
+            _httpClient.BaseAddress + _securityHttpClientConstants.DeleteEndpoint + $"/{id}",
             cancellationToken
         );
 
