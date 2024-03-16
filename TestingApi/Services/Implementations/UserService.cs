@@ -97,17 +97,24 @@ public class UserService : IUserService
     }
 
     public async Task<UserResponseDto> RegisterUserAsync(UserSignUpDto userSignUpDto,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default, bool isAdmin = false)
     {
         var jsonContent = JsonSerializer.Serialize(userSignUpDto);
         var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-        var httpResponse = await _httpClient.PostAsync(
-            _httpClient.BaseAddress + _securityHttpClientConstants.RegisterEndpoint,
-            content,
-            cancellationToken
-        );
-
+        var url = _httpClient.BaseAddress.ToString();
+        if (isAdmin)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
+                _currentUserService.AccessTokenRaw);
+            url += _securityHttpClientConstants.RegisterAdminEndpoint;
+        } 
+        else
+        {
+            url += _securityHttpClientConstants.RegisterEndpoint;
+        }
+        
+        var httpResponse = await _httpClient.PostAsync(url, content, cancellationToken);
         if (httpResponse.StatusCode != HttpStatusCode.OK)
         {
             var problemDetails = await HandleHttpResponse<ProblemDetails>(httpResponse, cancellationToken);

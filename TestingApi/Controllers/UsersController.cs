@@ -67,6 +67,19 @@ public class UsersController : ControllerBase
 
         return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, response);
     }
+    
+    [Authorize(Roles = "SuperAdmin")]
+    [HttpPost("register/admin")]
+    [ValidateModel]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserResponseDto))]
+    public async Task<IActionResult> RegisterAdmin([FromBody] UserSignUpDto userSignUpDto,
+        CancellationToken cancellationToken)
+    {
+        var response = await _userService.RegisterUserAsync(userSignUpDto, cancellationToken, true);
+
+        return CreatedAtAction(nameof(GetUserById), new { id = response.Id }, response);
+    }
 
     [Authorize(Roles = "SuperAdmin, Admin, User")]
     [HttpPut("{id:guid}")]
