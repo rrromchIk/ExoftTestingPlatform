@@ -11,7 +11,6 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("/api/users")]
-[Authorize(Roles = "SuperAdmin, Admin")]
 public class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
@@ -25,6 +24,7 @@ public class UsersController : ControllerBase
         _fileService = fileService;
     }
 
+    [Authorize(Roles = "SuperAdmin, Admin")]
     [HttpGet]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<UserResponseDto>))]
@@ -42,6 +42,7 @@ public class UsersController : ControllerBase
         return Ok(response);
     }
 
+    [Authorize(Roles = "SuperAdmin, Admin, User")]
     [HttpGet("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -148,6 +149,7 @@ public class UsersController : ControllerBase
     }
 
 
+    [Authorize(Roles = "SuperAdmin, Admin")]
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
