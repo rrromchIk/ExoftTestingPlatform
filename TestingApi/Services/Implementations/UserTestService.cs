@@ -7,6 +7,7 @@ using TestingApi.Dto;
 using TestingApi.Dto.TestDto;
 using TestingApi.Dto.TestResultDto;
 using TestingApi.Dto.UserTestDto;
+using TestingAPI.Exceptions;
 using TestingApi.Helpers;
 using TestingApi.Models;
 using TestingApi.Services.Abstractions;
@@ -216,16 +217,18 @@ public class UserTestService : IUserTestService
     public async Task<TestResultResponseDto> GetUserTestResults(Guid userId, Guid testId,
         CancellationToken cancellationToken = default)
     {
-        var userQuestionsResultsQuery = GetUserQuestionResultQuery(userId, testId);
-        
-        var questionsResult = await userQuestionsResultsQuery.ToListAsync(cancellationToken);
-        
-        var userScore = questionsResult.Sum(q => q.UserScore);
-
         var userTest = await _dataContext.UserTests
             .Where(t => t.UserId == userId && t.TestId == testId)
             .FirstAsync(cancellationToken);
-
+        
+        if (userTest.UserTestStatus != UserTestStatus.Completed)
+            throw new ApiException("Test is not completed", StatusCodes.Status400BadRequest);
+            
+        var userQuestionsResultsQuery = GetUserQuestionResultQuery(userId, testId);
+        
+        var questionsResult = await userQuestionsResultsQuery.ToListAsync(cancellationToken);
+        var userScore = questionsResult.Sum(q => q.UserScore);
+        
         return new TestResultResponseDto
         {
             UserId = userId,
