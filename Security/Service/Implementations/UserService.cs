@@ -25,14 +25,7 @@ public class UserService : IUserService
 
         var userToDeleteRoles = await _userManager.GetRolesAsync(userToDelete);
 
-        if (userToDeleteRoles.Contains("SuperAdmin"))
-            throw new AuthException("Can not delete SuperAdmin", StatusCodes.Status400BadRequest);
-
-        if (userToDeleteRoles.Contains("Admin") && _currentUserService.UserRole != "SuperAdmin")
-            throw new AuthException(
-                _currentUserService.UserRole + " can not delete Admin",
-                StatusCodes.Status403Forbidden
-            );
+        CheckRoleViolationsForDelete(userToDeleteRoles);
 
         var result = await _userManager.DeleteAsync(userToDelete);
         if (!result.Succeeded)
@@ -53,6 +46,18 @@ public class UserService : IUserService
         var result = await _userManager.UpdateAsync(userToUpdate);
         if (!result.Succeeded)
             throw new AuthException(result.Errors.First().Description, StatusCodes.Status500InternalServerError);
+    }
+    
+    private void CheckRoleViolationsForDelete(IList<string> userToDeleteRoles)
+    {
+        if (userToDeleteRoles.Contains("SuperAdmin"))
+            throw new AuthException("Can not delete SuperAdmin", StatusCodes.Status400BadRequest);
+
+        if (userToDeleteRoles.Contains("Admin") && _currentUserService.UserRole != "SuperAdmin")
+            throw new AuthException(
+                _currentUserService.UserRole + " can not delete Admin",
+                StatusCodes.Status403Forbidden
+            );
     }
 
     private async Task<bool> CheckUpdateViolation(ApplicationUser userToUpdate)
