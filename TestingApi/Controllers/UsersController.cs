@@ -161,4 +161,14 @@ public class UsersController : ControllerBase
         await _userService.DeleteUserAsync(id);
         return NoContent();
     }
+    
+    [AllowAnonymous]
+    [HttpGet("email/confirm")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ConfirmEmail([FromQuery] Guid userId, [FromQuery] string token)
+    {
+        await _userService.ConfirmEmail(userId, token);
+        return Ok();
+    }
 }

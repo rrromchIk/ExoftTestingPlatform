@@ -135,6 +135,31 @@ public class UserService : IUserService
         return _mapper.Map<UserResponseDto>(createdUser.Entity);
     }
 
+    public async Task ConfirmEmail(Guid userId, string token, CancellationToken cancellationToken = default)
+    {
+        var url = _httpClient.BaseAddress + _securityHttpClientConstants.ConfirmEmailEndpoint +
+                  $"?userId={userId}&token={token}";
+        var httpResponse = await _httpClient.GetAsync(url, cancellationToken);
+        
+        _logger.LogInformation("{b}, {s}",
+            await httpResponse.Content.ReadAsStringAsync(cancellationToken),
+            httpResponse.StatusCode);
+        
+        if (httpResponse.StatusCode != HttpStatusCode.OK)
+        {
+            var problemDetails = await HandleHttpResponse<ProblemDetails>(httpResponse, cancellationToken);
+            throw new ApiException(problemDetails.Detail, (int)httpResponse.StatusCode);
+        }
+
+
+        var userToConfirmEmail = await _dataContext.Users
+            .FirstAsync(u => u.Id == userId, cancellationToken);
+
+        userToConfirmEmail.EmailConfirmed = true;
+
+        await _dataContext.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task UpdateUserAsync(Guid id, UserUpdateDto userUpdateDto, CancellationToken cancellationToken = default)
     {
         _logger.LogInformation("Access token: {a}", _currentUserService.AccessTokenRaw);
