@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using AutoMapper;
+using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Constants;
@@ -162,24 +163,23 @@ public class UserService : IUserService
 
     public async Task UpdateUserAsync(Guid id, UserUpdateDto userUpdateDto, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Access token: {a}", _currentUserService.AccessTokenRaw);
+        if (!await CheckRoleViolationsForUpdate(id, cancellationToken))
+            throw new ApiException("Forbidden to update the user", StatusCodes.Status403Forbidden);
+        
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
             _currentUserService.AccessTokenRaw);
         
         var jsonContent = JsonSerializer.Serialize(userUpdateDto);
-        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        var content = new StringContent(jsonContent, Encoding.UTF8, ContentType.ApplicationJson.ToString());
 
         var url = _httpClient.BaseAddress + _securityHttpClientConstants.UpdateEndpoint + $"/{id}";
         
         var httpResponse = await _httpClient.PatchAsync(url, content, cancellationToken);
         
         if (httpResponse.StatusCode != HttpStatusCode.NoContent)
-        {
             throw new ApiException("Error while updating user", (int)httpResponse.StatusCode);
-        }
         
         var userFounded = await _dataContext.Users.FirstAsync(u => u.Id == id, cancellationToken);
-        
         userFounded.FirstName = userUpdateDto.FirstName;
         userFounded.LastName = userUpdateDto.LastName;
 
@@ -189,6 +189,9 @@ public class UserService : IUserService
     public async Task UpdateUserAvatarAsync(Guid id, string profilePictureFilePath,
         CancellationToken cancellationToken = default)
     {
+        if(!await CheckRoleViolationsForUpdate(id, cancellationToken))
+            throw new ApiException("Forbidden to update the user", StatusCodes.Status403Forbidden);
+        
         var userToUpdate = await _dataContext.Users.FirstAsync(u => u.Id == id, cancellationToken);
 
         userToUpdate.ProfilePictureFilePath = profilePictureFilePath;
@@ -198,21 +201,19 @@ public class UserService : IUserService
 
     public async Task DeleteUserAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("Access token: {a}", _currentUserService.AccessTokenRaw);
+        if (!await CheckRoleViolationsForDelete(id, cancellationToken))
+            throw new ApiException("Forbidden to delete user", StatusCodes.Status403Forbidden);
+        
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer",
             _currentUserService.AccessTokenRaw);
-        var httpResponse = await _httpClient.DeleteAsync(
-            _httpClient.BaseAddress + _securityHttpClientConstants.DeleteEndpoint + $"/{id}",
-            cancellationToken
-        );
+        var url = _httpClient.BaseAddress + _securityHttpClientConstants.DeleteEndpoint + $"/{id}";
+        var httpResponse = await _httpClient.DeleteAsync(url, cancellationToken);
 
         _logger.LogInformation("Response: Status {s}, Body: {b}",
             httpResponse.StatusCode, await httpResponse.Content.ReadAsStringAsync(cancellationToken));
         
         if (httpResponse.StatusCode != HttpStatusCode.NoContent)
-        {
             throw new ApiException("Error while deleting user", (int)httpResponse.StatusCode);
-        }
         
         var userToDelete = await _dataContext.Users
             .FirstAsync(e => e.Id == id, cancellationToken);
@@ -222,7 +223,8 @@ public class UserService : IUserService
     }
 
 
-    private static async Task<T> HandleHttpResponse<T>(HttpResponseMessage httpResponse, CancellationToken cancellationToken)
+    private static async Task<T> HandleHttpResponse<T>(HttpResponseMessage httpResponse,
+        CancellationToken cancellationToken = default)
     {
         await using var stream = await httpResponse.Content.ReadAsStreamAsync(cancellationToken);
         var securityUserResponseDto = await JsonSerializer.DeserializeAsync<T>(
@@ -235,5 +237,42 @@ public class UserService : IUserService
         );
 
         return securityUserResponseDto;
+    }
+
+    private async Task<bool> CheckRoleViolationsForUpdate(Guid userToUpdateId, CancellationToken cancellationToken = default)
+    {
+        var currentUserRole = _currentUserService.UserRole;
+        var currentUserId = _currentUserService.UserId;
+        var userToUpdateRole = (await _dataContext.Users
+            .FirstAsync(u => u.Id == userToUpdateId, cancellationToken))
+            .UserRole.ToString();
+        
+        switch (currentUserRole)
+        {
+            case "User" when userToUpdateRole != "User" ||
+                             currentUserId != userToUpdateId.ToString():
+            case "Admin" when userToUpdateRole == "SuperAdmin":
+            case "Admin" when userToUpdateRole == "Admin" &&
+                              currentUserId != userToUpdateId.ToString():
+                return false;
+            default:
+                return true;
+        }
+    }
+    
+    private async Task<bool> CheckRoleViolationsForDelete(Guid userToDeleteId, CancellationToken cancellationToken = default)
+    {
+        var userToDeleteRole = (await _dataContext.Users
+                .FirstAsync(u => u.Id == userToDeleteId, cancellationToken))
+            .UserRole.ToString();
+
+        switch (userToDeleteRole)
+        {
+            case "SuperAdmin":
+            case "Admin" when _currentUserService.UserRole != "SuperAdmin":
+                return false;
+            default:
+                return true;
+        }
     }
 }
