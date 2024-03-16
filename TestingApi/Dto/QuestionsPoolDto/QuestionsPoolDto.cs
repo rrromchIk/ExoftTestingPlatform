@@ -17,4 +17,6 @@ public class QuestionsPoolDto
     [Required(ErrorMessage = "GenerationStrategy is required")]
     [EnumValue(typeof(GenerationStrategy))]
     public string GenerationStrategy { get; set; } = null!;
+
+    public Guid? TemplateId { get; set; }
 }

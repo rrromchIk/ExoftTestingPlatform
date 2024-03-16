@@ -6,4 +6,5 @@ public class QuestionsPoolResponseDto : BaseResponseDto
     public string Name { get; set; } = null!;
     public int NumOfQuestionsToBeGenerated { get; set; }
     public string GenerationStrategy { get; set; } = null!;
+    public Guid? TemplateId { get; set; }
 }

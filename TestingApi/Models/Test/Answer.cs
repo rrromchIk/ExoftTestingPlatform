@@ -7,4 +7,5 @@ public class Answer : BaseEntity
 
     public string Text { get; set; } = null!;
     public bool IsCorrect { get; set; }
+    public Guid? TemplateId { get; set; }
 }

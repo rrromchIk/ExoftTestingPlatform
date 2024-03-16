@@ -10,4 +10,5 @@ public class AnswerDto
     
     [Required(ErrorMessage = "IsCorrect property is required")]
     public bool? IsCorrect { get; set; }
+    public Guid? TemplateId { get; set; }
 }

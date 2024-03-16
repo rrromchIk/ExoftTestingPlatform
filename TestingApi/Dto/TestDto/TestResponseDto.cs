@@ -7,4 +7,5 @@ public class TestResponseDto : BaseResponseDto
     public int Duration { get; set; }
     public bool IsPublished { get; set; }
     public string Difficulty { get; set; } = null!;
+    public Guid? TemplateId { get; set; }
 }

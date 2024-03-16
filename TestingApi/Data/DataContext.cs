@@ -38,6 +38,7 @@ public class DataContext : DbContext
         modelBuilder.ApplyConfiguration(new QuestionPoolTemplateEntityConfiguration());
         modelBuilder.ApplyConfiguration(new QuestionTemplateEntityConfiguration());
         modelBuilder.ApplyConfiguration(new AnswerTemplateEntityConfiguration());
+        modelBuilder.ApplyConfiguration(new AnswerEntityConfiguration());
         base.OnModelCreating(modelBuilder);
     }
     

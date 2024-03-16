@@ -8,6 +8,7 @@ public class QuestionResponseDto : BaseResponseDto
     
     public string Text { get; set; } = null!;
     public int MaxScore { get; set; }
-
+    public Guid? TemplateId { get; set; }
+    
     public ICollection<AnswerResponseDto> Answers { get; set; } = null!;
 }

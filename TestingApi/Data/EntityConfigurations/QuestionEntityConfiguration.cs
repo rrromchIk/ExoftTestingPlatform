@@ -21,5 +21,7 @@ public class QuestionEntityConfiguration : BaseEntityConfiguration<Question>
             .WithOne(ua => ua.Question)
             .HasForeignKey(ua => ua.QuestionId)
             .OnDelete(DeleteBehavior.NoAction);
+        
+        builder.Property(q => q.TemplateId).IsRequired(false);
     }
 }

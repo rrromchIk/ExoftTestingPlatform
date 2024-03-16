@@ -46,6 +46,9 @@ namespace TestingApi.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("TemplateId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -79,6 +82,9 @@ namespace TestingApi.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("QuestionsPoolId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TemplateId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Text")
@@ -119,6 +125,9 @@ namespace TestingApi.Migrations
 
                     b.Property<int>("NumOfQuestionsToBeGenerated")
                         .HasColumnType("int");
+
+                    b.Property<Guid?>("TemplateId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("TestId")
                         .HasColumnType("uniqueidentifier");
@@ -164,6 +173,9 @@ namespace TestingApi.Migrations
                     b.Property<string>("Subject")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("TemplateId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 

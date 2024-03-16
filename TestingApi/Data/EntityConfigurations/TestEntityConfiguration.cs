@@ -20,5 +20,6 @@ public class TestEntityConfiguration : BaseEntityConfiguration<Test>
             .HasIndex(t => t.Name)
             .IsUnique();
         
+        builder.Property(t => t.TemplateId).IsRequired(false);
     }
 }

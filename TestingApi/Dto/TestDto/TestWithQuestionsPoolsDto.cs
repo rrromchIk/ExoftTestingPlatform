@@ -21,6 +21,8 @@ public class TestWithQuestionsPoolsDto
     [Required(ErrorMessage = "Difficulty is required")]
     [EnumValue(typeof(TestDifficulty))]
     public string Difficulty { get; set; } = null!;
+
+    public Guid? TemplateId { get; set; }
     
     public ICollection<QuestionsPoolDto.QuestionsPoolDto>? QuestionsPools { get; set; } = null!;
 }
