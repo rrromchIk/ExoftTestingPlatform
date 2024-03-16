@@ -40,22 +40,7 @@ public class QuestionsPoolTmplService : IQuestionsPoolTmplService
     {
         var questionsPoolTemplateToAdd = _mapper.Map<QuestionsPoolTemplate>(questionsPoolTmplDto);
         questionsPoolTemplateToAdd.TestTemplateId = testTemplateId;
-
-        var collision = await _dataContext.QuestionsPoolTemplates
-            .Where(qp => qp.DefaultName != null)
-            .AnyAsync(
-                qp =>
-                    qp.DefaultName == questionsPoolTemplateToAdd.DefaultName &&
-                    qp.TestTemplateId == questionsPoolTemplateToAdd.TestTemplateId,
-                cancellationToken
-            );
-
-        if (collision)
-            throw new ApiException(
-                "Questions pool template name has to be unique for the each test template",
-                StatusCodes.Status409Conflict
-            );
-
+        
         var createdQuestionsPoolTemplate = await _dataContext.AddAsync(questionsPoolTemplateToAdd, cancellationToken);
 
         await _dataContext.SaveChangesAsync(cancellationToken);
@@ -70,22 +55,6 @@ public class QuestionsPoolTmplService : IQuestionsPoolTmplService
             .FirstAsync(qp => qp.Id == id, cancellationToken);
         var updatedQuestionsPoolTemplate = _mapper.Map<QuestionsPoolTemplate>(questionsPoolTmplDto);
         
-        var collision = await _dataContext.QuestionsPoolTemplates
-            .Where(qp => qp.DefaultName != null)
-            .AnyAsync(
-                qp =>
-                    qp.DefaultName == updatedQuestionsPoolTemplate.DefaultName &&
-                    qp.TestTemplateId == updatedQuestionsPoolTemplate.TestTemplateId &&
-                    qp.Id != questionsPoolTemplateFounded.Id,
-                cancellationToken
-            );
-
-        if (collision)
-            throw new ApiException(
-                "Questions pool template name has to be unique for the each test",
-                StatusCodes.Status409Conflict
-            );
-
         questionsPoolTemplateFounded.DefaultName = updatedQuestionsPoolTemplate.DefaultName;
         questionsPoolTemplateFounded.NumOfQuestionsToBeGeneratedRestriction = 
             updatedQuestionsPoolTemplate.NumOfQuestionsToBeGeneratedRestriction;
