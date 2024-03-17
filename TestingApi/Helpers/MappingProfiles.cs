@@ -56,7 +56,7 @@ public class MappingProfiles : Profile
                     .MapFrom(src => Enum.Parse(typeof(TestDifficulty), src.Difficulty, true))
             );
 
-        CreateMap<TestDto, Test>()
+        CreateMap<TestUpdateDto, Test>()
             .ForMember(
                 dest => dest.Difficulty,
                 opt => opt
@@ -91,12 +91,22 @@ public class MappingProfiles : Profile
                             Enum.Parse(typeof(GenerationStrategy), src.GenerationStrategy, true)
                     )
             );
+        
+        CreateMap<QuestionsPoolUpdateDto, QuestionsPool>()
+            .ForMember(
+                dest => dest.GenerationStrategy,
+                opt => opt
+                    .MapFrom(
+                        src =>
+                            Enum.Parse(typeof(GenerationStrategy), src.GenerationStrategy, true)
+                    )
+            );
     }
 
     private void ConfigureMappingForQuestionEntity()
     {
         CreateMap<QuestionWithAnswersDto, Question>();
-        CreateMap<QuestionDto, Question>();
+        CreateMap<QuestionUpdateDto, Question>();
         CreateMap<Question, QuestionResponseDto>();
     }
 
@@ -104,6 +114,7 @@ public class MappingProfiles : Profile
     {
         CreateMap<AnswerDto, Answer>();
         CreateMap<Answer, AnswerResponseDto>();
+        CreateMap<AnswerUpdateDto, Answer>();
     }
 
     private void ConfigureMappingForUserEntity()

@@ -1,0 +1,13 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace TestingApi.Dto.AnswerDto;
+
+public class AnswerUpdateDto
+{
+    [Required(AllowEmptyStrings = false, ErrorMessage = "Text is required")]
+    [MaxLength(100, ErrorMessage = "Text can't exceed 100 characters")]
+    public string Text { get; set; } = null!;
+    
+    [Required(ErrorMessage = "IsCorrect property is required")]
+    public bool? IsCorrect { get; set; }
+}

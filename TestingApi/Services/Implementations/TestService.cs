@@ -78,10 +78,10 @@ public class TestService : ITestService
         return _mapper.Map<TestWithQuestionsPoolResponseDto>(createdTest.Entity);
     }
 
-    public async Task UpdateTestAsync(Guid id, TestDto testDto, CancellationToken cancellationToken = default)
+    public async Task UpdateTestAsync(Guid id, TestUpdateDto testUpdateDto, CancellationToken cancellationToken = default)
     {
         var testFounded = await _dataContext.Tests.FirstAsync(e => e.Id == id, cancellationToken);
-        var updatedTest = _mapper.Map<Test>(testDto);
+        var updatedTest = _mapper.Map<Test>(testUpdateDto);
         
         var collision = await _dataContext.Tests
             .AnyAsync(

@@ -67,13 +67,13 @@ public class AnswersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> UpdateAnswer(
         [FromRoute] Guid id,
-        [FromBody] AnswerDto answerDto,
+        [FromBody] AnswerUpdateDto answerUpdateDto,
         CancellationToken cancellationToken)
     {
         if (!await _answerService.AnswerExistsAsync(id, cancellationToken))
             return NotFound();
 
-        await _answerService.UpdateAnswerAsync(id, answerDto, cancellationToken);
+        await _answerService.UpdateAnswerAsync(id, answerUpdateDto, cancellationToken);
         return NoContent();
     }
 

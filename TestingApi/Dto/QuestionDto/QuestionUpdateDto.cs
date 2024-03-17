@@ -2,7 +2,7 @@
 
 namespace TestingApi.Dto.QuestionDto;
 
-public class QuestionDto
+public class QuestionUpdateDto
 {
     [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
     [MaxLength(100, ErrorMessage = "Text can't exceed 100 characters")]

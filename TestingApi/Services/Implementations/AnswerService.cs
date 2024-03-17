@@ -45,11 +45,11 @@ public class AnswerService : IAnswerService
         return _mapper.Map<AnswerResponseDto>(createdAnswer.Entity);
     }
 
-    public async Task UpdateAnswerAsync(Guid id, AnswerDto answerDto, CancellationToken cancellationToken = default)
+    public async Task UpdateAnswerAsync(Guid id, AnswerUpdateDto answerUpdateDto, CancellationToken cancellationToken = default)
     {
         var answerFounded = await _dataContext.Answers
             .FirstAsync(a => a.Id == id, cancellationToken);
-        var updatedAnswer = _mapper.Map<Answer>(answerDto);
+        var updatedAnswer = _mapper.Map<Answer>(answerUpdateDto);
         
         answerFounded.Text = updatedAnswer.Text;
         answerFounded.IsCorrect = updatedAnswer.IsCorrect;

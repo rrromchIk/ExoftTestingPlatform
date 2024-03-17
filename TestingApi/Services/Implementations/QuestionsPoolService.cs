@@ -48,12 +48,12 @@ public class QuestionsPoolService : IQuestionsPoolService
         return _mapper.Map<QuestionsPoolResponseDto>(createdQuestionsPool.Entity);
     }
 
-    public async Task UpdateQuestionsPoolAsync(Guid id, QuestionsPoolDto questionsPoolDto,
+    public async Task UpdateQuestionsPoolAsync(Guid id, QuestionsPoolUpdateDto questionsPoolUpdateDto,
         CancellationToken cancellationToken = default)
     {
         var questionsPoolFounded = await _dataContext.QuestionsPools
             .FirstAsync(qp => qp.Id == id, cancellationToken);
-        var updatedQuestionsPool = _mapper.Map<QuestionsPool>(questionsPoolDto);
+        var updatedQuestionsPool = _mapper.Map<QuestionsPool>(questionsPoolUpdateDto);
         
         questionsPoolFounded.Name = updatedQuestionsPool.Name;
         questionsPoolFounded.NumOfQuestionsToBeGenerated = updatedQuestionsPool.NumOfQuestionsToBeGenerated;

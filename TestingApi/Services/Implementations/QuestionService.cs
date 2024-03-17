@@ -56,12 +56,12 @@ public class QuestionService : IQuestionService
         return _mapper.Map<QuestionResponseDto>(createdQuestion.Entity);
     }
     
-    public async Task UpdateQuestionAsync(Guid id, QuestionDto questionDto, CancellationToken cancellationToken = default)
+    public async Task UpdateQuestionAsync(Guid id, QuestionUpdateDto questionUpdateDto, CancellationToken cancellationToken = default)
     {
         var questionFounded = await _dataContext.Questions
             .FirstAsync(q => q.Id == id, cancellationToken);
         
-        var updatedQuestion = _mapper.Map<Question>(questionDto);
+        var updatedQuestion = _mapper.Map<Question>(questionUpdateDto);
         
         questionFounded.Text = updatedQuestion.Text;
         questionFounded.MaxScore = updatedQuestion.MaxScore;

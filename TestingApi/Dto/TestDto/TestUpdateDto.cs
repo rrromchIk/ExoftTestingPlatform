@@ -4,7 +4,7 @@ using TestingApi.Models.Test;
 
 namespace TestingApi.Dto.TestDto;
 
-public class TestDto
+public class TestUpdateDto
 {
     [Required(AllowEmptyStrings = false, ErrorMessage = "Name is required")]
     [MaxLength(25, ErrorMessage = "Name can't exceed 25 characters")]

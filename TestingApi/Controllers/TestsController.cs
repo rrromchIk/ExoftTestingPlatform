@@ -86,13 +86,13 @@ public class TestsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> UpdateTest(
         [FromRoute] Guid id,
-        [FromBody] TestDto testDto,
+        [FromBody] TestUpdateDto testUpdateDto,
         CancellationToken cancellationToken)
     {
         if (!await _testService.TestExistsAsync(id, cancellationToken))
             return NotFound();
 
-        await _testService.UpdateTestAsync(id, testDto, cancellationToken);
+        await _testService.UpdateTestAsync(id, testUpdateDto, cancellationToken);
         return NoContent();
     }
 
