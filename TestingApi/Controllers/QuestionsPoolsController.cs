@@ -13,15 +13,17 @@ public class QuestionsPoolsController : ControllerBase
 {
     private readonly IQuestionsPoolService _questionsPoolService;
     private readonly ITestService _testService;
+    private readonly IQuestionsPoolTmplService _questionsPoolTmplService;
     private readonly ILogger<QuestionsPoolsController> _logger;
 
     public QuestionsPoolsController(IQuestionsPoolService questionsPoolService,
         ILogger<QuestionsPoolsController> logger,
-        ITestService testService)
+        ITestService testService, IQuestionsPoolTmplService questionsPoolTmplService)
     {
         _questionsPoolService = questionsPoolService;
         _logger = logger;
         _testService = testService;
+        _questionsPoolTmplService = questionsPoolTmplService;
     }
 
     [HttpGet]
@@ -45,8 +47,15 @@ public class QuestionsPoolsController : ControllerBase
         CancellationToken cancellationToken)
     {
         if (!await _testService.TestExistsAsync(testId, cancellationToken))
-            return NotFound();
-
+            return NotFound("Test with such id not found");
+        
+        var templateId = questionsPoolDto.TemplateId;
+        if (templateId != null && await _questionsPoolTmplService.QuestionsPoolTmplExistsAsync(
+                templateId.GetValueOrDefault(),
+                cancellationToken
+            ))
+            return NotFound("Template with such id not found");
+        
         var response = await _questionsPoolService.CreateQuestionsPoolAsync(
             testId,
             questionsPoolDto,

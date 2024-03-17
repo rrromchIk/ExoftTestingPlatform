@@ -16,12 +16,14 @@ namespace TestingApi.Controllers;
 public class TestsController : ControllerBase
 {
     private readonly ITestService _testService;
+    private readonly ITestTmplService _testTmplService;
     private readonly ILogger<TestsController> _logger;
 
-    public TestsController(ITestService testService, ILogger<TestsController> logger)
+    public TestsController(ITestService testService, ILogger<TestsController> logger, ITestTmplService testTmplService)
     {
         _testService = testService;
         _logger = logger;
+        _testTmplService = testTmplService;
     }
     
     [HttpGet]
@@ -60,10 +62,18 @@ public class TestsController : ControllerBase
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(TestWithQuestionsPoolResponseDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     public async Task<IActionResult> CreateTest([FromBody] TestWithQuestionsPoolsDto testWithQuestionsPoolsDto,
         CancellationToken cancellationToken)
     {
+        var templateId = testWithQuestionsPoolsDto.TemplateId;
+        if (templateId != null && await _testTmplService.TestTmplExistsAsync(
+                templateId.GetValueOrDefault(),
+                cancellationToken
+            ))
+            return NotFound("Template with such id not found");
+        
         var response = await _testService.CreateTestAsync(testWithQuestionsPoolsDto, cancellationToken);
         return CreatedAtAction(nameof(GetTestById), new { id = response.Id }, response);
     }

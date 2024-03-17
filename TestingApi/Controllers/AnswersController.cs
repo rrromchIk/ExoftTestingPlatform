@@ -13,14 +13,16 @@ public class AnswersController : ControllerBase
 {
     private readonly IAnswerService _answerService;
     private readonly IQuestionService _questionService;
+    private readonly IAnswerTmplService _answerTmplService;
     private readonly ILogger<AnswersController> _logger;
 
     public AnswersController(IQuestionService questionService, ILogger<AnswersController> logger,
-        IAnswerService answerService)
+        IAnswerService answerService, IAnswerTmplService answerTmplService)
     {
         _questionService = questionService;
         _logger = logger;
         _answerService = answerService;
+        _answerTmplService = answerTmplService;
     }
 
     [HttpGet("answers/{id:guid}")]
@@ -44,7 +46,14 @@ public class AnswersController : ControllerBase
         CancellationToken cancellationToken)
     {
         if (!await _questionService.QuestionExistsAsync(questionId, cancellationToken))
-            return NotFound();
+            return NotFound("Question with such id not found");
+        
+        var templateId = answerDto.TemplateId;
+        if (templateId != null && await _answerTmplService.AnswerTmplExistsAsync(
+                templateId.GetValueOrDefault(),
+                cancellationToken
+            ))
+            return NotFound("Template with such id not found");
 
         var response = await _answerService.CreateAnswerAsync(questionId, answerDto, cancellationToken);
         return CreatedAtAction(nameof(GetAnswerById), new { id = response.Id }, response);
