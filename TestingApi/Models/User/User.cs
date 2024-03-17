@@ -10,4 +10,5 @@ public class User : BaseEntity
     public UserRole UserRole { get; set; }
     
     public ICollection<UserTest> UserTests { get; set; } = null!;
+    public ICollection<UserQuestion> UserQuestions { get; set; } = null!;
 }

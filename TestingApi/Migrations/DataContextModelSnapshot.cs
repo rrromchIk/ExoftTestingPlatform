@@ -420,6 +420,21 @@ namespace TestingApi.Migrations
                     b.ToTable("UserAnswers");
                 });
 
+            modelBuilder.Entity("TestingApi.Models.UserQuestion", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("UserId", "QuestionId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("UserQuestions");
+                });
+
             modelBuilder.Entity("TestingApi.Models.UserTest", b =>
                 {
                     b.Property<Guid>("UserId")
@@ -575,6 +590,25 @@ namespace TestingApi.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("TestingApi.Models.UserQuestion", b =>
+                {
+                    b.HasOne("TestingApi.Models.Test.Question", "Question")
+                        .WithMany("UserQuestions")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TestingApi.Models.User.User", "User")
+                        .WithMany("UserQuestions")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("TestingApi.Models.UserTest", b =>
                 {
                     b.HasOne("TestingApi.Models.Test.Test", "Test")
@@ -599,6 +633,8 @@ namespace TestingApi.Migrations
                     b.Navigation("Answers");
 
                     b.Navigation("UserAnswers");
+
+                    b.Navigation("UserQuestions");
                 });
 
             modelBuilder.Entity("TestingApi.Models.Test.QuestionsPool", b =>
@@ -641,6 +677,8 @@ namespace TestingApi.Migrations
 
             modelBuilder.Entity("TestingApi.Models.User.User", b =>
                 {
+                    b.Navigation("UserQuestions");
+
                     b.Navigation("UserTests");
                 });
 #pragma warning restore 612, 618

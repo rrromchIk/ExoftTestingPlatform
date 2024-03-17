@@ -14,4 +14,6 @@ public class Question : BaseEntity
 
     public ICollection<UserAnswer> UserAnswers { get; set; } = null!;
     public ICollection<Answer> Answers { get; set; } = null!;
+
+    public ICollection<UserQuestion> UserQuestions { get; set; } = null!;
 }
