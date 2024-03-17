@@ -11,7 +11,7 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("/api/users/{userId:guid}/tests")]
-[Authorize(Roles = "SuperAdmin, Admin, Users")]
+[Authorize(Roles = "SuperAdmin, Admin, User")]
 public class UserTestsController : ControllerBase
 {
     private readonly IUserTestService _userTestService;
