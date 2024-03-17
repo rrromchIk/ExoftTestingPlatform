@@ -3,10 +3,10 @@
 public class UserTest
 {
     public Guid UserId { get; set; }
-    public User User { get; set; } = null!;
+    public User.User User { get; set; } = null!;
 
     public Guid TestId { get; set; }
-    public Test Test { get; set; } = null!;
+    public Test.Test Test { get; set; } = null!;
 
     public float UserScore { get; set; }
     public float TotalScore { get; set; }

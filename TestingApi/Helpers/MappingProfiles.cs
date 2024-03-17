@@ -11,7 +11,9 @@ using TestingApi.Dto.UserAnswerDto;
 using TestingApi.Dto.UserDto;
 using TestingApi.Dto.UserTestDto;
 using TestingApi.Models;
+using TestingApi.Models.Test;
 using TestingApi.Models.TestTemplate;
+using TestingApi.Models.User;
 
 namespace TestingApi.Helpers;
 

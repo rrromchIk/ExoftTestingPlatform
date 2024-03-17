@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using System.Text.RegularExpressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
@@ -10,6 +9,7 @@ using TestingApi.Dto.UserTestDto;
 using TestingAPI.Exceptions;
 using TestingApi.Helpers;
 using TestingApi.Models;
+using TestingApi.Models.Test;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Services.Implementations;

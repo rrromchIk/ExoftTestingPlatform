@@ -1,4 +1,6 @@
-﻿namespace TestingApi.Models.TestTemplate;
+﻿using TestingApi.Models.Test;
+
+namespace TestingApi.Models.TestTemplate;
 
 public class TestTemplate : BaseEntity
 {

@@ -1,4 +1,4 @@
-namespace TestingApi.Models;
+namespace TestingApi.Models.User;
 
 public enum UserRole
 {

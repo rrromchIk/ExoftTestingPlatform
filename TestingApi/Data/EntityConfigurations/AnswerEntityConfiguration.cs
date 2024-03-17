@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TestingApi.Models;
-using TestingApi.Models.TestTemplate;
+using TestingApi.Models.Test;
 
 namespace TestingApi.Data.EntityConfigurations;
 

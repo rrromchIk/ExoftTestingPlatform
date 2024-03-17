@@ -13,9 +13,9 @@ using TestingApi.Dto;
 using TestingApi.Dto.UserDto;
 using TestingAPI.Exceptions;
 using TestingApi.Helpers;
-using TestingApi.Models;
 using TestingApi.Services.Abstractions;
 using Microsoft.Extensions.Options;
+using TestingApi.Models.User;
 
 
 namespace TestingApi.Services.Implementations;

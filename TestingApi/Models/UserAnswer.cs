@@ -1,9 +1,11 @@
-﻿namespace TestingApi.Models;
+﻿using TestingApi.Models.Test;
+
+namespace TestingApi.Models;
 
 public class UserAnswer
 {
     public Guid UserId { get; set; }
-    public User User { get; set; } = null!;
+    public User.User User { get; set; } = null!;
 
     public Guid QuestionId { get; set; }
     public Question Question { get; set; } = null!;

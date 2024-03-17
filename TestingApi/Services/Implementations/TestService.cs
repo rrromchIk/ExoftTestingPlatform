@@ -7,7 +7,7 @@ using TestingApi.Dto;
 using TestingApi.Dto.TestDto;
 using TestingAPI.Exceptions;
 using TestingApi.Helpers;
-using TestingApi.Models;
+using TestingApi.Models.Test;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Services.Implementations;

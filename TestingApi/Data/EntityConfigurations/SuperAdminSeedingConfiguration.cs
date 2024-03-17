@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TestingApi.Constants;
-using TestingApi.Models;
+using TestingApi.Models.User;
 
 namespace TestingApi.Data.EntityConfigurations;
 

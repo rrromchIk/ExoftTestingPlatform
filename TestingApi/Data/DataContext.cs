@@ -3,7 +3,9 @@ using Microsoft.Extensions.Options;
 using TestingApi.Constants;
 using TestingApi.Data.EntityConfigurations;
 using TestingApi.Models;
+using TestingApi.Models.Test;
 using TestingApi.Models.TestTemplate;
+using TestingApi.Models.User;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Data;

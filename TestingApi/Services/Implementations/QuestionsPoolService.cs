@@ -1,10 +1,8 @@
-﻿using System.Text.Json;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
 using TestingApi.Dto.QuestionsPoolDto;
-using TestingAPI.Exceptions;
-using TestingApi.Models;
+using TestingApi.Models.Test;
 using TestingApi.Services.Abstractions;
 
 namespace TestingApi.Services.Implementations;

@@ -1,4 +1,4 @@
-﻿namespace TestingApi.Models;
+﻿namespace TestingApi.Models.Test;
 
 public class QuestionsPool : BaseEntity
 {

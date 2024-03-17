@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using TestingApi.Models;
-using TestingApi.Dto.QuestionsPoolTemplateDto;
 using TestingApi.Helpers.ValidationAttributes;
+using TestingApi.Models.Test;
 
 
 namespace TestingApi.Dto.TestTemplateDto;

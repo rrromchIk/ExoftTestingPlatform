@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using TestingApi.Helpers.ValidationAttributes;
-using TestingApi.Models;
+using TestingApi.Models.Test;
 
 namespace TestingApi.Dto.TestTemplateDto;
 
