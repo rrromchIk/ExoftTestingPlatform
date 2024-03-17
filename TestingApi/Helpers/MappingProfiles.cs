@@ -9,6 +9,7 @@ using TestingApi.Dto.TestDto;
 using TestingApi.Dto.TestTemplateDto;
 using TestingApi.Dto.UserAnswerDto;
 using TestingApi.Dto.UserDto;
+using TestingApi.Dto.UserQuestionDto;
 using TestingApi.Dto.UserTestDto;
 using TestingApi.Models;
 using TestingApi.Models.Test;
@@ -155,6 +156,8 @@ public class MappingProfiles : Profile
                 opt => opt
                     .MapFrom(src => src.UserTestStatus.ToString())
             );
+
+        CreateMap<UserQuestionDto, UserQuestion>();
     }
 
     private void ConfigureMappingForTestTemplateEntity()

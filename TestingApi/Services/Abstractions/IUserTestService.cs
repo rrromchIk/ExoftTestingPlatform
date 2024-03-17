@@ -13,9 +13,6 @@ public interface IUserTestService
         CancellationToken cancellationToken = default);
     Task<PagedList<StartedTestResponseDto>> GetAllStartedTestsForUserAsync(FiltersDto filtersDto,
         Guid userId, CancellationToken cancellationToken = default);
-
-    Task<ICollection<TestPassingQuestionsPoolResponseDto>> GetQuestionsForUserTest(Guid userId, Guid testId,
-        CancellationToken cancellationToken = default);
     Task<bool> UserTestExistsAsync(Guid userId, Guid testId, CancellationToken cancellationToken = default);
     Task<UserTestResponseDto> CreateUserTestAsync(Guid userId, Guid testId,
         float totalScore, CancellationToken cancellationToken = default);

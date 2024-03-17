@@ -55,20 +55,6 @@ public class UserTestsController : ControllerBase
         return response.Items.IsNullOrEmpty() ? NotFound() : Ok(response);
     }
 
-    [HttpGet("{testId:guid}/questions")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<TestPassingQuestionsPoolResponseDto>))]
-    public async Task<IActionResult> GetAllQuestionsForUserTestAsync(
-        [FromRoute] Guid userId,
-        [FromRoute] Guid testId,
-        CancellationToken cancellationToken)
-    {
-
-        var response = await _userTestService
-            .GetQuestionsForUserTest(userId, testId, cancellationToken);
-
-        return response.IsNullOrEmpty() ? NotFound() : Ok(response);
-    }
-
     [HttpGet("started")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<StartedTestResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

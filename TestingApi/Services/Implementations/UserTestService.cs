@@ -131,34 +131,6 @@ public class UserTestService : IUserTestService
         );
     }
 
-    public async Task<ICollection<TestPassingQuestionsPoolResponseDto>> GetQuestionsForUserTest(Guid userId,
-        Guid testId, CancellationToken cancellationToken = default)
-    {
-        return await _dataContext.QuestionsPools
-            .Include(qp => qp.Questions)
-            .Where(qp => qp.TestId == testId)
-            .Select(
-                qp => new TestPassingQuestionsPoolResponseDto
-                {
-                    QuestionsPoolId = qp.Id,
-                    GenerationStrategy = qp.GenerationStrategy.ToString(),
-                    NumOfQuestionsToBeGenerated = qp.NumOfQuestionsToBeGenerated,
-                    UserQuestions = qp.Questions
-                        .Select(
-                            q => new UserQuestionResponseDto
-                            {
-                                QuestionId = q.Id,
-                                IsAnswered = _dataContext.UserAnswers
-                                    .Any(
-                                        ua => ua.UserId == userId &&
-                                              ua.QuestionId == q.Id
-                                    )
-                            }
-                        ).ToList()
-                }
-            ).ToListAsync(cancellationToken);
-    }
-
     public async Task<bool> UserTestExistsAsync(Guid userId, Guid testId, CancellationToken cancellationToken = default)
     {
         return await _dataContext.UserTests

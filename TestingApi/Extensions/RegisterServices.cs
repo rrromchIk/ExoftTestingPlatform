@@ -27,6 +27,7 @@ public static class RegisterServices
         serviceCollection.AddScoped<IQuestionsPoolTmplService, QuestionsPoolTmplService>();
         serviceCollection.AddScoped<IQuestionTmplService, QuestionTmplService>();
         serviceCollection.AddScoped<IAnswerTmplService, AnswerTmplService>();
+        serviceCollection.AddScoped<IUserQuestionService, UserQuestionService>();
         serviceCollection.AddHttpContextAccessor();
         serviceCollection.AddScoped<ICurrentUserService, CurrentUserService>();
         serviceCollection.Configure<SecurityHttpClientConstants>(configuration.GetSection("SecurityHttpClient"));
