@@ -22,7 +22,7 @@ namespace TestingApi.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("TestingApi.Models.Answer", b =>
+            modelBuilder.Entity("TestingApi.Models.Test.Answer", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -57,10 +57,12 @@ namespace TestingApi.Migrations
 
                     b.HasIndex("QuestionId");
 
+                    b.HasIndex("TemplateId");
+
                     b.ToTable("Answers");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.Question", b =>
+            modelBuilder.Entity("TestingApi.Models.Test.Question", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -95,10 +97,12 @@ namespace TestingApi.Migrations
 
                     b.HasIndex("QuestionsPoolId");
 
+                    b.HasIndex("TemplateId");
+
                     b.ToTable("Questions");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.QuestionsPool", b =>
+            modelBuilder.Entity("TestingApi.Models.Test.QuestionsPool", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -134,12 +138,14 @@ namespace TestingApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("TemplateId");
+
                     b.HasIndex("TestId");
 
                     b.ToTable("QuestionsPools");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.Test", b =>
+            modelBuilder.Entity("TestingApi.Models.Test.Test", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -181,6 +187,8 @@ namespace TestingApi.Migrations
 
                     b.HasIndex("Name")
                         .IsUnique();
+
+                    b.HasIndex("TemplateId");
 
                     b.ToTable("Tests");
                 });
@@ -329,7 +337,7 @@ namespace TestingApi.Migrations
                     b.ToTable("TestTemplates");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.User", b =>
+            modelBuilder.Entity("TestingApi.Models.User.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -443,37 +451,68 @@ namespace TestingApi.Migrations
                     b.ToTable("UserTests");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.Answer", b =>
+            modelBuilder.Entity("TestingApi.Models.Test.Answer", b =>
                 {
-                    b.HasOne("TestingApi.Models.Question", "Question")
+                    b.HasOne("TestingApi.Models.Test.Question", "Question")
                         .WithMany("Answers")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TestingApi.Models.TestTemplate.AnswerTemplate", "AnswerTemplate")
+                        .WithMany("AnswersFromTemplate")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("AnswerTemplate");
+
                     b.Navigation("Question");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.Question", b =>
+            modelBuilder.Entity("TestingApi.Models.Test.Question", b =>
                 {
-                    b.HasOne("TestingApi.Models.QuestionsPool", "QuestionsPool")
+                    b.HasOne("TestingApi.Models.Test.QuestionsPool", "QuestionsPool")
                         .WithMany("Questions")
                         .HasForeignKey("QuestionsPoolId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("TestingApi.Models.TestTemplate.QuestionTemplate", "QuestionTemplate")
+                        .WithMany("QuestionsFromTemplate")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("QuestionTemplate");
+
                     b.Navigation("QuestionsPool");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.QuestionsPool", b =>
+            modelBuilder.Entity("TestingApi.Models.Test.QuestionsPool", b =>
                 {
-                    b.HasOne("TestingApi.Models.Test", "Test")
+                    b.HasOne("TestingApi.Models.TestTemplate.QuestionsPoolTemplate", "QuestionsPoolTemplate")
+                        .WithMany("QuestionsPoolsFromTmpl")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("TestingApi.Models.Test.Test", "Test")
                         .WithMany("QuestionsPools")
                         .HasForeignKey("TestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("QuestionsPoolTemplate");
+
                     b.Navigation("Test");
+                });
+
+            modelBuilder.Entity("TestingApi.Models.Test.Test", b =>
+                {
+                    b.HasOne("TestingApi.Models.TestTemplate.TestTemplate", "TestTemplate")
+                        .WithMany("TestsFromTemplate")
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("TestTemplate");
                 });
 
             modelBuilder.Entity("TestingApi.Models.TestTemplate.AnswerTemplate", b =>
@@ -511,19 +550,19 @@ namespace TestingApi.Migrations
 
             modelBuilder.Entity("TestingApi.Models.UserAnswer", b =>
                 {
-                    b.HasOne("TestingApi.Models.Answer", "Answer")
+                    b.HasOne("TestingApi.Models.Test.Answer", "Answer")
                         .WithMany()
                         .HasForeignKey("AnswerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TestingApi.Models.Question", "Question")
+                    b.HasOne("TestingApi.Models.Test.Question", "Question")
                         .WithMany("UserAnswers")
                         .HasForeignKey("QuestionId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("TestingApi.Models.User", "User")
+                    b.HasOne("TestingApi.Models.User.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -538,13 +577,13 @@ namespace TestingApi.Migrations
 
             modelBuilder.Entity("TestingApi.Models.UserTest", b =>
                 {
-                    b.HasOne("TestingApi.Models.Test", "Test")
+                    b.HasOne("TestingApi.Models.Test.Test", "Test")
                         .WithMany("UserTests")
                         .HasForeignKey("TestId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TestingApi.Models.User", "User")
+                    b.HasOne("TestingApi.Models.User.User", "User")
                         .WithMany("UserTests")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -555,41 +594,52 @@ namespace TestingApi.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.Question", b =>
+            modelBuilder.Entity("TestingApi.Models.Test.Question", b =>
                 {
                     b.Navigation("Answers");
 
                     b.Navigation("UserAnswers");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.QuestionsPool", b =>
+            modelBuilder.Entity("TestingApi.Models.Test.QuestionsPool", b =>
                 {
                     b.Navigation("Questions");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.Test", b =>
+            modelBuilder.Entity("TestingApi.Models.Test.Test", b =>
                 {
                     b.Navigation("QuestionsPools");
 
                     b.Navigation("UserTests");
                 });
 
+            modelBuilder.Entity("TestingApi.Models.TestTemplate.AnswerTemplate", b =>
+                {
+                    b.Navigation("AnswersFromTemplate");
+                });
+
             modelBuilder.Entity("TestingApi.Models.TestTemplate.QuestionTemplate", b =>
                 {
                     b.Navigation("AnswerTemplates");
+
+                    b.Navigation("QuestionsFromTemplate");
                 });
 
             modelBuilder.Entity("TestingApi.Models.TestTemplate.QuestionsPoolTemplate", b =>
                 {
+                    b.Navigation("QuestionsPoolsFromTmpl");
+
                     b.Navigation("QuestionsTemplates");
                 });
 
             modelBuilder.Entity("TestingApi.Models.TestTemplate.TestTemplate", b =>
                 {
                     b.Navigation("QuestionsPoolTemplates");
+
+                    b.Navigation("TestsFromTemplate");
                 });
 
-            modelBuilder.Entity("TestingApi.Models.User", b =>
+            modelBuilder.Entity("TestingApi.Models.User.User", b =>
                 {
                     b.Navigation("UserTests");
                 });

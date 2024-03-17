@@ -16,6 +16,12 @@ public class QuestionPoolTemplateEntityConfiguration : BaseEntityConfiguration<Q
             .WithOne(q => q.QuestionsPoolTemplate)
             .HasForeignKey(q => q.QuestionsPoolTemplateId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder
+            .HasMany(qp => qp.QuestionsPoolsFromTmpl)
+            .WithOne(qp => qp.QuestionsPoolTemplate)
+            .HasForeignKey(qp => qp.TemplateId)
+            .OnDelete(DeleteBehavior.SetNull);
 
         builder.Property(qp => qp.NumOfQuestionsToBeGeneratedRestriction).IsRequired(false);
         builder.Property(qp => qp.GenerationStrategyRestriction).IsRequired(false);

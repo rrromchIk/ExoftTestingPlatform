@@ -8,6 +8,8 @@ public class Test : BaseEntity
     public bool IsPublished { get; set; }
     public TestDifficulty Difficulty { get; set; }
     public Guid? TemplateId { get; set; }
+    
+    public TestTemplate.TestTemplate? TestTemplate { get; set; }
 
     public ICollection<QuestionsPool> QuestionsPools { get; set; } = null!;
     public ICollection<UserTest> UserTests { get; set; } = null!;

@@ -11,4 +11,5 @@ public class QuestionsPoolTemplate : BaseEntity
     public int? NumOfQuestionsToBeGeneratedRestriction { get; set; }
     public GenerationStrategy? GenerationStrategyRestriction { get; set; }
     public ICollection<QuestionTemplate> QuestionsTemplates { get; set; } = null!;
+    public ICollection<QuestionsPool> QuestionsPoolsFromTmpl { get; set; } = null!;
 }

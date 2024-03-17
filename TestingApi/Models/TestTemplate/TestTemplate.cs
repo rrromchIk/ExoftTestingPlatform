@@ -12,4 +12,6 @@ public class TestTemplate : BaseEntity
     public int? DefaultDuration { get; set; }
 
     public ICollection<QuestionsPoolTemplate> QuestionsPoolTemplates { get; set; } = null!;
+    
+    public ICollection<Test.Test> TestsFromTemplate { get; set; } = null!;
 }
