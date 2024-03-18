@@ -179,7 +179,7 @@ public class UserTestService : IUserTestService
     private async ValueTask<float> CalculateUserScore(Guid userId, Guid testId,
         CancellationToken cancellationToken = default)
     {
-        var userQuestionsResultsQuery = GetUserQuestionResultQuery(userId, testId);
+        var userQuestionsResultsQuery = GetAnsweredUserQuestionResultQuery(userId, testId);
 
         return (await userQuestionsResultsQuery.ToListAsync(cancellationToken))
             .Sum(q => q.UserScore);
@@ -196,10 +196,17 @@ public class UserTestService : IUserTestService
         if (userTest.UserTestStatus != UserTestStatus.Completed)
             throw new ApiException("Test is not completed", StatusCodes.Status400BadRequest);
             
-        var userQuestionsResultsQuery = GetUserQuestionResultQuery(userId, testId);
+        var answeredUserQuestionsResultsQuery = GetAnsweredUserQuestionResultQuery(userId, testId);
+        var unAnsweredUserQuestionsResultsQuery = GetUnAnsweredQuestionsResultQuery(userId, testId);
         
-        var questionsResult = await userQuestionsResultsQuery.ToListAsync(cancellationToken);
-        var userScore = questionsResult.Sum(q => q.UserScore);
+        var answeredQuestionsResult = await answeredUserQuestionsResultsQuery.ToListAsync(cancellationToken);
+        var unAnsweredQuestionsResult = await unAnsweredUserQuestionsResultsQuery.ToListAsync(cancellationToken);
+        
+        var userScore = answeredQuestionsResult.Sum(q => q.UserScore);
+
+        var allUserQuestionsResult = answeredQuestionsResult
+            .Concat(unAnsweredQuestionsResult)
+            .ToList();
         
         return new TestResultResponseDto
         {
@@ -210,11 +217,11 @@ public class UserTestService : IUserTestService
             EndingTime = userTest.EndingTime,
             UserTestStatus = userTest.UserTestStatus.ToString(),
             UserScore = userScore,
-            QuestionsResults = questionsResult
+            QuestionsResults = allUserQuestionsResult
         };
     }
 
-    private IQueryable<QuestionResultResponseDto> GetUserQuestionResultQuery(Guid userId, Guid testId)
+    private IQueryable<QuestionResultResponseDto> GetAnsweredUserQuestionResultQuery(Guid userId, Guid testId)
     {
         var userAnswersDetailsQuery = _dataContext.UserAnswers
             .Include(ua => ua.Question)
@@ -291,6 +298,37 @@ public class UserTestService : IUserTestService
             );
     }
 
+    private IQueryable<QuestionResultResponseDto> GetUnAnsweredQuestionsResultQuery(Guid userId, Guid testId)
+    {
+        return _dataContext.UserQuestions
+            .Include(uq => uq.Question)
+            .ThenInclude(q => q.QuestionsPool)
+            .Include(uq => uq.Question)
+            .ThenInclude(q => q.Answers)
+            .Where(uq => uq.UserId == userId && 
+                         uq.Question.QuestionsPool.TestId == testId &&
+                         !_dataContext.UserAnswers
+                             .Any(ua => ua.QuestionId == uq.QuestionId 
+                                        && ua.UserId == uq.UserId))
+            .Select(
+                uq => new QuestionResultResponseDto
+                {
+                    Id = uq.QuestionId,
+                    QuestionText = uq.Question.Text,
+                    MaxScore = uq.Question.MaxScore,
+                    UserScore = 0f,
+                    AnswersResults = uq.Question.Answers
+                        .Select(
+                            a => new AnswerResultResponseDto
+                            {
+                                AnswerText = a.Text,
+                                IsCorrect = a.IsCorrect,
+                                IsUserAnswerSelected = false
+                            }
+                        ).ToList()
+                }
+            );
+    }
     private static Expression<Func<Test, object>> GetSortPropertyForTestToPass(string? sortColumn)
     {
         return sortColumn?.ToLower() switch
