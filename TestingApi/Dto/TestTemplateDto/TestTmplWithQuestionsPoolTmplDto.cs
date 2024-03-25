@@ -19,6 +19,6 @@ public class TestTmplWithQuestionsPoolTmplDto
     [Range(1, int.MaxValue, ErrorMessage = "Duration must be greater than 0")]
     public int? DefaultDuration { get; set; }
     
-    public ICollection<QuestionsPoolTemplateDto.QuestionsPoolTmplDto> QuestionsPoolTemplates { get; set; } = null!;
+    public ICollection<QuestionsPoolTemplateDto.QuestionsPoolTmplDto>? QuestionsPoolTemplates { get; set; } = null!;
 
 }
