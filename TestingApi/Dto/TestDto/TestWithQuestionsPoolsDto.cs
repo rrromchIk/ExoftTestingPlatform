@@ -11,7 +11,7 @@ public class TestWithQuestionsPoolsDto
     public string Name { get; set; } = null!;
 
     [Required(AllowEmptyStrings = false, ErrorMessage = "Subject is required")]
-    [MaxLength(25, ErrorMessage = "Name cannot exceed 25 characters")]
+    [MaxLength(25, ErrorMessage = "Subject cannot exceed 25 characters")]
     public string Subject { get; set; } = null!;
 
     [Required(ErrorMessage = "Duration is required")]
