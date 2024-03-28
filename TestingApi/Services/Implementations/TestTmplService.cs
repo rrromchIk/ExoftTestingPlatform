@@ -3,10 +3,10 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Data;
-using TestingApi.Dto;
 using TestingApi.Dto.TestTemplateDto;
 using TestingAPI.Exceptions;
 using TestingApi.Helpers;
+using TestingApi.Models.Test;
 using TestingApi.Models.TestTemplate;
 using TestingApi.Services.Abstractions;
 
@@ -125,7 +125,7 @@ public class TestTmplService : ITestTmplService
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<PagedList<TestTmplResponseDto>> GetAllTestsTmplsAsync(FiltersDto filtersDto,
+    public async Task<PagedList<TestTmplResponseDto>> GetAllTestsTmplsAsync(TestTemplateFiltersDto filtersDto,
         CancellationToken cancellationToken = default)
     {
         var tests = await PagedList<TestTemplate>.CreateAsync(
@@ -139,7 +139,7 @@ public class TestTmplService : ITestTmplService
     }
 
     public async Task<PagedList<TestTmplResponseDto>> GetTestsTmplsByAuthorIdAsync(
-        Guid authorId, FiltersDto filtersDto, CancellationToken cancellationToken = default)
+        Guid authorId, TestTemplateFiltersDto filtersDto, CancellationToken cancellationToken = default)
     {
         IQueryable<TestTemplate> testTemplatesQuery = GetTestTemplatesQueryWithFiltersApplied(filtersDto);
 
@@ -155,10 +155,10 @@ public class TestTmplService : ITestTmplService
         return _mapper.Map<PagedList<TestTmplResponseDto>>(tests);
     }
 
-    private IQueryable<TestTemplate> GetTestTemplatesQueryWithFiltersApplied(FiltersDto filtersDto)
+    private IQueryable<TestTemplate> GetTestTemplatesQueryWithFiltersApplied(TestTemplateFiltersDto filtersDto)
     {
         IQueryable<TestTemplate> testTemplatesQuery = _dataContext.TestTemplates;
-        
+
         if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
         {
             testTemplatesQuery = testTemplatesQuery.Where(
@@ -167,19 +167,37 @@ public class TestTmplService : ITestTmplService
             );
         }
 
+        if (!string.IsNullOrEmpty(filtersDto.Difficulty))
+        {
+            if (Enum.TryParse(typeof(TestDifficulty), filtersDto.Difficulty, true, out var difficultyValue))
+            {
+                testTemplatesQuery = testTemplatesQuery
+                    .Where(t => t.DefaultTestDifficulty == (TestDifficulty)difficultyValue);
+            }
+        }
+        
         testTemplatesQuery = filtersDto.SortOrder?.ToLower() == "desc"
-            ? testTemplatesQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn))
-            : testTemplatesQuery.OrderBy(GetSortProperty(filtersDto.SortColumn));
+            ? testTemplatesQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn, "desc"))
+            : testTemplatesQuery.OrderBy(GetSortProperty(filtersDto.SortColumn, "asc"));
 
         return testTemplatesQuery;
     }
 
-    private static Expression<Func<TestTemplate, object>> GetSortProperty(string? sortColumn)
+    private static Expression<Func<TestTemplate, object>> GetSortProperty(string? sortColumn, string sortOrder)
     {
         return sortColumn?.ToLower() switch
         {
-            "name" => t => t.TemplateName,
-            "creationTime" => t => t.CreatedTimestamp,
+            "duration" => t => t.DefaultDuration == null
+                ? sortOrder == "asc" 
+                    ? int.MaxValue
+                    : int.MinValue
+                : t.DefaultDuration,
+            "modificationdate" => t => t.ModifiedTimestamp == null 
+                ? sortOrder == "asc" 
+                    ? DateTime.MaxValue
+                    : DateTime.MinValue
+                : t.ModifiedTimestamp,
+            "creationdate" => t => t.CreatedTimestamp,
             _ => t => t.Id
         };
     }

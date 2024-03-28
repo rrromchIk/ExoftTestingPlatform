@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using TestingApi.Dto;
 using TestingApi.Dto.TestResultDto;
 using TestingApi.Dto.UserTestDto;
 using TestingApi.Helpers;
@@ -42,7 +41,7 @@ public class UserTestsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestToPassResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllTestsForUser(
-        [FromQuery] FiltersDto filtersDto,
+        [FromQuery] UserTestFilters filtersDto,
         [FromRoute] Guid userId,
         CancellationToken cancellationToken)
     {
@@ -59,7 +58,7 @@ public class UserTestsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<StartedTestResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllStartedTestsForUserAsync(
-        [FromQuery] FiltersDto filtersDto,
+        [FromQuery] UserTestFilters filtersDto,
         [FromRoute] Guid userId,
         CancellationToken cancellationToken)
     {

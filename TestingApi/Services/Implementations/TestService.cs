@@ -3,7 +3,6 @@ using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Data;
-using TestingApi.Dto;
 using TestingApi.Dto.TestDto;
 using TestingAPI.Exceptions;
 using TestingApi.Helpers;
@@ -111,23 +110,16 @@ public class TestService : ITestService
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<PagedList<TestResponseDto>> GetAllTestsAsync(FiltersDto filtersDto,
+    public async Task<PagedList<TestResponseDto>> GetAllTestsAsync(TestFiltersDto filtersDto,
         CancellationToken cancellationToken = default)
     {
         IQueryable<Test> testsQuery = _dataContext.Tests;
 
-        if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
-        {
-            testsQuery = testsQuery.Where(
-                t =>
-                    t.Name.Contains(filtersDto.SearchTerm) ||
-                    t.Subject.Contains(filtersDto.SearchTerm)
-            );
-        }
-
+        testsQuery = ApplyFilters(testsQuery, filtersDto);
+        
         testsQuery = filtersDto.SortOrder?.ToLower() == "desc"
-            ? testsQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn))
-            : testsQuery.OrderBy(GetSortProperty(filtersDto.SortColumn));
+            ? testsQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn, "desc"))
+            : testsQuery.OrderBy(GetSortProperty(filtersDto.SortColumn, "asc"));
 
         var tests = await PagedList<Test>.CreateAsync(
             testsQuery,
@@ -147,16 +139,47 @@ public class TestService : ITestService
         
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
+    
+    
+    private static IQueryable<Test> ApplyFilters(IQueryable<Test> query, TestFiltersDto testFiltersDto) {
+        if (testFiltersDto.Published != null) {
+            query = query
+                .Where(t => t.IsPublished == testFiltersDto.Published);
+        }
+        
+        if (!string.IsNullOrEmpty(testFiltersDto.Difficulty)) {
+            if (Enum.TryParse(typeof(TestDifficulty), testFiltersDto.Difficulty, true, out var difficultyValue)) {
+                query = query.Where(t => t.Difficulty == (TestDifficulty)difficultyValue);
+            }
+        }
+        
+        if (!string.IsNullOrEmpty(testFiltersDto.TemplateId)) {
+            query = query.Where(t => t.TemplateId.ToString() == testFiltersDto.TemplateId);
+        }
+        
+        if (!string.IsNullOrWhiteSpace(testFiltersDto.SearchTerm))
+        {
+            query = query.Where(
+                t =>
+                    t.Name.Contains(testFiltersDto.SearchTerm) ||
+                    t.Subject.Contains(testFiltersDto.SearchTerm)
+            );
+        }
 
-    private static Expression<Func<Test, object>> GetSortProperty(string? sortColumn)
+        return query;
+    }
+
+    private static Expression<Func<Test, object>> GetSortProperty(string? sortColumn, string sortOrder)
     {
         return sortColumn?.ToLower() switch
         {
-            "name" => t => t.Name,
-            "subject" => t => t.Subject,
-            "difficulty" => t => t.Difficulty,
             "duration" => t => t.Duration,
-            "creationTime" => t => t.CreatedTimestamp,
+            "modificationdate" => t => t.ModifiedTimestamp == null 
+                ? sortOrder == "asc" 
+                    ? DateTime.MaxValue
+                    : DateTime.MinValue
+                : t.ModifiedTimestamp,
+            "creationdate" => t => t.CreatedTimestamp,
             _ => t => t.Id
         };
     }

@@ -1,8 +1,6 @@
-﻿using System.Text.Json;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using TestingApi.Dto;
 using TestingApi.Dto.TestDto;
 using TestingApi.Helpers;
 using TestingApi.Helpers.ValidationAttributes;
@@ -31,7 +29,7 @@ public class TestsController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestResponseDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllTests([FromQuery] FiltersDto filtersDto,
+    public async Task<IActionResult> GetAllTests([FromQuery] TestFiltersDto filtersDto,
         CancellationToken cancellationToken)
     {
         var response = await _testService.GetAllTestsAsync(filtersDto, cancellationToken);

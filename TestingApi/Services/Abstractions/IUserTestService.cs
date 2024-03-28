@@ -9,9 +9,9 @@ public interface IUserTestService
 {
     Task<UserTestResponseDto?> GetUserTestAsync(Guid userId, Guid testId, CancellationToken cancellationToken = default);
 
-    Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(FiltersDto filtersDto, Guid userId,
+    Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(UserTestFilters filtersDto, Guid userId,
         CancellationToken cancellationToken = default);
-    Task<PagedList<StartedTestResponseDto>> GetAllStartedTestsForUserAsync(FiltersDto filtersDto,
+    Task<PagedList<StartedTestResponseDto>> GetAllStartedTestsForUserAsync(UserTestFilters filtersDto,
         Guid userId, CancellationToken cancellationToken = default);
     Task<bool> UserTestExistsAsync(Guid userId, Guid testId, CancellationToken cancellationToken = default);
     Task<UserTestResponseDto> CreateUserTestAsync(Guid userId, Guid testId,

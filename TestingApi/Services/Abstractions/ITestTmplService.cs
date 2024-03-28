@@ -1,5 +1,4 @@
-﻿using TestingApi.Dto;
-using TestingApi.Dto.TestTemplateDto;
+﻿using TestingApi.Dto.TestTemplateDto;
 using TestingApi.Helpers;
 
 namespace TestingApi.Services.Abstractions;
@@ -22,10 +21,10 @@ public interface ITestTmplService
     
     Task DeleteTestTmplAsync(Guid id, CancellationToken cancellationToken = default);
 
-    Task<PagedList<TestTmplResponseDto>> GetAllTestsTmplsAsync(FiltersDto filtersDto,
+    Task<PagedList<TestTmplResponseDto>> GetAllTestsTmplsAsync(TestTemplateFiltersDto filtersDto,
         CancellationToken cancellationToken = default);
 
     public Task<PagedList<TestTmplResponseDto>> GetTestsTmplsByAuthorIdAsync(
-        Guid authorId, FiltersDto filtersDto, CancellationToken cancellationToken = default
+        Guid authorId, TestTemplateFiltersDto filtersDto, CancellationToken cancellationToken = default
     );
 }

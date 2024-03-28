@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Constants;
 using TestingApi.Data;
-using TestingApi.Dto;
 using TestingApi.Dto.UserDto;
 using TestingAPI.Exceptions;
 using TestingApi.Helpers;
@@ -41,24 +40,16 @@ public class UserService : IUserService
         _logger = logger;
     }
 
-    public async Task<PagedList<UserResponseDto>> GetAllUsersAsync(FiltersDto filtersDto,
+    public async Task<PagedList<UserResponseDto>> GetAllUsersAsync(UserFiltersDto filtersDto,
         CancellationToken cancellationToken = default)
     {
         IQueryable<User> usersQuery = _dataContext.Users;
 
-        if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
-        {
-            usersQuery = usersQuery.Where(
-                u =>
-                    u.FirstName.Contains(filtersDto.SearchTerm) ||
-                    u.LastName.Contains(filtersDto.SearchTerm) ||
-                    u.Email.Contains(filtersDto.SearchTerm)
-            );
-        }
+        usersQuery = ApplyFilters(usersQuery, filtersDto);
 
         usersQuery = filtersDto.SortOrder?.ToLower() == "desc"
-            ? usersQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn))
-            : usersQuery.OrderBy(GetSortProperty(filtersDto.SortColumn));
+            ? usersQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn, "desc"))
+            : usersQuery.OrderBy(GetSortProperty(filtersDto.SortColumn, "asc"));
 
         var tests = await PagedList<User>.CreateAsync(
             usersQuery,
@@ -68,18 +59,6 @@ public class UserService : IUserService
         );
 
         return _mapper.Map<PagedList<UserResponseDto>>(tests);
-    }
-
-    private static Expression<Func<User, object>> GetSortProperty(string? sortColumn)
-    {
-        return sortColumn?.ToLower() switch
-        {
-            "name" => u => u.FirstName,
-            "surname" => u => u.LastName,
-            "email" => u => u.Email,
-            "creationTime" => u => u.CreatedTimestamp,
-            _ => u => u.Id
-        };
     }
 
     public async Task<UserResponseDto?> GetUserByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -274,5 +253,44 @@ public class UserService : IUserService
             default:
                 return true;
         }
+    }
+    
+    private IQueryable<User> ApplyFilters(IQueryable<User> query, UserFiltersDto userFiltersDto) {
+        if (userFiltersDto.EmailConfirmed != null) {
+            query = query
+                .Where(u => u.EmailConfirmed == userFiltersDto.EmailConfirmed);
+        }
+        
+        if (!string.IsNullOrEmpty(userFiltersDto.Role)) {
+            if (Enum.TryParse(typeof(UserRole), userFiltersDto.Role, true, out var roleValue)) {
+                query = query.Where(u => u.UserRole == (UserRole)roleValue);
+            }
+        }
+        
+        if (!string.IsNullOrWhiteSpace(userFiltersDto.SearchTerm))
+        {
+            query = query.Where(
+                u =>
+                    u.FirstName.Contains(userFiltersDto.SearchTerm) ||
+                    u.LastName.Contains(userFiltersDto.SearchTerm) ||
+                    u.Email.Contains(userFiltersDto.SearchTerm)
+            );
+        }
+
+        return query;
+    }
+
+    private static Expression<Func<User, object>> GetSortProperty(string? sortColumn, string sortOrder)
+    {
+        return sortColumn?.ToLower() switch
+        {
+            "modificationdate" => u => u.ModifiedTimestamp == null 
+                ? sortOrder == "asc" 
+                    ? DateTime.MaxValue
+                    : DateTime.MinValue
+                : u.ModifiedTimestamp,
+            "creationdate" => u => u.CreatedTimestamp,
+            _ => u => u.Id
+        };
     }
 }

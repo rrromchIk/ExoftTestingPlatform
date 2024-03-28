@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using TestingApi.Dto;
 using TestingApi.Dto.TestTemplateDto;
 using TestingApi.Helpers;
 using TestingApi.Helpers.ValidationAttributes;
@@ -28,7 +27,7 @@ public class TestTemplatesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestTmplResponseDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllTestTemplates([FromQuery] FiltersDto filtersDto,
+    public async Task<IActionResult> GetAllTestTemplates([FromQuery] TestTemplateFiltersDto filtersDto,
         CancellationToken cancellationToken)
     {
         var response = await _testTmplService.GetAllTestsTmplsAsync(filtersDto, cancellationToken);
@@ -42,7 +41,7 @@ public class TestTemplatesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTestTemplatesByAuthorId(
         [FromRoute] Guid authorId,
-        [FromQuery] FiltersDto filtersDto,
+        [FromQuery] TestTemplateFiltersDto filtersDto,
         CancellationToken cancellationToken)
     {
         var response = await _testTmplService.GetTestsTmplsByAuthorIdAsync(

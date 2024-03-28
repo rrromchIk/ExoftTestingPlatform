@@ -2,7 +2,6 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
-using TestingApi.Dto;
 using TestingApi.Dto.TestDto;
 using TestingApi.Dto.TestResultDto;
 using TestingApi.Dto.UserTestDto;
@@ -36,21 +35,14 @@ public class UserTestService : IUserTestService
         return _mapper.Map<UserTestResponseDto>(userTestFounded);
     }
 
-    public async Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(FiltersDto filtersDto,
+    public async Task<PagedList<TestToPassResponseDto>> GetAllTestsForUserAsync(UserTestFilters filtersDto,
         Guid userId, CancellationToken cancellationToken = default)
     {
         IQueryable<Test> testsQuery = _dataContext.Tests
             .Where(t => t.IsPublished)
             .Include(t => t.UserTests);
-        
-        if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
-        {
-            testsQuery = testsQuery.Where(
-                t =>
-                    t.Name.Contains(filtersDto.SearchTerm) ||
-                    t.Subject.Contains(filtersDto.SearchTerm)
-            );
-        }
+
+        testsQuery = ApplyFiltersForTestToPass(testsQuery, filtersDto);
 
         testsQuery = filtersDto.SortOrder?.ToLower() == "desc"
             ? testsQuery.OrderByDescending(GetSortPropertyForTestToPass(filtersDto.SortColumn))
@@ -82,21 +74,14 @@ public class UserTestService : IUserTestService
         );
     }
 
-    public async Task<PagedList<StartedTestResponseDto>> GetAllStartedTestsForUserAsync(FiltersDto filtersDto,
+    public async Task<PagedList<StartedTestResponseDto>> GetAllStartedTestsForUserAsync(UserTestFilters filtersDto,
         Guid userId, CancellationToken cancellationToken = default)
     {
         var testsQuery = _dataContext.UserTests
             .Include(ut => ut.Test)
             .Where(ut => ut.UserId == userId);
-        
-        if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
-        {
-            testsQuery = testsQuery.Where(
-                t =>
-                    t.Test.Name.Contains(filtersDto.SearchTerm) ||
-                    t.Test.Subject.Contains(filtersDto.SearchTerm)
-            );
-        }
+
+        testsQuery = ApplyFiltersForStartedTests(testsQuery, filtersDto);
 
         testsQuery = filtersDto.SortOrder?.ToLower() == "desc"
             ? testsQuery.OrderByDescending(GetSortPropertyForStartedTest(filtersDto.SortColumn))
@@ -329,15 +314,61 @@ public class UserTestService : IUserTestService
                 }
             );
     }
+    
+    private static IQueryable<Test> ApplyFiltersForTestToPass(IQueryable<Test> query, UserTestFilters filtersDto) {
+        
+        if (!string.IsNullOrEmpty(filtersDto.Difficulty)) {
+            if (Enum.TryParse(typeof(TestDifficulty), filtersDto.Difficulty, true, out var difficultyValue)) {
+                query = query.Where(t => t.Difficulty == (TestDifficulty)difficultyValue);
+            }
+        }
+        
+        if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
+        {
+            query = query.Where(
+                t =>
+                    t.Name.Contains(filtersDto.SearchTerm) ||
+                    t.Subject.Contains(filtersDto.SearchTerm)
+            );
+        }
+
+        return query;
+    }
+    
+    private static IQueryable<UserTest> ApplyFiltersForStartedTests(IQueryable<UserTest> query, UserTestFilters filtersDto) {
+        
+        if (!string.IsNullOrWhiteSpace(filtersDto.SearchTerm))
+        {
+            query = query.Where(
+                ut =>
+                    ut.Test.Name.Contains(filtersDto.SearchTerm) ||
+                    ut.Test.Subject.Contains(filtersDto.SearchTerm)
+            );
+        }
+        
+        
+        if (!string.IsNullOrEmpty(filtersDto.UserTestStatus)) {
+            if (Enum.TryParse(typeof(TestDifficulty), filtersDto.UserTestStatus, true, out var statusValue)) {
+                query = query.Where(ut => ut.UserTestStatus == (UserTestStatus)statusValue);
+            }
+        }
+        
+        
+        if (!string.IsNullOrEmpty(filtersDto.Difficulty)) {
+            if (Enum.TryParse(typeof(TestDifficulty), filtersDto.Difficulty, true, out var difficultyValue)) {
+                query = query.Where(ut => ut.Test.Difficulty == (TestDifficulty)difficultyValue);
+            }
+        }
+        
+        return query;
+    }
+    
     private static Expression<Func<Test, object>> GetSortPropertyForTestToPass(string? sortColumn)
     {
         return sortColumn?.ToLower() switch
         {
-            "name" => t => t.Name,
-            "subject" => t => t.Subject,
-            "difficulty" => t => t.Difficulty,
             "duration" => t => t.Duration,
-            "creationTime" => t => t.CreatedTimestamp,
+            "creationdate" => t => t.CreatedTimestamp,
             _ => t => t.Id
         };
     }
@@ -346,12 +377,9 @@ public class UserTestService : IUserTestService
     {
         return sortColumn?.ToLower() switch
         {
-            "name" => ut => ut.Test.Name,
-            "subject" => ut => ut.Test.Subject,
-            "difficulty" => ut => ut.Test.Difficulty,
+            "score" => ut => ut.UserScore,
             "duration" => ut => ut.Test.Duration,
-            "startingTime" => ut => ut.StartingTime,
-            "endingTime" => ut => ut.EndingTime,
+            "startingtime" => ut => ut.StartingTime,
             _ => ut => ut.Test.Name
         };
     }

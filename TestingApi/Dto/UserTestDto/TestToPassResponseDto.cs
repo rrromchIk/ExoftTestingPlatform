@@ -1,6 +1,4 @@
-﻿using TestingApi.Models;
-
-namespace TestingApi.Dto.UserTestDto;
+﻿namespace TestingApi.Dto.UserTestDto;
 
 public class TestToPassResponseDto
 {

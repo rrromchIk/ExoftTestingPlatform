@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using TestingApi.Dto;
 using TestingApi.Dto.UserDto;
 using TestingApi.Helpers;
 using TestingApi.Helpers.ValidationAttributes;
@@ -30,7 +29,7 @@ public class UsersController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<UserResponseDto>))]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
     public async Task<IActionResult> GetAllUsers(
-        [FromQuery] FiltersDto filtersDto,
+        [FromQuery] UserFiltersDto filtersDto,
         CancellationToken cancellationToken
     )
     {
