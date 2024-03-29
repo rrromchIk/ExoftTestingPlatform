@@ -348,7 +348,7 @@ public class UserTestService : IUserTestService
         
         
         if (!string.IsNullOrEmpty(filtersDto.UserTestStatus)) {
-            if (Enum.TryParse(typeof(TestDifficulty), filtersDto.UserTestStatus, true, out var statusValue)) {
+            if (Enum.TryParse(typeof(UserTestStatus), filtersDto.UserTestStatus, true, out var statusValue)) {
                 query = query.Where(ut => ut.UserTestStatus == (UserTestStatus)statusValue);
             }
         }
@@ -378,7 +378,6 @@ public class UserTestService : IUserTestService
         return sortColumn?.ToLower() switch
         {
             "score" => ut => ut.UserScore,
-            "duration" => ut => ut.Test.Duration,
             "startingtime" => ut => ut.StartingTime,
             _ => ut => ut.Test.Name
         };
