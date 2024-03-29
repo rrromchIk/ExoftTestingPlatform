@@ -455,9 +455,8 @@ namespace TestingApi.Migrations
                     b.Property<float>("UserScore")
                         .HasColumnType("real");
 
-                    b.Property<string>("UserTestStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("UserTestStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("UserId", "TestId");
 
