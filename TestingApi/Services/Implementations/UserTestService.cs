@@ -122,14 +122,13 @@ public class UserTestService : IUserTestService
             .AnyAsync(ut => ut.UserId == userId && ut.TestId == testId, cancellationToken);
     }
 
-    public async Task<UserTestResponseDto> CreateUserTestAsync(Guid userId, Guid testId,
-        float totalScore, CancellationToken cancellationToken = default)
+    public async Task<UserTestResponseDto> CreateUserTestAsync(Guid userId, Guid testId, 
+        CancellationToken cancellationToken = default)
     {
         var userTestToAdd = new UserTest()
         {
             UserId = userId,
             TestId = testId,
-            TotalScore = totalScore,
             StartingTime = DateTime.Now,
             UserTestStatus = UserTestStatus.InProcess
         };
@@ -146,6 +145,7 @@ public class UserTestService : IUserTestService
             .FirstAsync(ut => ut.UserId == userId && ut.TestId == testId, cancellationToken);
 
         userTestToComplete.UserTestStatus = UserTestStatus.Completed;
+        userTestToComplete.TotalScore = await CalculateTotalTestScore(userId, testId, cancellationToken);
         userTestToComplete.UserScore = await CalculateUserScore(userId, testId, cancellationToken);
 
         await _dataContext.SaveChangesAsync(cancellationToken);
@@ -161,16 +161,7 @@ public class UserTestService : IUserTestService
         await _dataContext.SaveChangesAsync(cancellationToken);
     }
 
-    private async ValueTask<float> CalculateUserScore(Guid userId, Guid testId,
-        CancellationToken cancellationToken = default)
-    {
-        var userQuestionsResultsQuery = GetAnsweredUserQuestionResultQuery(userId, testId);
-
-        return (await userQuestionsResultsQuery.ToListAsync(cancellationToken))
-            .Sum(q => q.UserScore);
-    }
-
-
+    
     public async Task<TestResultResponseDto> GetUserTestResults(Guid userId, Guid testId,
         CancellationToken cancellationToken = default)
     {
@@ -313,6 +304,28 @@ public class UserTestService : IUserTestService
                         ).ToList()
                 }
             );
+    }
+    
+    private async ValueTask<float> CalculateUserScore(Guid userId, Guid testId,
+        CancellationToken cancellationToken = default)
+    {
+        var userQuestionsResultsQuery = GetAnsweredUserQuestionResultQuery(userId, testId);
+
+        return (await userQuestionsResultsQuery.ToListAsync(cancellationToken))
+            .Sum(q => q.UserScore);
+    }
+    
+    private async ValueTask<float> CalculateTotalTestScore(Guid userId, Guid testId,
+        CancellationToken cancellationToken = default)
+    {
+        return await _dataContext.UserQuestions
+            .Include(uq => uq.Question)
+            .ThenInclude(q => q.QuestionsPool)
+            .Where(
+                uq => uq.UserId == userId &&
+                      uq.Question.QuestionsPool.TestId == testId
+            )
+            .SumAsync(uq => uq.Question.MaxScore, cancellationToken);
     }
     
     private static IQueryable<Test> ApplyFiltersForTestToPass(IQueryable<Test> query, UserTestFilters filtersDto) {

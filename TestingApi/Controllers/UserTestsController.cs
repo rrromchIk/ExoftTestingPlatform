@@ -77,7 +77,6 @@ public class UserTestsController : ControllerBase
     public async Task<IActionResult> CreateUserTest(
         [FromRoute] Guid userId,
         [FromRoute] Guid testId,
-        [FromQuery] float totalScore,
         CancellationToken cancellationToken)
     {
         if (!(await _userService.UserExistsAsync(userId, cancellationToken) &&
@@ -88,7 +87,7 @@ public class UserTestsController : ControllerBase
             return BadRequest();
 
 
-        var response = await _userTestService.CreateUserTestAsync(userId, testId, totalScore, cancellationToken);
+        var response = await _userTestService.CreateUserTestAsync(userId, testId, cancellationToken);
 
         return CreatedAtAction(
             nameof(GetUserTest),
