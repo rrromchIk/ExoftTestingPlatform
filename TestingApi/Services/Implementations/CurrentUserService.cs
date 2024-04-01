@@ -15,7 +15,7 @@ public class CurrentUserService : ICurrentUserService
     }
 
     public string? AccessTokenRaw => _httpContextAccessor.HttpContext?.Request.Headers["Authorization"]
-        .ToString().Substring("Bearer ".Length).Trim();
+        .ToString()["Bearer ".Length..].Trim();
 
     public string? UserId =>
         _httpContextAccessor.HttpContext?.User?.FindFirstValue(ClaimTypes.NameIdentifier);
