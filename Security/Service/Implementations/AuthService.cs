@@ -74,7 +74,7 @@ public class AuthService : IAuthService
         };
     }
 
-    public async Task<TokenDto> LoginAsync(UserLoginDto userLoginDto)
+    public async Task<UserLoginResponseDto> LoginAsync(UserLoginDto userLoginDto)
     {
         var user = await _userManager.FindByEmailAsync(userLoginDto.Email);
 
@@ -93,11 +93,26 @@ public class AuthService : IAuthService
         {
             throw new AuthException("Unable to create refresh token", StatusCodes.Status500InternalServerError);
         }
+        
+        var roles = await _userManager.GetRolesAsync(user);
+        var rolesString = string.Join(", ", roles);
 
-        return new TokenDto
+        return new UserLoginResponseDto()
         {
-            AccessToken = await _tokenGenerator.GenerateAccessToken(user),
-            RefreshToken = user.RefreshToken
+            UserData = new UserResponseDto()
+            {
+                Id = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Email = user.Email,
+                EmailConfirmed = user.EmailConfirmed,
+                Role = rolesString
+            },
+            TokensPair = new TokenDto()
+            {
+                AccessToken = await _tokenGenerator.GenerateAccessToken(user),
+                RefreshToken = user.RefreshToken
+            }
         };
     }
 
