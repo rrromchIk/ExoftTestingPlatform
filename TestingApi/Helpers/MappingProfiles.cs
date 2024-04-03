@@ -130,7 +130,7 @@ public class MappingProfiles : Profile
         
         CreateMap<User, UserResponseDto>()
             .ForMember(
-                dest => dest.UserRole,
+                dest => dest.Role,
                 opt => opt
                     .MapFrom(src => src.UserRole.ToString())
             );

@@ -7,5 +7,5 @@ public class UserResponseDto : BaseResponseDto
     public string Email { get; set; } = null!;
     public bool EmailConfirmed { get; set; }
     public string ProfilePictureFilePath { get; set; } = null!;
-    public string UserRole { get; set; } = null!;
+    public string Role { get; set; } = null!;
 }
