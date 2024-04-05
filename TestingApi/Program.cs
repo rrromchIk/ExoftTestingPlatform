@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using TestingApi.Data;
 using TestingApi.Extensions;
 using TestingApi.Middlewares;
@@ -8,16 +9,12 @@ using TestingApi.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging
-    .ClearProviders()
-    .SetMinimumLevel(LogLevel.Trace)
-    .AddSimpleConsole(
-        options =>
-        {
-            options.IncludeScopes = true;
-            options.TimestampFormat = "yyyy-MM-dd HH:mm:ss.fff ";
-        })
-    .AddDebug();
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 builder.Services.RegisterCustomServices(builder.Configuration);
 builder.Services.ConfigureAuth(builder.Configuration);

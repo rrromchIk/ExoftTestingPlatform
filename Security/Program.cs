@@ -1,19 +1,16 @@
 using Microsoft.OpenApi.Models;
 using Security.Extensions;
 using Security.Middlewares;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Logging
-    .ClearProviders()
-    .SetMinimumLevel(LogLevel.Trace)
-    .AddSimpleConsole(
-        options =>
-        {
-            options.IncludeScopes = true;
-            options.TimestampFormat = "yyyy-MM-dd HH:mm:ss.fff ";
-        })
-    .AddDebug();
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 builder.Services.AddControllers();
 builder.Services.RegisterServices(builder.Configuration);
