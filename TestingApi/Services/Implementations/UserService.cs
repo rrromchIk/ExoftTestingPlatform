@@ -47,9 +47,9 @@ public class UserService : IUserService
 
         usersQuery = ApplyFilters(usersQuery, filtersDto);
 
-        usersQuery = filtersDto.SortOrder?.ToLower() == "desc"
-            ? usersQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn, "desc"))
-            : usersQuery.OrderBy(GetSortProperty(filtersDto.SortColumn, "asc"));
+        usersQuery = filtersDto.SortOrder?.ToLower() == "asc"
+            ? usersQuery.OrderBy(GetSortProperty(filtersDto.SortColumn, "asc"))
+            : usersQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn, "desc"));
 
         var tests = await PagedList<User>.CreateAsync(
             usersQuery,
@@ -290,7 +290,7 @@ public class UserService : IUserService
                     : DateTime.MinValue
                 : u.ModifiedTimestamp,
             "creationdate" => u => u.CreatedTimestamp,
-            _ => u => u.Id
+            _ => u => u.CreatedTimestamp
         };
     }
 }

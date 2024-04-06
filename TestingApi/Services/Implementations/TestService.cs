@@ -117,9 +117,9 @@ public class TestService : ITestService
 
         testsQuery = ApplyFilters(testsQuery, filtersDto);
         
-        testsQuery = filtersDto.SortOrder?.ToLower() == "desc"
-            ? testsQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn, "desc"))
-            : testsQuery.OrderBy(GetSortProperty(filtersDto.SortColumn, "asc"));
+        testsQuery = filtersDto.SortOrder?.ToLower() == "asc"
+            ? testsQuery.OrderBy(GetSortProperty(filtersDto.SortColumn, "asc"))
+            : testsQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn, "desc"));
 
         var tests = await PagedList<Test>.CreateAsync(
             testsQuery,
@@ -180,7 +180,7 @@ public class TestService : ITestService
                     : DateTime.MinValue
                 : t.ModifiedTimestamp,
             "creationdate" => t => t.CreatedTimestamp,
-            _ => t => t.Id
+            _ => t => t.CreatedTimestamp
         };
     }
 }

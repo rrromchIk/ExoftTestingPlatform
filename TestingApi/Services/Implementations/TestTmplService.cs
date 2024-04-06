@@ -176,9 +176,9 @@ public class TestTmplService : ITestTmplService
             }
         }
         
-        testTemplatesQuery = filtersDto.SortOrder?.ToLower() == "desc"
-            ? testTemplatesQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn, "desc"))
-            : testTemplatesQuery.OrderBy(GetSortProperty(filtersDto.SortColumn, "asc"));
+        testTemplatesQuery = filtersDto.SortOrder?.ToLower() == "asc"
+            ? testTemplatesQuery.OrderBy(GetSortProperty(filtersDto.SortColumn, "asc"))
+            : testTemplatesQuery.OrderByDescending(GetSortProperty(filtersDto.SortColumn, "desc"));
 
         return testTemplatesQuery;
     }
@@ -198,7 +198,7 @@ public class TestTmplService : ITestTmplService
                     : DateTime.MinValue
                 : t.ModifiedTimestamp,
             "creationdate" => t => t.CreatedTimestamp,
-            _ => t => t.Id
+            _ => t => t.CreatedTimestamp
         };
     }
 }

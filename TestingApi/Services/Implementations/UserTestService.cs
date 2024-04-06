@@ -44,9 +44,9 @@ public class UserTestService : IUserTestService
 
         testsQuery = ApplyFiltersForTestToPass(testsQuery, filtersDto);
 
-        testsQuery = filtersDto.SortOrder?.ToLower() == "desc"
-            ? testsQuery.OrderByDescending(GetSortPropertyForTestToPass(filtersDto.SortColumn))
-            : testsQuery.OrderBy(GetSortPropertyForTestToPass(filtersDto.SortColumn));
+        testsQuery = filtersDto.SortOrder?.ToLower() == "asc"
+            ? testsQuery.OrderBy(GetSortPropertyForTestToPass(filtersDto.SortColumn))
+            : testsQuery.OrderByDescending(GetSortPropertyForTestToPass(filtersDto.SortColumn));
         
         var testsToPassQuery = testsQuery
             .Select(
@@ -83,9 +83,9 @@ public class UserTestService : IUserTestService
 
         testsQuery = ApplyFiltersForStartedTests(testsQuery, filtersDto);
 
-        testsQuery = filtersDto.SortOrder?.ToLower() == "desc"
-            ? testsQuery.OrderByDescending(GetSortPropertyForStartedTest(filtersDto.SortColumn))
-            : testsQuery.OrderBy(GetSortPropertyForStartedTest(filtersDto.SortColumn));
+        testsQuery = filtersDto.SortOrder?.ToLower() == "asc"
+            ? testsQuery.OrderBy(GetSortPropertyForStartedTest(filtersDto.SortColumn))
+            : testsQuery.OrderByDescending(GetSortPropertyForStartedTest(filtersDto.SortColumn));
 
         var startedTestQuery = testsQuery
             .Select(
@@ -382,7 +382,7 @@ public class UserTestService : IUserTestService
         {
             "duration" => t => t.Duration,
             "creationdate" => t => t.CreatedTimestamp,
-            _ => t => t.Id
+            _ => t => t.CreatedTimestamp
         };
     }
 
@@ -392,7 +392,7 @@ public class UserTestService : IUserTestService
         {
             "score" => ut => ut.UserScore,
             "startingtime" => ut => ut.StartingTime,
-            _ => ut => ut.Test.Name
+            _ => ut => ut.StartingTime
         };
     }
 }
