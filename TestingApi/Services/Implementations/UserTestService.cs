@@ -134,10 +134,10 @@ public class UserTestService : IUserTestService
             UserTestStatus = UserTestStatus.InProcess
         };
 
-        var addedUserTest = await _dataContext.AddAsync(userTestToAdd, cancellationToken);
-
+        await _dataContext.AddAsync(userTestToAdd, cancellationToken);
         await _dataContext.SaveChangesAsync(cancellationToken);
-        return _mapper.Map<UserTestResponseDto>(addedUserTest.Entity);
+        
+        return await GetUserTestAsync(userId, testId, cancellationToken);
     }
 
     public async Task CompleteUserTestAsync(Guid userId, Guid testId, CancellationToken cancellationToken = default)
