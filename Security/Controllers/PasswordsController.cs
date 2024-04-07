@@ -29,18 +29,6 @@ public class PasswordsController : ControllerBase
         return Ok();
     }
 
-    [HttpGet("reset")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> ResetPassword([FromQuery] string userId, [FromQuery] string token)
-    {
-        var response = new ResetPasswordDto
-        {
-            UserId = userId,
-            Token = token
-        };
-        return Ok(response);
-    }
-
     [ValidateModel]
     [HttpPost("reset")]
     [ProducesResponseType(StatusCodes.Status200OK)]
