@@ -227,9 +227,9 @@ public class AuthService : IAuthService
         var passwordResetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
         var subject = _mailTemplatesConstants.ForgotPasswordMailSubject;
         var mailTemplatePath = _mailTemplatesConstants.ForgotPasswordMailTemplatePath;
-        var endpoint = "reset-password";
+        var link = _mailTemplatesConstants.ForgotPasswordLink;
 
-        return await SendEmailWithToken(user, passwordResetToken, subject, mailTemplatePath, endpoint);
+        return await SendEmailWithToken(user, passwordResetToken, subject, mailTemplatePath, link);
     }
 
     private async Task<bool> SendEmailVerificationMail(ApplicationUser user)
@@ -237,23 +237,19 @@ public class AuthService : IAuthService
         var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var subject = _mailTemplatesConstants.VerifyEmailMailSubject;
         var mailTemplatePath = _mailTemplatesConstants.VerifyEmailMailTemplatePath;
-        var endpoint = "email-confirm";
+        var link = _mailTemplatesConstants.VerifyEmailLink;
 
-        return await SendEmailWithToken(user, emailConfirmationToken, subject, mailTemplatePath, endpoint);
+        return await SendEmailWithToken(user, emailConfirmationToken, subject, mailTemplatePath, link);
     }
 
     private async Task<bool> SendEmailWithToken(ApplicationUser user, string token, string subject,
-        string mailTemplatePath, string endpoint)
+        string mailTemplatePath, string link)
     {
         var basePath = _webHostEnvironment.WebRootPath ?? _webHostEnvironment.ContentRootPath;
         var emailTemplatePath = Path.Combine(basePath, mailTemplatePath);
         var emailHtmlContent = await File.ReadAllTextAsync(emailTemplatePath);
-
         
-        var scheme = "http";
-        var host = "localhost:4200";
-        
-        var verificationUrl = $"{scheme}://{host}/{endpoint}"
+        var verificationUrl = $"{link}"
                               + $"?userId={user.Id}&token={token}";
 
         emailHtmlContent = emailHtmlContent.Replace("{url}", verificationUrl);
