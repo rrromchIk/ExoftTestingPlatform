@@ -70,7 +70,8 @@ public class DataContext : DbContext
                 {
                     case EntityState.Modified:
                         baseEntity.ModifiedTimestamp = DateTime.Now;
-                        baseEntity.ModifiedBy = Guid.Parse(_currentUserService.UserId);
+                        if(_currentUserService.UserId != null)
+                            baseEntity.ModifiedBy = Guid.Parse(_currentUserService.UserId);
                         break;
 
                     case EntityState.Added:
