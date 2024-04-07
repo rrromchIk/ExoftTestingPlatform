@@ -30,6 +30,7 @@ public class UserTestService : IUserTestService
         CancellationToken cancellationToken = default)
     {
         var userTestFounded = await _dataContext.UserTests
+            .Include(ut => ut.Test)
             .FirstOrDefaultAsync(ut => ut.UserId == userId && ut.TestId == testId, cancellationToken);
 
         return _mapper.Map<UserTestResponseDto>(userTestFounded);
@@ -145,6 +146,7 @@ public class UserTestService : IUserTestService
             .FirstAsync(ut => ut.UserId == userId && ut.TestId == testId, cancellationToken);
 
         userTestToComplete.UserTestStatus = UserTestStatus.Completed;
+        userTestToComplete.EndingTime = DateTime.Now;
         userTestToComplete.TotalScore = await CalculateTotalTestScore(userId, testId, cancellationToken);
         userTestToComplete.UserScore = await CalculateUserScore(userId, testId, cancellationToken);
 

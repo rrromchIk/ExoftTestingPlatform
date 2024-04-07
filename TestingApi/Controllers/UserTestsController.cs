@@ -91,7 +91,7 @@ public class UserTestsController : ControllerBase
 
         return CreatedAtAction(
             nameof(GetUserTest),
-            new { userId = response.UserId, testId = response.TestId },
+            new { userId = response.UserId, testId = response.Test.Id },
             response
         );
     }
