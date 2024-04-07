@@ -162,12 +162,14 @@ public class UsersController : ControllerBase
     }
     
     [AllowAnonymous]
-    [HttpGet("email/confirm")]
+    [ValidateModel]
+    [HttpPost("email/confirm")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> ConfirmEmail([FromQuery] Guid userId, [FromQuery] string token)
+    public async Task<IActionResult> ConfirmEmail([FromBody] EmailConfirmationDto emailConfirmationDto)
     {
-        await _userService.ConfirmEmail(userId, token);
+        await _userService.ConfirmEmail(emailConfirmationDto);
         return Ok();
     }
 }

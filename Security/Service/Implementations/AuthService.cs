@@ -153,14 +153,14 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task ConfirmEmail(Guid userId, string confirmationToken)
+    public async Task ConfirmEmail(EmailConfirmationDto emailConfirmationDto)
     {
-        confirmationToken = confirmationToken.Replace(' ', '+');
-        var user = await _userManager.FindByIdAsync(userId.ToString());
+        var emailConfirmationToken = emailConfirmationDto.Token.Replace(' ', '+');
+        var user = await _userManager.FindByIdAsync(emailConfirmationDto.UserId.ToString());
         if (user == null)
             throw new AuthException("User with such id not found", StatusCodes.Status404NotFound);
 
-        var result = await _userManager.ConfirmEmailAsync(user, confirmationToken);
+        var result = await _userManager.ConfirmEmailAsync(user, emailConfirmationToken);
         if (!result.Succeeded)
             throw new AuthException(result.Errors.First().Description, StatusCodes.Status500InternalServerError);
     }
@@ -237,7 +237,7 @@ public class AuthService : IAuthService
         var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
         var subject = _mailTemplatesConstants.VerifyEmailMailSubject;
         var mailTemplatePath = _mailTemplatesConstants.VerifyEmailMailTemplatePath;
-        var endpoint = "email/confirm";
+        var endpoint = "email-confirm";
 
         return await SendEmailWithToken(user, emailConfirmationToken, subject, mailTemplatePath, endpoint);
     }
@@ -249,9 +249,11 @@ public class AuthService : IAuthService
         var emailTemplatePath = Path.Combine(basePath, mailTemplatePath);
         var emailHtmlContent = await File.ReadAllTextAsync(emailTemplatePath);
 
-        var scheme = _httpContextAccessor.HttpContext.Request.Scheme;
-        var host = _httpContextAccessor.HttpContext.Request.Host.Value;
-        var verificationUrl = $"{scheme}://{host}/api/auth/{endpoint}"
+        
+        var scheme = "http";
+        var host = "localhost:4200";
+        
+        var verificationUrl = $"{scheme}://{host}/{endpoint}"
                               + $"?userId={user.Id}&token={token}";
 
         emailHtmlContent = emailHtmlContent.Replace("{url}", verificationUrl);

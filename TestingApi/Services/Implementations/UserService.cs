@@ -115,11 +115,20 @@ public class UserService : IUserService
         return _mapper.Map<UserResponseDto>(createdUser.Entity);
     }
 
-    public async Task ConfirmEmail(Guid userId, string token, CancellationToken cancellationToken = default)
+    public async Task ConfirmEmail(EmailConfirmationDto emailConfirmationDto, CancellationToken cancellationToken = default)
     {
-        var url = _httpClient.BaseAddress + _securityHttpClientConstants.ConfirmEmailEndpoint +
-                  $"?userId={userId}&token={token}";
-        var httpResponse = await _httpClient.GetAsync(url, cancellationToken);
+        var userToConfirmEmail = await _dataContext.Users
+            .FirstAsync(u => u.Id == emailConfirmationDto.UserId, cancellationToken);
+        if (userToConfirmEmail.EmailConfirmed == true)
+        {
+            throw new ApiException("User email already confirmed", StatusCodes.Status400BadRequest);
+        }
+        
+        var url = _httpClient.BaseAddress + _securityHttpClientConstants.ConfirmEmailEndpoint;
+        var jsonContent = JsonSerializer.Serialize(emailConfirmationDto);
+        var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+        
+        var httpResponse = await _httpClient.PostAsync(url, content, cancellationToken);
         
         _logger.LogInformation("{b}, {s}",
             await httpResponse.Content.ReadAsStringAsync(cancellationToken),
@@ -132,8 +141,7 @@ public class UserService : IUserService
         }
 
 
-        var userToConfirmEmail = await _dataContext.Users
-            .FirstAsync(u => u.Id == userId, cancellationToken);
+        
 
         userToConfirmEmail.EmailConfirmed = true;
 

@@ -8,7 +8,7 @@ public interface IAuthService
     Task<UserLoginResponseDto> LoginAsync(UserLoginDto userLoginDto);
     Task<TokenDto> RefreshAccessTokenAsync(TokenDto tokenDto);
     Task ConfirmEmailRequest();
-    Task ConfirmEmail(Guid userId, string confirmationToken);
+    Task ConfirmEmail(EmailConfirmationDto emailConfirmationDto);
     Task ForgotPassword(ForgotPasswordDto forgotPasswordDto);
     Task ResetPassword(ResetPasswordDto resetPasswordDto);
     Task ChangePassword(ChangePasswordDto changePasswordDto);

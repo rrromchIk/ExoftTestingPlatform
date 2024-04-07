@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Security.Dto;
+using Security.Helpers.ValidationAttributes;
 using Security.Service.Abstractions;
 
 namespace Security.Controllers;
@@ -26,12 +28,14 @@ public class EmailConfirmationController : ControllerBase
     }
     
     [AllowAnonymous]
-    [HttpGet]
+    [HttpPost]
+    [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> ConfirmEmail([FromQuery] Guid userId, [FromQuery] string token)
+    public async Task<IActionResult> ConfirmEmail([FromBody] EmailConfirmationDto emailConfirmationDto) 
     {
-        await _authService.ConfirmEmail(userId, token);
+        await _authService.ConfirmEmail(emailConfirmationDto);
         return Ok();
     }
 }
