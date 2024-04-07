@@ -5,7 +5,7 @@ namespace Security.Dto;
 public class ResetPasswordDto
 {
     [Required(AllowEmptyStrings = false, ErrorMessage = "UserId is required")]
-    public string UserId { get; set; } = null!;
+    public Guid? UserId { get; set; } = null!;
     
     [Required(AllowEmptyStrings = false, ErrorMessage = "Token is required")]
     public string Token { get; set; } = null!;

@@ -179,7 +179,7 @@ public class AuthService : IAuthService
     public async Task ResetPassword(ResetPasswordDto resetPasswordDto)
     {
         resetPasswordDto.Token = resetPasswordDto.Token.Replace(' ', '+');
-        var user = await _userManager.FindByIdAsync(resetPasswordDto.UserId);
+        var user = await _userManager.FindByIdAsync(resetPasswordDto.UserId.ToString());
         if (user == null)
             throw new AuthException("User with such id not found", StatusCodes.Status404NotFound);
 
