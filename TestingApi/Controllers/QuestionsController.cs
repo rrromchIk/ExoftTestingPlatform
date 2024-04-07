@@ -10,7 +10,6 @@ namespace TestingApi.Controllers;
 
 [ApiController]
 [Route("api/tests/questions-pools/")]
-[Authorize(Roles = "SuperAdmin, Admin")]
 public class QuestionsController : ControllerBase
 {
     private readonly IQuestionsPoolService _questionsPoolService;
@@ -27,6 +26,7 @@ public class QuestionsController : ControllerBase
         _questionTmplService = questionTmplService;
     }
 
+    [Authorize(Roles = "SuperAdmin, Admin")]
     [HttpGet("{questionsPoolId:guid}/questions")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<QuestionResponseDto>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -41,7 +41,8 @@ public class QuestionsController : ControllerBase
 
         return response.IsNullOrEmpty() ? NotFound() : Ok(response);
     }
-
+    
+    [Authorize(Roles = "SuperAdmin, Admin, User")]
     [HttpGet("questions/{id:guid}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(QuestionResponseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -51,6 +52,7 @@ public class QuestionsController : ControllerBase
         return response == null ? NotFound() : Ok(response);
     }
 
+    [Authorize(Roles = "SuperAdmin, Admin")]
     [HttpPost("{questionsPoolId:guid}/questions")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -80,6 +82,7 @@ public class QuestionsController : ControllerBase
         return CreatedAtAction(nameof(GetQuestionById), new { id = response.Id }, response);
     }
 
+    [Authorize(Roles = "SuperAdmin, Admin")]
     [HttpPut("questions/{id:guid}")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -97,6 +100,7 @@ public class QuestionsController : ControllerBase
         return NoContent();
     }
 
+    [Authorize(Roles = "SuperAdmin, Admin")]
     [HttpDelete("questions/{id:guid}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
