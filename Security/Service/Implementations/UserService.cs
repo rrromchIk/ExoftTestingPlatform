@@ -48,7 +48,7 @@ public class UserService : IUserService
             throw new AuthException(result.Errors.First().Description, StatusCodes.Status500InternalServerError);
     }
     
-    private void CheckRoleViolationsForDelete(IList<string> userToDeleteRoles)
+    private void CheckRoleViolationsForDelete(ICollection<string> userToDeleteRoles)
     {
         if (userToDeleteRoles.Contains("SuperAdmin"))
             throw new AuthException("Can not delete SuperAdmin", StatusCodes.Status400BadRequest);
