@@ -118,8 +118,14 @@ public class UserService : IUserService
     public async Task ConfirmEmail(EmailConfirmationDto emailConfirmationDto, CancellationToken cancellationToken = default)
     {
         var userToConfirmEmail = await _dataContext.Users
-            .FirstAsync(u => u.Id == emailConfirmationDto.UserId, cancellationToken);
-        if (userToConfirmEmail.EmailConfirmed == true)
+            .FirstOrDefaultAsync(u => u.Id == emailConfirmationDto.UserId, cancellationToken);
+        
+        if (userToConfirmEmail == null)
+        {
+            throw new ApiException("User not found", StatusCodes.Status404NotFound);
+        }
+        
+        if (userToConfirmEmail.EmailConfirmed)
         {
             throw new ApiException("User email already confirmed", StatusCodes.Status400BadRequest);
         }
@@ -139,10 +145,7 @@ public class UserService : IUserService
             var problemDetails = await HandleHttpResponse<ProblemDetails>(httpResponse, cancellationToken);
             throw new ApiException(problemDetails.Detail, (int)httpResponse.StatusCode);
         }
-
-
         
-
         userToConfirmEmail.EmailConfirmed = true;
 
         await _dataContext.SaveChangesAsync(cancellationToken);
