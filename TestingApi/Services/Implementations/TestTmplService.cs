@@ -59,18 +59,6 @@ public class TestTmplService : ITestTmplService
 
         if (!testWithQuestionsPoolsDto.QuestionsPoolTemplates.IsNullOrEmpty())
         {
-            var amountOfUniqueQuestionsPoolNames = testWithQuestionsPoolsDto.QuestionsPoolTemplates
-                .Where(qp => !qp.DefaultName.IsNullOrEmpty())
-                .Select(qp => qp.DefaultName)
-                .ToHashSet()
-                .Count;
-
-            if (amountOfUniqueQuestionsPoolNames != testTemplateToAdd.QuestionsPoolTemplates.Count)
-                throw new ApiException(
-                    "Questions pool template names have to be unique",
-                    StatusCodes.Status409Conflict
-                );
-
             testTemplateToAdd.QuestionsPoolTemplates =
                 _mapper.Map<ICollection<QuestionsPoolTemplate>>(testWithQuestionsPoolsDto.QuestionsPoolTemplates);
         }
