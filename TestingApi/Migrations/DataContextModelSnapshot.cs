@@ -428,6 +428,9 @@ namespace TestingApi.Migrations
                     b.Property<Guid>("QuestionId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<DateTime>("CreatedTimestamp")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("UserId", "QuestionId");
 
                     b.HasIndex("QuestionId");

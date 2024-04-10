@@ -211,6 +211,7 @@ public class UserTestService : IUserTestService
                     .Select(
                         a => new
                         {
+                            AnsweringTime = ua.AnsweringTime,
                             QuestionId = a.Question.Id,
                             AnswerId = a.Id,
                             MaxScore = a.Question.MaxScore,
@@ -226,6 +227,7 @@ public class UserTestService : IUserTestService
             .Select(
                 group => new
                 {
+                    AnsweringTime = group.First().AnsweringTime,
                     QuestionId = group.Key.QuestionId,
                     AnswerId = group.Key.AnswerId,
                     MaxScore = group.First().MaxScore,
@@ -243,6 +245,7 @@ public class UserTestService : IUserTestService
             .Select(
                 userQuestion => new
                 {
+                    AnsweringTime = userQuestion.First().AnsweringTime,
                     QuestionId = userQuestion.Key,
                     QuestionText = userQuestion.First().QuestionText,
                     MaxScore = userQuestion.First().MaxScore,
@@ -261,6 +264,7 @@ public class UserTestService : IUserTestService
                     ).ToList()
                 }
             )
+            .OrderBy(o => o.AnsweringTime)
             .Select(
                 q => new QuestionResultResponseDto
                 {
@@ -288,6 +292,7 @@ public class UserTestService : IUserTestService
                          !_dataContext.UserAnswers
                              .Any(ua => ua.QuestionId == uq.QuestionId 
                                         && ua.UserId == uq.UserId))
+            .OrderBy(uq => uq.CreatedTimestamp)
             .Select(
                 uq => new QuestionResultResponseDto
                 {

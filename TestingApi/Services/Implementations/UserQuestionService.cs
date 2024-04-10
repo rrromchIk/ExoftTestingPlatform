@@ -42,6 +42,7 @@ public class UserQuestionService : IUserQuestionService
             .Include(uq => uq.Question)
             .ThenInclude(q => q.QuestionsPool)
             .Where(uq => uq.UserId == userId && uq.Question.QuestionsPool.TestId == testId)
+            .OrderBy(uq => uq.CreatedTimestamp)
             .Select(
                 uq => new UserQuestionDetailsResponseDto
                 {
@@ -53,12 +54,17 @@ public class UserQuestionService : IUserQuestionService
                                   ua.QuestionId == uq.QuestionId
                         )
                 }
-            ).ToListAsync(cancellationToken);
+            )
+            .ToListAsync(cancellationToken);
     }
 
     public async Task CreateUserQuestions(ICollection<UserQuestionDto> userQuestionsDto, CancellationToken cancellationToken = default)
     {
         var userQuestionsToAdd = _mapper.Map<ICollection<UserQuestion>>(userQuestionsDto);
+        foreach (var userQuestion in userQuestionsToAdd)
+        {
+            userQuestion.CreatedTimestamp = DateTime.Now;
+        }
 
         await _dataContext.AddRangeAsync(userQuestionsToAdd, cancellationToken);
 

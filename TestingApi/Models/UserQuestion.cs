@@ -9,4 +9,6 @@ public class UserQuestion
     
     public Guid QuestionId { get; set; }
     public Question Question { get; set; } = null!;
+
+    public DateTime CreatedTimestamp { get; set; }
 }

@@ -90,3 +90,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+//TODO info for charts
