@@ -66,7 +66,7 @@ public class TestsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var templateId = testWithQuestionsPoolsDto.TemplateId;
-        if (templateId != null && await _testTmplService.TestTmplExistsAsync(
+        if (templateId != null && !await _testTmplService.TestTmplExistsAsync(
                 templateId.GetValueOrDefault(),
                 cancellationToken
             ))
