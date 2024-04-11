@@ -49,7 +49,7 @@ public class AnswersController : ControllerBase
             return NotFound("Question with such id not found");
         
         var templateId = answerDto.TemplateId;
-        if (templateId != null && await _answerTmplService.AnswerTmplExistsAsync(
+        if (templateId != null && !await _answerTmplService.AnswerTmplExistsAsync(
                 templateId.GetValueOrDefault(),
                 cancellationToken
             ))

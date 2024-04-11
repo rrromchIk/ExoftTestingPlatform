@@ -67,7 +67,7 @@ public class QuestionsController : ControllerBase
             return NotFound("Questions pool with such id not found");
 
         var templateId = questionWithAnswersDto.TemplateId;
-        if (templateId != null && await _questionTmplService.QuestionTmplExistsAsync(
+        if (templateId != null && !await _questionTmplService.QuestionTmplExistsAsync(
                 templateId.GetValueOrDefault(),
                 cancellationToken
             ))
