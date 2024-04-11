@@ -23,6 +23,8 @@ public interface ITestTmplService
 
     Task<PagedList<TestTmplResponseDto>> GetAllTestsTmplsAsync(TestTemplateFiltersDto filtersDto,
         CancellationToken cancellationToken = default);
+    
+    Task<ICollection<TestTmplShortInfoResponseDto>> GetAllTestsTmplsShortInfoAsync(CancellationToken cancellationToken = default);
 
     public Task<PagedList<TestTmplResponseDto>> GetTestsTmplsByAuthorIdAsync(
         Guid authorId, TestTemplateFiltersDto filtersDto, CancellationToken cancellationToken = default

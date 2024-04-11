@@ -21,7 +21,16 @@ public class TestTemplatesController : ControllerBase
         _testTmplService = testTmplService;
         _logger = logger;
     }
-
+    
+    [HttpGet("short-info")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<TestTmplShortInfoResponseDto>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetAllTestTemplatesShortInfo(CancellationToken cancellationToken)
+    {
+        var response = await _testTmplService.GetAllTestsTmplsShortInfoAsync(cancellationToken);
+        return response.IsNullOrEmpty() ? NotFound() : Ok(response);
+    }
+    
     [HttpGet]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PagedList<TestTmplResponseDto>))]

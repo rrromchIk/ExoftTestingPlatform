@@ -126,6 +126,20 @@ public class TestTmplService : ITestTmplService
         return _mapper.Map<PagedList<TestTmplResponseDto>>(tests);
     }
 
+    public async Task<ICollection<TestTmplShortInfoResponseDto>> GetAllTestsTmplsShortInfoAsync(CancellationToken cancellationToken = default)
+    {
+        return await _dataContext.TestTemplates
+            .OrderBy(t => t.CreatedTimestamp)
+            .Select(
+                t => new TestTmplShortInfoResponseDto
+                {
+                    Id = t.Id,
+                    Name = t.TemplateName
+                }
+            )
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<PagedList<TestTmplResponseDto>> GetTestsTmplsByAuthorIdAsync(
         Guid authorId, TestTemplateFiltersDto filtersDto, CancellationToken cancellationToken = default)
     {
