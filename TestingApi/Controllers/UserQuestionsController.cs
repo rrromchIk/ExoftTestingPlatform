@@ -63,7 +63,7 @@ public class UserQuestionsController : ControllerBase
     {
         await _userQuestionService.CreateUserQuestions(userQuestionsDto, cancellationToken);
 
-        return Ok();
+        return StatusCode(StatusCodes.Status201Created);
     }
     
 }

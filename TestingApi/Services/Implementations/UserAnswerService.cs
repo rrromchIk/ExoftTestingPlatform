@@ -42,17 +42,18 @@ public class UserAnswerService : IUserAnswerService
         );
     }
 
-    public async Task<UserAnswerResponseDto> CreateUserAnswerAsync(UserAnswerDto userAnswer,
+    public async Task CreateUserAnswersAsync(ICollection<UserAnswerDto> userAnswers,
         CancellationToken cancellationToken = default)
     {
-        var userAnswerToCreate = _mapper.Map<UserAnswer>(userAnswer);
-        userAnswerToCreate.AnsweringTime = DateTime.Now;
-
-        var createdUserAnswer = _dataContext.Add(userAnswerToCreate);
-
+        var userAnswersToCreate = _mapper.Map<ICollection<UserAnswer>>(userAnswers);
+        foreach (var userAnswer in userAnswersToCreate)
+        {
+            userAnswer.AnsweringTime = DateTime.Now;
+        }
+        
+        await _dataContext.AddRangeAsync(userAnswersToCreate, cancellationToken);
+        
         await _dataContext.SaveChangesAsync(cancellationToken);
-
-        return _mapper.Map<UserAnswerResponseDto>(createdUserAnswer.Entity);
     }
 
     public async Task DeleteUserAnswerAsync(Guid userId, Guid questionId, Guid answerId,

@@ -6,7 +6,7 @@ public interface IUserAnswerService
 {
     Task<ICollection<UserAnswerResponseDto>> GetUserAnswersAsync(Guid userId, Guid questionId, CancellationToken cancellationToken = default);
     Task<bool> UserAnswerExistAsync(Guid userId, Guid questionId, Guid answerId, CancellationToken cancellationToken = default);
-    Task<UserAnswerResponseDto> CreateUserAnswerAsync(UserAnswerDto userAnswer, CancellationToken cancellationToken = default);
+    Task CreateUserAnswersAsync(ICollection<UserAnswerDto> userAnswers, CancellationToken cancellationToken = default);
     Task DeleteUserAnswerAsync(Guid userId, Guid questionId, Guid answerId,
         CancellationToken cancellationToken = default);
 }

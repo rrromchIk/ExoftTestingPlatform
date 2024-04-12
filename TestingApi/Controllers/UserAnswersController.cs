@@ -45,24 +45,14 @@ public class UserAnswersController : ControllerBase
 
     [HttpPost("answers")]
     [ValidateModel]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(UserAnswerResponseDto))]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
-    public async Task<IActionResult> CreateUserAnswer([FromBody] UserAnswerDto userAnswerDto,
+    public async Task<IActionResult> CreateUserAnswer([FromBody] ICollection<UserAnswerDto> userAnswersDto,
         CancellationToken cancellationToken)
     {
-        if (!(await _userService.UserExistsAsync(userAnswerDto.UserId ?? Guid.Empty, cancellationToken) &&
-              await _questionService.QuestionExistsAsync(userAnswerDto.QuestionId ?? Guid.Empty, cancellationToken) &&
-              await _answerService.AnswerExistsAsync(userAnswerDto.AnswerId ?? Guid.Empty, cancellationToken)))
-            return NotFound();
-
-        var response = await _userAnswerService.CreateUserAnswerAsync(userAnswerDto, cancellationToken);
-
-        return CreatedAtAction(
-            nameof(GetUserAnswers),
-            new { userId = response.UserId, questionId = response.QuestionId },
-            response
-        );
+        await _userAnswerService.CreateUserAnswersAsync(userAnswersDto, cancellationToken);
+        return StatusCode(StatusCodes.Status201Created);
     }
 
     [HttpDelete("{userId:guid}/questions/{questionId:guid}/answers/{answerId:guid}")]
