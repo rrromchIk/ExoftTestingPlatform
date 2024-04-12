@@ -46,11 +46,7 @@ public class UserQuestionsController : ControllerBase
         [FromRoute] Guid testId,
         CancellationToken cancellationToken)
     {
-        if (!await _userTestService.UserTestExistsAsync(userId, testId, cancellationToken))
-            return NotFound("User test not found");
-            
-        var response = await _userQuestionService
-            .GetUserQuestionsDetails(userId, testId, cancellationToken);
+        var response = await _userQuestionService.GetUserQuestions(userId, testId, cancellationToken);
 
         return response.IsNullOrEmpty() ? NotFound() : Ok(response);
     }
