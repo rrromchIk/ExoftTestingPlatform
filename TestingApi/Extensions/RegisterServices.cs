@@ -3,6 +3,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using TestingApi.Constants;
+using TestingApi.Dto.StatisticDto;
 using TestingApi.Middlewares;
 using TestingApi.Services.Abstractions;
 using TestingApi.Services.Implementations;
@@ -32,7 +33,8 @@ public static class RegisterServices
         serviceCollection.AddScoped<ICurrentUserService, CurrentUserService>();
         serviceCollection.Configure<SecurityHttpClientConstants>(configuration.GetSection("SecurityHttpClient"));
         serviceCollection.Configure<SuperAdminSeedData>(configuration.GetSection("SuperAdminSeedData"));
-
+        serviceCollection.AddScoped<IUserStatisticService, UserStatisticService>();
+        serviceCollection.AddScoped<ITestStatisticService, TestStatisticService>();
     }
     
     public static void ConfigureAuth(this IServiceCollection services, IConfiguration configuration)
