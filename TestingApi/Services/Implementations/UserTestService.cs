@@ -143,10 +143,13 @@ public class UserTestService : IUserTestService
     public async Task CompleteUserTestAsync(Guid userId, Guid testId, CancellationToken cancellationToken = default)
     {
         var userTestToComplete = await _dataContext.UserTests
+            .Include(ut => ut.Test)
             .FirstAsync(ut => ut.UserId == userId && ut.TestId == testId, cancellationToken);
 
+        var limitTime = userTestToComplete.StartingTime.AddMinutes(userTestToComplete.Test.Duration);
+       
+        userTestToComplete.EndingTime = DateTime.Now > limitTime ? limitTime : DateTime.Now;
         userTestToComplete.UserTestStatus = UserTestStatus.Completed;
-        userTestToComplete.EndingTime = DateTime.Now;
         userTestToComplete.TotalScore = await CalculateTotalTestScore(userId, testId, cancellationToken);
         userTestToComplete.UserScore = await CalculateUserScore(userId, testId, cancellationToken);
 
