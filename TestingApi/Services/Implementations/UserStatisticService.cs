@@ -41,12 +41,18 @@ public class UserStatisticService : IUserStatisticService
             ? await testResultsQuery.AverageAsync(cancellationToken)
             : null;
 
+        var totalTimeSpentInMinutes = allCompletedTestsQuery
+            .AsEnumerable()
+            .Select(ut => (int)(ut.EndingTime.Subtract(ut.EndingTime)).TotalMinutes)
+            .Sum();
+
         return new UserStatisticResponseDto
         {
             AmountOfStartedTests = amountOfStartedTests,
             AmountOfCompletedTests = amountOfTestsCompleted,
             AmountOfInProcessTests = amountOfTestsInProcess,
             AverageResult = averagePercentageScore,
+            TotalTimeSpentInMinutes = totalTimeSpentInMinutes,
             AllTestsResults = await testResultsQuery.ToListAsync(cancellationToken)
         };
     }

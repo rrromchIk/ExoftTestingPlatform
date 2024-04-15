@@ -6,5 +6,6 @@ public class UserStatisticResponseDto
     public int AmountOfCompletedTests { get; set; }
     public int AmountOfInProcessTests { get; set; }
     public float? AverageResult { get; set; }
+    public int TotalTimeSpentInMinutes { get; set; } 
     public ICollection<float> AllTestsResults { get; set; } = null!;
 }
