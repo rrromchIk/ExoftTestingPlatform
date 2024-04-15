@@ -33,18 +33,18 @@ public class TestStatisticService : ITestStatisticService
             .Where(ut => ut.TestId == testId && ut.UserTestStatus == UserTestStatus.InProcess)
             .CountAsync(cancellationToken);
 
-        var averageUsersScore = await completedTestsQuery
+        var averageUsersResult = await completedTestsQuery
             .Select(ut => ut.UserScore / ut.TotalScore * 100)
             .DefaultIfEmpty()
             .AverageAsync(cancellationToken);
         
-        var averageUsersTimeSpent = completedTestsQuery
+        var averageUsersTimeSpentInMinutes = completedTestsQuery
             .AsEnumerable()
             .Select(ut => (float)ut.EndingTime.Subtract(ut.StartingTime).TotalMinutes)
             .DefaultIfEmpty()
             .Average();
         
-        var allUsersScores = await completedTestsQuery
+        var allUsersResults = await completedTestsQuery
             .Select(ut => ut.UserScore / ut.TotalScore * 100)
             .ToListAsync(cancellationToken);
 
@@ -53,9 +53,9 @@ public class TestStatisticService : ITestStatisticService
             Test = _mapper.Map<TestResponseDto>(test),
             TotalAmountOfAttemptsTaken = totalAmountOfAttemptsTaken,
             AmountOfCurrentGoingAttempts = amountOfCurrentGoingAttempts,
-            AverageUsersTimeSpent = averageUsersTimeSpent,
-            AverageUsersScore = averageUsersScore,
-            AllUsersScores = allUsersScores
+            AverageUsersTimeSpentInMinutes = averageUsersTimeSpentInMinutes,
+            AverageUsersResult = averageUsersResult,
+            AllUsersResults = allUsersResults
         };
     }
 }
