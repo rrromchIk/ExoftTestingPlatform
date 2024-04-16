@@ -43,7 +43,7 @@ public class UserStatisticService : IUserStatisticService
 
         var totalTimeSpentInMinutes = allCompletedTestsQuery
             .AsEnumerable()
-            .Select(ut => (int)(ut.EndingTime.Subtract(ut.EndingTime)).TotalMinutes)
+            .Select(ut => (int)(ut.EndingTime.Subtract(ut.StartingTime)).TotalMinutes)
             .Sum();
 
         return new UserStatisticResponseDto
