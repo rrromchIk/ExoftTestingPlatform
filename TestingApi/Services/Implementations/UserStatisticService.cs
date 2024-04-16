@@ -80,7 +80,7 @@ public class UserStatisticService : IUserStatisticService
         );
 
         if (allUsersScoresOnTest.Count - 1 == 0)
-            return 0;
+            return 100;
 
         var percentileRank = (float)(userIndex) / (allUsersScoresOnTest.Count - 1) * 100;
         return percentileRank;
