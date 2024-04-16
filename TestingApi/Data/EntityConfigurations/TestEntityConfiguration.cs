@@ -19,6 +19,9 @@ public class TestEntityConfiguration : BaseEntityConfiguration<Test>
         builder
             .HasIndex(t => t.Name)
             .IsUnique();
+        builder.HasIndex(t => t.CreatedTimestamp);
+        builder.HasIndex(t => t.Duration);
+        builder.HasIndex(t => t.ModifiedTimestamp);
         
         builder.Property(t => t.TemplateId).IsRequired(false);
     }

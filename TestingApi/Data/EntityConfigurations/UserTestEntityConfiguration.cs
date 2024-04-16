@@ -20,5 +20,8 @@ public class UserTestEntityConfiguration : IEntityTypeConfiguration<UserTest>
             .WithMany(t => t.UserTests)
             .HasForeignKey(ut => ut.TestId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        builder.HasIndex(ut => ut.StartingTime);
+        builder.HasIndex(ut => ut.UserScore);
     }
 }

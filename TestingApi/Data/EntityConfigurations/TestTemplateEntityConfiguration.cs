@@ -24,6 +24,10 @@ public class TestTemplateEntityConfiguration : BaseEntityConfiguration<TestTempl
             .OnDelete(DeleteBehavior.SetNull);
 
         builder.HasIndex(tp => tp.TemplateName).IsUnique();
+        builder.HasIndex(t => t.DefaultDuration);
+        builder.HasIndex(t => t.CreatedTimestamp);
+        builder.HasIndex(t => t.ModifiedTimestamp);
+        
         builder.Property(tp => tp.DefaultTestDifficulty).IsRequired(false);
         builder.Property(tp => tp.DefaultSubject).IsRequired(false);
         builder.Property(tp => tp.DefaultDuration).IsRequired(false);

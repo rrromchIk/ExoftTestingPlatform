@@ -14,5 +14,10 @@ public class UserEntityConfiguration : BaseEntityConfiguration<User>
         builder
             .HasIndex(u => u.Email)
             .IsUnique();
+        
+        builder.HasIndex(u => u.FirstName);
+        builder.HasIndex(u => u.LastName);
+        builder.HasIndex(u => u.CreatedTimestamp);
+        builder.HasIndex(u => u.ModifiedTimestamp);
     }
 }

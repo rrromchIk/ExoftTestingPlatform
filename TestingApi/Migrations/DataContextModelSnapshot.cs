@@ -185,6 +185,12 @@ namespace TestingApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedTimestamp");
+
+                    b.HasIndex("Duration");
+
+                    b.HasIndex("ModifiedTimestamp");
+
                     b.HasIndex("Name")
                         .IsUnique();
 
@@ -331,6 +337,12 @@ namespace TestingApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedTimestamp");
+
+                    b.HasIndex("DefaultDuration");
+
+                    b.HasIndex("ModifiedTimestamp");
+
                     b.HasIndex("TemplateName")
                         .IsUnique();
 
@@ -358,11 +370,11 @@ namespace TestingApi.Migrations
 
                     b.Property<string>("FirstName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LastName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<Guid?>("ModifiedBy")
                         .HasColumnType("uniqueidentifier");
@@ -378,8 +390,16 @@ namespace TestingApi.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CreatedTimestamp");
+
                     b.HasIndex("Email")
                         .IsUnique();
+
+                    b.HasIndex("FirstName");
+
+                    b.HasIndex("LastName");
+
+                    b.HasIndex("ModifiedTimestamp");
 
                     b.ToTable("Users");
 
@@ -463,7 +483,11 @@ namespace TestingApi.Migrations
 
                     b.HasKey("UserId", "TestId");
 
+                    b.HasIndex("StartingTime");
+
                     b.HasIndex("TestId");
+
+                    b.HasIndex("UserScore");
 
                     b.ToTable("UserTests");
                 });
