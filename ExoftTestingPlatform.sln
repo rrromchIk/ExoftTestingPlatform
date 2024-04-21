@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingApi", "TestingApi\TestingApi.csproj", "{0121A739-02C5-43F5-BE57-3F27430C221D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security", "Security\Security.csproj", "{68E6777C-C7D6-463E-B260-CCB28C7283EF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{0121A739-02C5-43F5-BE57-3F27430C221D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0121A739-02C5-43F5-BE57-3F27430C221D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0121A739-02C5-43F5-BE57-3F27430C221D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68E6777C-C7D6-463E-B260-CCB28C7283EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68E6777C-C7D6-463E-B260-CCB28C7283EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68E6777C-C7D6-463E-B260-CCB28C7283EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68E6777C-C7D6-463E-B260-CCB28C7283EF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
