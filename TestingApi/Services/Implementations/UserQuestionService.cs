@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using TestingApi.Data;
 using TestingApi.Dto.UserQuestionDto;
@@ -7,7 +6,6 @@ using TestingAPI.Exceptions;
 using TestingApi.Models;
 using TestingApi.Models.Test;
 using TestingApi.Services.Abstractions;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace TestingApi.Services.Implementations;
 
@@ -101,24 +99,20 @@ public class UserQuestionService : IUserQuestionService
     private async Task<ICollection<UserQuestionDto>> GetUserQuestionsForNewTest(Guid userId, Guid testId,
         CancellationToken cancellationToken = default)
     {
-        _logger.LogInformation("get user questions for new test");
         var allQuestionsInTheTest = await GetAllQuestionsForTestAsync(testId, cancellationToken);
         return GenerateUserQuestions(userId, allQuestionsInTheTest);
     }
 
-    private ICollection<UserQuestionDto> GenerateUserQuestions(Guid userId,
+    private static ICollection<UserQuestionDto> GenerateUserQuestions(Guid userId,
         ICollection<QuestionsPoolDetailsDto> questionsPools)
     {
         var concatenatedQuestions = new List<UserQuestionDto>();
 
         foreach (var pool in questionsPools)
         {
-            _logger.LogInformation("question pool: {q}", JsonSerializer.Serialize(pool));
             if (pool.GenerationStrategy == GenerationStrategy.Randomly.ToString())
             {
-                _logger.LogInformation("random strategy: {q}", JsonSerializer.Serialize(pool.QuestionsId));
                 pool.QuestionsId = ShuffleArray(pool.QuestionsId.ToList());
-                _logger.LogInformation("random strategy after shuffling: {q}", JsonSerializer.Serialize(pool.QuestionsId));
             }
 
             var numToConcatenate = Math.Min(pool.NumOfQuestionsToBeGenerated, pool.QuestionsId.Count);
