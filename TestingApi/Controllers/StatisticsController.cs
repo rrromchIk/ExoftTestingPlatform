@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using TestingApi.Dto.StatisticDto;
 using TestingApi.Services.Abstractions;
 
@@ -6,6 +7,7 @@ namespace TestingApi.Controllers;
 
 [Route("api/statistic")]
 [ApiController]
+[Authorize(Roles = "SuperAdmin, Admin, Users")]
 public class StatisticsController : Controller
 {
     private readonly IUserStatisticService _userStatisticService;

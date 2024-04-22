@@ -128,7 +128,7 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
-    [AllowAnonymous]
+    [Authorize(Roles = "SuperAdmin, Admin, User")]
     [HttpGet("{id:guid}/avatar/download")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
