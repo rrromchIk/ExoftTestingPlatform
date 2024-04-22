@@ -35,7 +35,7 @@ public class QuestionsPoolsController : ControllerBase
         return response == null ? NotFound() : Ok(response);
     }
 
-    [Authorize(Roles = "SuperAdmin, Admin")]
+    
     [HttpPost("/api/tests/{testId:guid}/questions-pools")]
     [ValidateModel]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(QuestionsPoolResponseDto))]
