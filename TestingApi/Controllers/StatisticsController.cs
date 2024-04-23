@@ -7,7 +7,7 @@ namespace TestingApi.Controllers;
 
 [Route("api/statistic")]
 [ApiController]
-[Authorize(Roles = "SuperAdmin, Admin, Users")]
+[Authorize(Roles = "SuperAdmin, Admin, User")]
 public class StatisticsController : Controller
 {
     private readonly IUserStatisticService _userStatisticService;
