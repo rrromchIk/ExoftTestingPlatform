@@ -19,7 +19,10 @@ public class UserStatisticService : IUserStatisticService
         CancellationToken cancellationToken = default)
     {
         var allStartedTestsQuery = _dataContext.UserTests
-            .Where(ut => ut.UserId == userId && ut.UserTestStatus != UserTestStatus.NotStarted);
+            .Include(ut => ut.Test)
+            .Where(ut => ut.UserId == userId && 
+                         ut.UserTestStatus != UserTestStatus.NotStarted &&
+                         ut.Test.IsPublished);
 
         var allCompletedTestsQuery = allStartedTestsQuery
             .Where(ut => ut.UserTestStatus == UserTestStatus.Completed);
@@ -34,7 +37,8 @@ public class UserStatisticService : IUserStatisticService
             .CountAsync(cancellationToken);
 
         var amountOfTestsInProcess = await _dataContext.UserTests
-            .Where(ut => ut.UserId == userId && ut.UserTestStatus == UserTestStatus.InProcess)
+            .Include(ut => ut.Test)
+            .Where(ut => ut.UserId == userId && ut.UserTestStatus == UserTestStatus.InProcess && ut.Test.IsPublished)
             .CountAsync(cancellationToken);
 
         float? averagePercentageScore = await testResultsQuery.AnyAsync(cancellationToken)

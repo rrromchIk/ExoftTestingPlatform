@@ -13,17 +13,10 @@ namespace TestingApi.Controllers;
 public class UserAnswersController : ControllerBase
 {
     private readonly IUserAnswerService _userAnswerService;
-    private readonly IUserService _userService;
-    private readonly IQuestionService _questionService;
-    private readonly IAnswerService _answerService;
 
-    public UserAnswersController(IUserAnswerService userAnswerService, IUserService userService,
-        IQuestionService questionService, IAnswerService answerService)
+    public UserAnswersController(IUserAnswerService userAnswerService)
     {
         _userAnswerService = userAnswerService;
-        _userService = userService;
-        _questionService = questionService;
-        _answerService = answerService;
     }
 
     [HttpGet("{userId:guid}/questions/{questionId:guid}/answers")]

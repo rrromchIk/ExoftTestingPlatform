@@ -12,13 +12,11 @@ namespace TestingApi.Controllers;
 public class UserQuestionsController : ControllerBase
 {
     private readonly IUserQuestionService _userQuestionService;
-    private readonly IUserTestService _userTestService;
     private readonly ITestService _testService;
 
-    public UserQuestionsController(IUserQuestionService userQuestionService, IUserTestService userTestService, ITestService testService)
+    public UserQuestionsController(IUserQuestionService userQuestionService, ITestService testService)
     {
         _userQuestionService = userQuestionService;
-        _userTestService = userTestService;
         _testService = testService;
     }
     

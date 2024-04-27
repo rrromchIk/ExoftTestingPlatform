@@ -80,7 +80,7 @@ public class UserTestService : IUserTestService
     {
         var testsQuery = _dataContext.UserTests
             .Include(ut => ut.Test)
-            .Where(ut => ut.UserId == userId);
+            .Where(ut => ut.UserId == userId && ut.Test.IsPublished);
 
         testsQuery = ApplyFiltersForStartedTests(testsQuery, filtersDto);
 

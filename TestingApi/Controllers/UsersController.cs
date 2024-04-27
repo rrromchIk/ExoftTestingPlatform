@@ -128,7 +128,6 @@ public class UsersController : ControllerBase
         return NoContent();
     }
 
-    [AllowAnonymous]
     [HttpGet("{id:guid}/avatar/download")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(FileContentResult))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
