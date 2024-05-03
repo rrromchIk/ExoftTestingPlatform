@@ -69,7 +69,7 @@ public class DataContext : DbContext
                 switch (entry.State)
                 {
                     case EntityState.Modified:
-                        baseEntity.ModifiedTimestamp = DateTime.Now;
+                        baseEntity.ModifiedTimestamp = DateTime.Now;//better use utc time. it may cause data inconsistency after deployment to many availability zones
                         if(_currentUserService.UserId != null)
                             baseEntity.ModifiedBy = Guid.Parse(_currentUserService.UserId);
                         break;

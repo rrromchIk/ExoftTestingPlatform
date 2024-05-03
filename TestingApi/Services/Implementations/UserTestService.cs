@@ -202,7 +202,7 @@ public class UserTestService : IUserTestService
         };
     }
 
-    private IQueryable<QuestionResultResponseDto> GetAnsweredUserQuestionResultQuery(Guid userId, Guid testId)
+    private IQueryable<QuestionResultResponseDto> GetAnsweredUserQuestionResultQuery(Guid userId, Guid testId)//very big linq. better to split into private methods
     {
         var userAnswersDetailsQuery = _dataContext.UserAnswers
             .Include(ua => ua.Question)

@@ -76,7 +76,8 @@ public class UserService : IUserService
             .AnyAsync(e => e.Id == id, cancellationToken);
     }
 
-    public async Task<UserResponseDto> RegisterUserAsync(UserSignUpDto userSignUpDto,
+    public async Task<UserResponseDto> RegisterUserAsync(UserSignUpDto userSignUpDto,//this way of handling users is not the best
+                                                                                     //better to make security api visible to FE and do all the call directly
         CancellationToken cancellationToken = default, bool isAdmin = false)
     {
         var jsonContent = JsonSerializer.Serialize(userSignUpDto);
