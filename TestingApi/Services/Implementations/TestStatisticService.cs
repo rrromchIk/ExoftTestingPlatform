@@ -19,7 +19,7 @@ public class TestStatisticService : ITestStatisticService
         _mapper = mapper;
     }
 
-    public async Task<TestStatisticResponseDto> GetTestStatistic(Guid testId,
+    public async Task<TestStatisticResponseDto> GetTestStatistic(Guid testId,//lines 29, 32, 36, 47 calls can be done in parallel
         CancellationToken cancellationToken = default)
     {
         var test = await _dataContext.Tests.Where(t => t.Id == testId).FirstAsync(cancellationToken);

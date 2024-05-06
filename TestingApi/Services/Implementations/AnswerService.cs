@@ -20,7 +20,8 @@ public class AnswerService : IAnswerService
         _logger = logger;
     }
 
-    public async Task<AnswerResponseDto?> GetAnswerById(Guid id, CancellationToken cancellationToken = default)
+    public async Task<AnswerResponseDto?> GetAnswerById(Guid id, CancellationToken cancellationToken = default)//no need to add word 'Answer' into the method name.
+                                                                                                               //it is already AnswerService
     {
         var answers = await _dataContext.Answers
             .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
@@ -28,7 +29,8 @@ public class AnswerService : IAnswerService
         return _mapper.Map<AnswerResponseDto>(answers);
     }
 
-    public async Task<bool> AnswerExistsAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<bool> AnswerExistsAsync(Guid id, CancellationToken cancellationToken = default)//looks like you need a generic repo to put common logic here
+                                                                                                     //I see at least several very similar methods in most of the services
     {
         return await _dataContext.Answers.AnyAsync(a => a.Id == id, cancellationToken);
     }

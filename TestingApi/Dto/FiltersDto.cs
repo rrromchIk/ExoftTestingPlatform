@@ -6,7 +6,7 @@ public class FiltersDto
 {
     public string? SearchTerm { get; set; }
     public string? SortColumn { get; set; }
-    public string? SortOrder { get; set; }
+    public string? SortOrder { get; set; }//it can be boolean
 
     [Range(1, int.MaxValue, ErrorMessage = "Page must be greater than 0")]
     public int Page { get; set; }

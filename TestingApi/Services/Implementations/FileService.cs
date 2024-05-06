@@ -9,11 +9,13 @@ public class FileService : IFileService
 {
     private readonly IConfiguration _configuration;
 
-    public FileService(IConfiguration configuration)
+    public FileService(IConfiguration configuration)//do not inject configuration. inject model instead
     {
         _configuration = configuration;
     }
-    public async Task RemoveFilesByNameIfExistsAsync(string fileName, CancellationToken cancellationToken = default)
+    public async Task RemoveFilesByNameIfExistsAsync(string fileName, CancellationToken cancellationToken = default)//there is no need in this method
+                                                                                                                    //old file is replaced by new one when created
+                                                                                                                    //read FileMode.Create description
     {
         var folderName = _configuration["FileStorage:FolderPath"];
         var pathToRemoveFiles = Path.Combine(Directory.GetCurrentDirectory(), folderName);

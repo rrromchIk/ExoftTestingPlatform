@@ -15,6 +15,7 @@ public class AnswerTemplatesController : ControllerBase
     private readonly IQuestionTmplService _questionTmplService;
     private readonly ILogger<AnswersController> _logger;
 
+    //logger, questionService and answerService are not needed. also very long string, better to split into several lines
     public AnswerTemplatesController(IQuestionService questionService, ILogger<AnswersController> logger, IAnswerService answerService, IAnswerTmplService answerTmplService, IQuestionTmplService questionTmplService)
     {
         _logger = logger;

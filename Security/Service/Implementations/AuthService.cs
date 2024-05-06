@@ -20,7 +20,7 @@ public class AuthService : IAuthService
     private readonly UserManager<ApplicationUser> _userManager;
     private readonly ITokenGenerator _tokenGenerator;
     private readonly IEmailService _emailService;
-    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IHttpContextAccessor _httpContextAccessor;//not needed
     private readonly ICurrentUserService _currentUserService;
     private readonly IWebHostEnvironment _webHostEnvironment;
     private readonly MailTemplatesConstants _mailTemplatesConstants;
